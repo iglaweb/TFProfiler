@@ -305,15 +305,16 @@ class VideoRecognizeFragment :
                 fail++
             }
         }
-
-        val dialog = MaterialDialog(requireContext())
-            .title(text = "Ready report")
-            .message(text = "Report is ready to explore!\r\nSuccess runs: $success, failed: $fail")
-            .positiveButton(text = "See report") {
-                openReport()
-            }
-            .negativeButton(R.string.dismiss)
-        dialog.show()
+        runOnUiThreadIfFragmentAlive {
+            val dialog = MaterialDialog(requireContext())
+                .title(text = "Ready report")
+                .message(text = "Report is ready to explore!\r\nSuccess runs: $success, failed: $fail")
+                .positiveButton(text = "See report") {
+                    openReport()
+                }
+                .negativeButton(R.string.dismiss)
+            dialog.show()
+        }
     }
 
     private fun recognizeUri(context: Context, selectedImageUri: Uri) {

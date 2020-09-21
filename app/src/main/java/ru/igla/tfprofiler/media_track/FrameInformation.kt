@@ -5,7 +5,9 @@ data class FrameInformation constructor(
     var framesCount: Int,
     var frameNumber: Int
 ) {
-    val progress =
+    //check if total frames is 0, progress is 50%
+    val progress = if (framesCount == 0) 50 else {
         if (framesCount == frameNumber) 100 else
             ((frameNumber / framesCount.toFloat()) * 100f).toInt()
+    }
 }

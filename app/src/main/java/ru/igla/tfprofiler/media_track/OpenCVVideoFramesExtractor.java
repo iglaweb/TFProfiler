@@ -12,12 +12,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import ru.igla.tfprofiler.core.FileNameLibraryLoader;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.TakeVideoFrameListener;
 import ru.igla.tfprofiler.video.TimestampBitmap;
 import ru.igla.tfprofiler.video.UpdateProgressListener;
 
 public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
+
+    static {
+        FileNameLibraryLoader fileNameLibraryLoader = new FileNameLibraryLoader();
+        fileNameLibraryLoader.loadLibraryFile("opencv_java4");
+    }
 
     @Override
     public boolean readVideoFile(@NotNull String mediaFile,
@@ -35,8 +41,7 @@ public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
 
         int fpsRate = (int) videoCapture.get(Videoio.CAP_PROP_FPS);
         int frameCount = (int) videoCapture.get(Videoio.CAP_PROP_FRAME_COUNT);
-        int duration = frameCount / fpsRate;
-        Timber.i("FPS: " + fpsRate + "; total frames: " + frameCount + "; duration: " + duration + "s");
+        Timber.i("FPS: " + fpsRate + "; total frames: " + frameCount);
 
         int frameNumber = 0;
 
