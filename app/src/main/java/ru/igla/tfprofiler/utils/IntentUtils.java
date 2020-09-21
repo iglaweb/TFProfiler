@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 
 import java.util.List;
 
+import ru.igla.tfprofiler.core.Timber;
+
 
 /**
  * Created by lashkov on 30/06/16.
@@ -30,7 +32,7 @@ public final class IntentUtils {
             context.startActivity(intent);
             return true;
         } catch (ActivityNotFoundException | SecurityException e) {
-            Log.e(e);
+            Timber.e(e);
             return false;
         }
     }

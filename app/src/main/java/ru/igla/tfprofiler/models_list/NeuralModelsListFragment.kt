@@ -30,9 +30,13 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_main_models_list.*
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.*
+import ru.igla.tfprofiler.BuildConfig
+import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaTrackUtils
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
@@ -57,7 +61,7 @@ class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
     }
 
     private val modelDeleteUseCase by lazy {
-        ModelDeleteUseCase(NeuralModelApp.instance)
+        ModelDeleteUseCase(TFProfilerApp.instance)
     }
 
     private var configureRunTFDialog: Dialog? = null
@@ -71,13 +75,13 @@ class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Job() + uiDispatcher
 
-    private val preferenceManager by lazy { AndroidPreferenceManager(NeuralModelApp.instance).defaultPrefs }
+    private val preferenceManager by lazy { AndroidPreferenceManager(TFProfilerApp.instance).defaultPrefs }
 
     private lateinit var modelsListAdapter: ModelsListRecyclerViewAdapter
 
     private val mToaster: Toaster by lazy {
         Toaster(
-            NeuralModelApp.instance
+            TFProfilerApp.instance
         )
     }
 
@@ -235,7 +239,7 @@ class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
                 listNeuralModelsViewModel.addCustomTfliteModel(filePath)
             } else {
                 withContext(Dispatchers.Main) {
-                    mToaster.showToast("Select path is not Tflite model: $filePath")
+                    mToaster.showToast("Selected file is not .tflite model: $filePath")
                 }
             }
         }

@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.report_details
 
 import android.app.Application
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.*
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.utils.DateUtils
@@ -53,7 +53,7 @@ class SaveReportDbUseCase(val application: Application) :
                 minTime = item.minTime,
                 maxTime = item.maxTime,
 
-                interferenceRuns = item.interferenceRuns,
+                interferenceRuns = item.inference,
                 warmupRuns = item.warmupRuns
             )
         }

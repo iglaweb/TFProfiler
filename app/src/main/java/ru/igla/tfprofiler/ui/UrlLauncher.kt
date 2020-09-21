@@ -8,6 +8,7 @@ import androidx.annotation.AttrRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.utils.IntentUtils
 
 
 interface UrlLauncher {
@@ -29,7 +30,7 @@ class RealUrlLauncher(
                 Intent(ACTION_VIEW)
                     .setData(url.toUri()), "View URL"
             )
-            currentActivity.startActivity(chooser)
+            IntentUtils.startActivitySafely(currentActivity, chooser)
         }
     }
 

@@ -6,7 +6,7 @@ import android.graphics.Matrix;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import ru.igla.tfprofiler.NeuralModelApp;
+import ru.igla.tfprofiler.TFProfilerApp;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.media_track.MediaPathProvider;
 
@@ -25,7 +25,7 @@ public class ImageUtils {
      * @param filename The location to save the bitmap to.
      */
     public static void saveBitmap(final Bitmap bitmap, final String filename) {
-        final String root = MediaPathProvider.getMediaPath(NeuralModelApp.Companion.getInstance()) + File.separator + "tensorflow";
+        final String root = MediaPathProvider.getMediaPath(TFProfilerApp.Companion.getInstance()) + File.separator + "tensorflow";
         Timber.i("Saving %dx%d bitmap to %s.", bitmap.getWidth(), bitmap.getHeight(), root);
         final File dir = new File(root);
         if (!dir.mkdirs()) {

@@ -3,8 +3,6 @@ package ru.igla.tfprofiler.prefs
 
 abstract class PrefsBase {
 
-    var ignorePrefChanges = false
-
     abstract fun getBoolValue(key: String, defaultValue: Boolean): Boolean
 
     abstract fun getIntValue(key: String, defaultValue: Int): Int
@@ -24,6 +22,4 @@ abstract class PrefsBase {
     abstract fun editLongValue(key: String, value: Long)
 
     abstract fun editStringValue(key: String, value: String?)
-
-    abstract fun clearCurrentSettings()
 }

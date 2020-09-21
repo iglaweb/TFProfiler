@@ -59,7 +59,7 @@
                 android:clipToPadding="false"
                 android:visibility="visible"
                 tools:itemCount="3"
-                tools:listitem="@layout/interference_report_row" />
+                tools:listitem="@layout/inference_report_row" />
 
         </LinearLayout>
 

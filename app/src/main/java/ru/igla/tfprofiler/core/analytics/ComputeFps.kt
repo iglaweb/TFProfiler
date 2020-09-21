@@ -1,6 +1,6 @@
 package ru.igla.tfprofiler.core.analytics
 
-import ru.igla.tfprofiler.utils.DateUtils
+import android.os.SystemClock
 import ru.igla.tfprofiler.utils.round
 import java.util.*
 
@@ -12,7 +12,7 @@ class ComputeFps {
 
     fun calcFps(): Double {
         // Keep track of frames analyzed
-        val currentTime = DateUtils.getCurrentDateInMs()
+        val currentTime = SystemClock.elapsedRealtime()
         frameTimestamps.addFirst(currentTime)
 
         // Compute the FPS using a moving average

@@ -17,10 +17,10 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_video_layout.*
 import kotlinx.android.synthetic.main.inference_info.*
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.NeuralModelApp
+import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.RequestMode
-import ru.igla.tfprofiler.Status
+import ru.igla.tfprofiler.core.RequestMode
+import ru.igla.tfprofiler.core.Status
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.intents.IntentManager
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
@@ -53,7 +53,7 @@ class VideoRecognizeFragment :
 
     private val mToaster: Toaster by lazy {
         Toaster(
-            NeuralModelApp.instance
+            TFProfilerApp.instance
         )
     }
 

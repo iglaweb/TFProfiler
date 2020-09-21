@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler
+package ru.igla.tfprofiler.core
 
 /**
  * A generic class that holds a value with its loading status.

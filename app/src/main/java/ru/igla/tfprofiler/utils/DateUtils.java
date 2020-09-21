@@ -5,7 +5,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -18,12 +17,6 @@ public final class DateUtils {
 
     private DateUtils() {
         //no impl
-    }
-
-    public static long getTimeFromFloat(float val) {
-        int hours = (int) val;
-        int minutes = (int) ((val % 1) * 100);
-        return TimeUnit.HOURS.toMillis(hours) + TimeUnit.MINUTES.toMillis(minutes);
     }
 
     public static String getSimpleReadableDateTime(long timestamp) {
@@ -54,22 +47,5 @@ public final class DateUtils {
      */
     public static long getCurrentDateInMs() {
         return System.currentTimeMillis();
-    }
-
-
-    /**
-     * Returns the current time in nanoseconds. it is not a wall clock :)
-     */
-    public static long getDateNowNano() {
-        return System.nanoTime();
-    }
-
-
-    /**
-     * Returns a long that describes the number of weeks
-     * between timeOne and timeTwo.
-     */
-    public static long getSecondsDiff(long date1, long date2) {
-        return TimeUnit.MILLISECONDS.toSeconds(Math.abs(date2 - date1));
     }
 }

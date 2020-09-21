@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.db.AppDatabase

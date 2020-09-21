@@ -19,10 +19,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_model_report_details_dialog.*
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.NeuralModelApp
+import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.SharedViewModel
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.SharedViewModel
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
@@ -51,7 +51,7 @@ class ModelReportFragment :
             )
         }
 
-    private val mToaster: Toaster by lazy { Toaster(NeuralModelApp.instance) }
+    private val mToaster: Toaster by lazy { Toaster(TFProfilerApp.instance) }
 
     private val reportDetailsViewModel: ReportDetailsViewModel by viewModels()
 

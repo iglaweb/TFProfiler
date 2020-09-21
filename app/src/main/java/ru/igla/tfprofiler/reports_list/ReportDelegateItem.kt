@@ -27,6 +27,6 @@ class ReportDelegateItem(
     val minTime: Long,
     val maxTime: Long,
 
-    val interferenceRuns: Int,
+    val inference: Int,
     val warmupRuns: Int
 ) : Parcelable

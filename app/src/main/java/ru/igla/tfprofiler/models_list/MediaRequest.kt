@@ -2,7 +2,7 @@ package ru.igla.tfprofiler.models_list
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import ru.igla.tfprofiler.RequestMode
+import ru.igla.tfprofiler.core.RequestMode
 
 @Parcelize
 class MediaRequest(

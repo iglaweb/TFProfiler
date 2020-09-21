@@ -12,7 +12,7 @@ import ru.igla.tfprofiler.utils.DevelopReportingTree
  * Created by lashkov on 17/09/20.
  * Copyright (c) 2020 igla. All rights reserved.
  */
-class NeuralModelApp : Application() {
+class TFProfilerApp : Application() {
     override fun onCreate() {
         super.onCreate()
         sInstance = this
@@ -44,10 +44,10 @@ class NeuralModelApp : Application() {
         private const val enableStrictMode = false
 
         @SuppressLint("StaticFieldLeak")
-        private lateinit var sInstance: NeuralModelApp
+        private lateinit var sInstance: TFProfilerApp
 
         @get:Synchronized
-        val instance: NeuralModelApp
+        val instance: TFProfilerApp
             get() = sInstance
     }
 }

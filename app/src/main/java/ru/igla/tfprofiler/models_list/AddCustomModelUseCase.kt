@@ -2,7 +2,7 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.Application
 import org.tensorflow.lite.DataType
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.db.AppDatabase

@@ -40,7 +40,7 @@ class StatisticsEstimator(context: Context) {
                 minTime = value.interferenceTimeMin,
                 maxTime = value.interferenceTimeMax,
 
-                interferenceRuns = value.interferenceRuns,
+                inference = value.interferenceRuns,
                 warmupRuns = value.warmupRuns
             )
             reportItems.add(item)

@@ -1,14 +1,11 @@
 package ru.igla.tfprofiler.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Looper
 import android.util.DisplayMetrics
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.UiThread
@@ -42,17 +39,6 @@ fun ImageView.clearAndSetBitmapNoRefresh(bitmap: Bitmap?) {
 }
 
 private fun Float.round(): Int = (if (this < 0) ceil(this + 0.5f) else floor(this + 0.5f)).toInt()
-
-
-inline fun <T> runMeasureTimeMs(tag: String, block: () -> T): T {
-    val start = DateUtils.getCurrentDateInMs()
-    val ret = block()
-    logI {
-        val elapsed = DateUtils.getCurrentDateInMs() - start
-        "TIME: $tag $elapsed ms"
-    }
-    return ret
-}
 
 inline fun logI(e: () -> String) {
     if (BuildConfig.DEBUG) {
@@ -96,20 +82,6 @@ inline fun <T1 : Any, T2 : Any, T3 : Any, R : Any> safeLet(
  */
 
 private const val TAG = "TFProfiler-android"
-fun Activity.hideKeyboard(flags: Int = InputMethodManager.HIDE_NOT_ALWAYS): Boolean {
-    currentFocus?.let {
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        return inputMethodManager?.hideSoftInputFromWindow(it.windowToken, flags) ?: false
-    }
-    return false
-}
-
-fun View.hideKeyboard(flags: Int = InputMethodManager.HIDE_NOT_ALWAYS): Boolean {
-    val inputMethodManager =
-        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-    return inputMethodManager?.hideSoftInputFromWindow(windowToken, flags) ?: false
-}
 
 fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, message, duration).show()

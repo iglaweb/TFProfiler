@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.reports_list
 
 import android.app.Application
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelReportsDbController
 

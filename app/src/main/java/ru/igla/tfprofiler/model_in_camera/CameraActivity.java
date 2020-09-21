@@ -40,8 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.SharedViewModel;
 import ru.igla.tfprofiler.core.Device;
+import ru.igla.tfprofiler.core.SharedViewModel;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.env.ImageUtils;

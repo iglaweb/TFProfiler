@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.RefreshLiveData
 import ru.igla.tfprofiler.reports_list.RefreshLiveData.RefreshAction

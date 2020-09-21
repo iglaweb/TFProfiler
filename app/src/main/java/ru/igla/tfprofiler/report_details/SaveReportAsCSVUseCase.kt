@@ -2,7 +2,7 @@ package ru.igla.tfprofiler.report_details
 
 import android.content.Context
 import de.siegmar.fastcsv.writer.CsvWriter
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import java.io.File
@@ -12,7 +12,7 @@ class SaveReportAsCSVUseCase(val context: Context) :
     UseCase<SaveReportAsCSVUseCase.RequestValues, SaveReportAsCSVUseCase.ResponseValue>() {
 
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-        val csvPath = MediaPathProvider.getRootPath(context) + "/file.csv"
+        val csvPath = MediaPathProvider.getRootPath(context) + "/model_report.csv"
         val file = File(csvPath)
         val csvWriter = CsvWriter()
         csvWriter.append(file, StandardCharsets.UTF_8).use { csvAppender ->
@@ -34,7 +34,8 @@ class SaveReportAsCSVUseCase(val context: Context) :
                 "Min time",
                 "Max time",
                 "Total runs",
-                "Warmup runs"
+                "Warmup runs",
+                "Exception"
             )
 
             val data = requestValues.reportEntity
@@ -61,13 +62,14 @@ class SaveReportAsCSVUseCase(val context: Context) :
                     item.minTime.toString(),
                     item.maxTime.toString(),
 
-                    item.interferenceRuns.toString(),
-                    item.warmupRuns.toString()
+                    item.inference.toString(),
+                    item.warmupRuns.toString(),
+
+                    item.exception ?: ""
                 )
             }
             csvAppender.endLine()
         }
-
         val responseValue = ResponseValue(csvPath)
         return Resource.success(responseValue)
     }

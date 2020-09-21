@@ -11,7 +11,7 @@ import androidx.room.TypeConverters
         DbReportDelegateItem::class,
         DbModelReportItem::class,
         DbModelItem::class
-    ], version = 5
+    ], version = 1
 )
 @TypeConverters(
     ModelTypeConverter::class,
@@ -34,7 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(
                 context,
-                AppDatabase::class.java, "neural-database"
+                AppDatabase::class.java, "tfprofiler-database"
             )
                 // Wipes and rebuilds instead of migrating
                 // if no Migration object.

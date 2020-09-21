@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler
+package ru.igla.tfprofiler.core
 
 abstract class UseCase<Q : UseCase.RequestValues, P : UseCase.ResponseValue> {
 

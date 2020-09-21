@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.reports_list
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelReportsDbController
 import ru.igla.tfprofiler.utils.DateUtils
@@ -47,7 +47,7 @@ class ReportsListUseCase(val application: Application) :
                             percentile99Time = item.percentileTime99,
                             minTime = item.minTime,
                             maxTime = item.maxTime,
-                            interferenceRuns = item.interferenceRuns,
+                            inference = item.interferenceRuns,
                             warmupRuns = item.warmupRuns
                         )
                         reportItems.add(reportItem)

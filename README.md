@@ -5,10 +5,23 @@
 
 # Overview
 
-TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model and measure its performance using FPS, interference time, memory consumption with different delegates (CPU, GPU, NNAPI, HEXAGON).
+TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model and measure its performance using FPS, inference time, memory consumption with different delegates (CPU, GPU, NNAPI, HEXAGON).
 
 - **API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
+
+
+# Features
+
+The app displays a list of models built inside the app that can be used to measure its performance on device. Also, you can upload your *.tflite model and see how it works on the smartphone.
+
+<div>
+  <img align="center" src="img/screenshot_config_options.jpg" alt="Configure options" width="220"> &nbsp;&nbsp;&nbsp;
+   <img align="center" src="img/screenshot_report.jpg" alt="Report" width="220">
+</div>
+
+<br/>
+
 
 # Performance tips
 
@@ -16,7 +29,7 @@ We can boost model performance and energy efficiency using various optimization 
 
 Model optimization aims to create smaller models that are generally faster and more energy efficient, so that they can be deployed on mobile devices. 
 
-1. Use [XNNPACK](https://blog.tensorflow.org/2020/07/accelerating-tensorflow-lite-xnnpack-integration.html) to boost float-point interference.
+1. Use [XNNPACK](https://blog.tensorflow.org/2020/07/accelerating-tensorflow-lite-xnnpack-integration.html) to boost float-point inference.
 
 2. Use [GPU](https://www.tensorflow.org/lite/performance/gpu) delegate to compare with CPU and other options. If some of the ops are not supported by the GPU delegate, the TF Lite will only run a part of the graph on the GPU and the remaining part on the CPU.
 
@@ -27,12 +40,11 @@ Model optimization aims to create smaller models that are generally faster and m
 5. Accelerate TFLite model on Qualcomm [Hexagon DSPs](https://blog.tensorflow.org/2019/12/accelerating-tensorflow-lite-on-qualcomm.html)
 
 
-## Credits
+# Credits
 Launcher icon: Icons made by [Becris](https://www.flaticon.com/authors/becris) from [https://www.flaticon.com/](www.flaticon.com)
 
 
-Issues
-------
+# Issues
 
 If you find any problems or would like to suggest a feature, please
 feel free to file an [issue](https://github.com/iglaweb/TFProfiler/issues)

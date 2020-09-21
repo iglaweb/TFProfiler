@@ -18,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.SharedViewModel
+import ru.igla.tfprofiler.core.SharedViewModel
 import ru.igla.tfprofiler.report_details.ModelReportFragment
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.utils.inTransaction

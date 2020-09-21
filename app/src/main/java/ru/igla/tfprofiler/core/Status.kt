@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler
+package ru.igla.tfprofiler.core
 
 /**
  * Status of a resource that is provided to the UI.

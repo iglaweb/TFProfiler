@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.SharedViewModel
+import ru.igla.tfprofiler.core.SharedViewModel
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.utils.inTransaction
 

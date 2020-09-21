@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler
+package ru.igla.tfprofiler.core
 
 enum class RequestMode {
     CAMERA,

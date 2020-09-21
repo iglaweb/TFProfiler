@@ -12,10 +12,10 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
-import ru.igla.tfprofiler.Resource
-import ru.igla.tfprofiler.UseCase
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.Resource
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.ModelEntity
@@ -110,8 +110,11 @@ class RecognitionViewModel(
     }
 
     fun recognizeVideo(filePath: String) {
-        val startTime = DateUtils.getCurrentDateInMs()
-        Timber.i("START recognize video $filePath")
+        val timeWatchClockOS = TimeWatchClockOS()
+        timeWatchClockOS.start()
+        logI {
+            "START recognize video $filePath"
+        }
         try {
             if (filePath.endsWith(".avi")) { //we can use opencv
                 // https://stackoverflow.com/questions/43382359/andriod-studio-opencv-3-2-cannot-open-video-file-or-android-camera-with-native
@@ -130,12 +133,10 @@ class RecognitionViewModel(
         } catch (e: Exception) {
             Timber.e(e)
             liveDataShowRecognitionError.postValue(e)
-        }
-        logI {
-            "Finished recognize video"
-        }
-        logI {
-            "Time elapsed: " + (DateUtils.getCurrentDateInMs() - startTime) + " ms"
+        } finally {
+            logI {
+                "Finish recognize video. Time elapsed: " + timeWatchClockOS.stop() + " ms"
+            }
         }
     }
 

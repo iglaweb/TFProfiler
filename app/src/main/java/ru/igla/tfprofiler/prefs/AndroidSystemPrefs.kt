@@ -9,20 +9,7 @@ abstract class AndroidSystemPrefs(val context: Context) : PrefsBase() {
 
     private val sharedPreferences: SharedPreferences by lazy { getSharedPrefs(prefName, context) }
 
-    override fun clearCurrentSettings() {
-        clearAllSettings(prefName, context)
-    }
-
     companion object {
-        @JvmStatic
-        fun clearAllSettings(prefName: String, c: Context) {
-            getSharedPrefs(prefName, c).apply {
-                val editor = edit()
-                editor.clear()
-                editor.apply()
-            }
-        }
-
         @JvmStatic
         fun getSharedPrefs(prefName: String, context: Context): SharedPreferences {
             return context.getSharedPreferences(prefName, Context.MODE_PRIVATE)

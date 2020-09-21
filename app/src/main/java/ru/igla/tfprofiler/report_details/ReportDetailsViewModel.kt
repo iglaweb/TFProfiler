@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.utils.ExceptionHandler
 import ru.igla.tfprofiler.utils.sendValueIfNew

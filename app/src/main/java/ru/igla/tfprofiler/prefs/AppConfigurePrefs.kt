@@ -6,6 +6,7 @@ import ru.igla.tfprofiler.models_list.CameraType
 class AppConfigurePrefs(private val pref: PrefsBase) {
 
     companion object {
+        const val PREFS_NAME = "tfprofiler"
         private const val PREF_IMAGE_MAXSIZE = "image_max_size"
         private const val PREF_WARMUP_RUNS = "warmup_runs"
         private const val PREF_IS_CAMERA_SELECTED_LAST = "is_camera_selected_last"

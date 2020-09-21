@@ -8,7 +8,7 @@ class AndroidPreferenceManager constructor(
 
     private val androidPrefs = object : AndroidSystemPrefs(context) {
         override val prefName: String
-            get() = "ru.igla.neural.general"
+            get() = AppConfigurePrefs.PREFS_NAME
     }
     override val defaultPrefs: AppConfigurePrefs by lazy {
         AppConfigurePrefs(androidPrefs)

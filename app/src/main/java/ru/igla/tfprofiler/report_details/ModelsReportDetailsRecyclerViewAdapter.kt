@@ -38,7 +38,7 @@ class ModelsReportDetailsRecyclerViewAdapter(val context: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModelReportItemHolder {
-        val layoutView = layoutInflater.inflate(R.layout.interference_report_row, parent, false)
+        val layoutView = layoutInflater.inflate(R.layout.inference_report_row, parent, false)
         return ModelReportItemHolder(layoutView)
     }
 
@@ -63,7 +63,7 @@ class ModelsReportDetailsRecyclerViewAdapter(val context: Context) :
             holder.errorContainer.visibility = View.GONE
             holder.statsContainer.visibility = View.VISIBLE
 
-            val hasRuns = modelHolder.interferenceRuns > 0
+            val hasRuns = modelHolder.inference > 0
             if (hasRuns) {
                 holder.textViewFps.text = modelHolder.fps.toString()
             } else {
@@ -93,7 +93,7 @@ class ModelsReportDetailsRecyclerViewAdapter(val context: Context) :
                     modelHolder.percentile99Time.toInt().toString() + " ms"
             }
 
-            holder.textViewInterferenceRuns.text = modelHolder.interferenceRuns.toString()
+            holder.textViewInterferenceRuns.text = modelHolder.inference.toString()
             holder.textViewWarmupRuns.text = modelHolder.warmupRuns.toString()
 
             if (modelHolder.memoryUsageMin != DataAnalytics.INVALID_MEMORY) {

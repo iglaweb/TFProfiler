@@ -27,17 +27,18 @@ class VideoRecognizeActivity : AppCompatActivity() {
             return
         }
 
+        val delegateRunRequest: DelegateRunRequest? =
+            intent.getParcelableExtra(NeuralModelsListFragment.MODEL_OPTIONS)
+        check(delegateRunRequest != null) { "Delegate is not provided" }
+
         setContentView(R.layout.activity_video_layout)
         if (savedInstanceState == null) {
-            val delegateRunRequest: DelegateRunRequest? =
-                intent.getParcelableExtra(NeuralModelsListFragment.MODEL_OPTIONS)
             supportFragmentManager.inTransaction {
                 setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 replace(
                     R.id.main_frame_layout, VideoRecognizeFragment().withArguments(
                         mediaRequest,
                         delegateRunRequest
-                            ?: DelegateRunRequest(IntRange(1, 1), emptyList(), false)
                     )
                 )
             }

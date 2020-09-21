@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.media_track
 import android.content.Context
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.UseCase
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.video.TimestampBitmap
 import java.io.IOException
