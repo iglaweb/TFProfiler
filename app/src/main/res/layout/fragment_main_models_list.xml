@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="64dp"
+        android:text="@string/list_items_empty"
+        android:textColor="@color/almost_black"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:text="@string/list_items_empty"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
+
+        <ru.igla.tfprofiler.ui.widgets.RecyclerViewEmptySupport
+            android:id="@+id/listModels"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:visibility="visible"
+            tools:itemCount="3"
+            tools:listitem="@layout/list_neural_model_row" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_baseline_add_24" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/loading_report_wait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="64dp"
+        android:text="@string/user_profile_prepare"
+        android:textColor="@color/almost_black"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:text="@string/list_items_empty" />
+
+</RelativeLayout>

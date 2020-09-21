@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">TFProfiler</string>
+    <string name="hint_enter_value">Enter value…</string>
+
+    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+    <string name="list_items_empty">The items list is empty</string>
+    <string name="user_profile_prepare">Preparing user profiles…</string>
+
+    <string name="tfe_ic_xnnpack" translatable="false">XNNPACK</string>
+
+    <string name="tfe_ic_device" translatable="false">Device</string>
+    <string-array name="tfe_ic_devices" translatable="false">
+        <item>CPU</item>
+        <item>GPU</item>
+        <item>NNAPI</item>
+        <item>HEXAGON</item>
+    </string-array>
+
+    <string name="tfe_ic_gpu_quant_error" translation_description="Error regarding GPU support for Quant models[CHAR_LIMIT=60]">GPU does not yet supported quantized models.</string>
+
+    <string name="tfe_pn_request_permission" translation_description="Request camera permission [CHAR_LIMIT=40]">This app needs camera permission.</string>
+    <string name="tfe_pn_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+
+    <string name="about">About</string>
+    <string name="about_title">TFProfiler v%1$s</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="about_body"><![CDATA[
+        This project is <a href=\'https://github.com/iglaweb/tfprofiler\'>open source</a>, and is
+        licensed under Apache 2.0.
+  ]]></string>
+
+</resources>

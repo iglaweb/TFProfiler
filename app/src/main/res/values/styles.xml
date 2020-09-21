@@ -1,0 +1,20 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppMediaFitScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/almost_black</item>
+        <item name="colorPrimaryDark">@color/almost_black</item>
+        <item name="colorAccent">@color/white_color</item>
+    </style>
+
+    <style name="FullScreenDialogToolbar">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
+    </style>
+
+</resources>

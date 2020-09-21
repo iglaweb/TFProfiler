@@ -1,0 +1,161 @@
+def mobileNetV1DownloadUrl = 'http://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip'
+def mobileNetV2DownloadUrl = 'https://storage.googleapis.com/tfhub-lite-models/google/lite-model/object_detection/mobile_object_localizer_v1/1/default/1.tflite'
+def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_front.tflite'
+//or switch back to back camera specific model
+def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
+def yolov4DownloadUrl = 'https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite'
+def faceLandmarkUrl = "https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_landmark.tflite"
+
+
+project.ext.faceLandmarkLocalFile = "face_landmark.tflite"
+project.ext.blazefaceFrontLocalFile = "face_detection_front.tflite"
+project.ext.mobilenetv2LocalFile = "object_detection_mobile_object_localizer_v1_1_default_1.tflite"
+project.ext.yolov4LocalFile = "yolov4.tflite"
+
+
+project.ext.mobilenetv1 = "mobilenetv1"
+project.ext.mobilenetv2 = 'mobilenetv2'
+project.ext.blazefacefront = 'blazefacefront'
+project.ext.yolov4 = 'yolov4'
+project.ext.facelandmark = 'face_landmark'
+
+project.ext.ASSET_DIR = projectDir.toString() + '/src/main/assets/'
+project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
+
+def targetMobileNetv1Folder = project.ext.ASSET_DIR + project.ext.mobilenetv1
+def targetMobileNetv2Folder = project.ext.ASSET_DIR + project.ext.mobilenetv2
+def targetBlazefaceFrontFolder = project.ext.ASSET_DIR + project.ext.blazefacefront
+def targetYolov4Folder = project.ext.ASSET_DIR + project.ext.yolov4
+def targetFaceLandmarkFolder = project.ext.ASSET_DIR + project.ext.facelandmark
+
+
+////////// Face landmark
+
+task downloadTfliteFaceLandmark(type: Download) {
+    doFirst {
+        println "Downloading ${faceLandmarkUrl}"
+    }
+    src faceLandmarkUrl
+    dest new File(buildDir, project.ext.faceLandmarkLocalFile)
+    overwrite true
+}
+
+task downloadAndCopyFaceLandmark(dependsOn: downloadTfliteFaceLandmark, type: Copy) {
+    doFirst {
+        println "Copying ${downloadTfliteFaceLandmark.dest}"
+    }
+    from downloadTfliteFaceLandmark.dest
+    into targetFaceLandmarkFolder
+    doLast {
+        println "Copied to ${targetFaceLandmarkFolder}"
+    }
+}
+
+////////// YOLOv4
+
+task downloadTfliteYoloV4(type: Download) {
+    doFirst {
+        println "Downloading ${yolov4DownloadUrl}"
+    }
+    src yolov4DownloadUrl
+    dest new File(buildDir, project.ext.yolov4LocalFile)
+    overwrite true
+}
+
+task downloadAndCopyYoloV4(dependsOn: downloadTfliteYoloV4, type: Copy) {
+    doFirst {
+        println "Copying ${downloadTfliteYoloV4.dest}"
+    }
+    from downloadTfliteYoloV4.dest
+    into targetYolov4Folder
+    doLast {
+        println "Copied to ${targetYolov4Folder}"
+    }
+}
+
+
+////////// Blazeface Front
+
+task downloadTfliteBlazefaceFront(type: Download) {
+    doFirst {
+        println "Downloading ${blazefaceFrontCameraUrl}"
+    }
+    src blazefaceFrontCameraUrl
+    dest new File(buildDir, project.ext.blazefaceFrontLocalFile)
+    overwrite true
+}
+
+task downloadAndCopyBlazefaceFront(dependsOn: downloadTfliteBlazefaceFront, type: Copy) {
+    doFirst {
+        println "Copying ${downloadTfliteBlazefaceFront.dest}"
+    }
+    from downloadTfliteBlazefaceFront.dest
+    into targetBlazefaceFrontFolder
+    doLast {
+        println "Copied to ${targetBlazefaceFrontFolder}"
+    }
+}
+
+
+////////// MobileNetV2
+
+task downloadTfliteMobileNetV2(type: Download) {
+    doFirst {
+        println "Downloading ${mobileNetV2DownloadUrl}"
+    }
+    src mobileNetV2DownloadUrl
+    dest new File(buildDir, project.ext.mobilenetv2LocalFile)
+    overwrite true
+}
+
+task downloadAndCopyMobileNetV2(dependsOn: downloadTfliteMobileNetV2, type: Copy) {
+    doFirst {
+        println "Copying ${downloadTfliteMobileNetV2.dest}"
+    }
+    from downloadTfliteMobileNetV2.dest
+    into targetMobileNetv2Folder
+    doLast {
+        println "Copied to ${targetMobileNetv2Folder}"
+    }
+}
+
+
+////////// MobileNetV1
+
+task downloadZipMobileNetV1(type: Download) {
+    doFirst {
+        println "Downloading ${mobileNetV1DownloadUrl}"
+    }
+    src mobileNetV1DownloadUrl
+    dest new File(buildDir, 'mobilenet_v1_1.0.zip')
+    overwrite true
+}
+
+task downloadAndUnzipMobileNetV1(dependsOn: downloadZipMobileNetV1, type: Copy) {
+    doFirst {
+        println "Unzipping ${downloadZipMobileNetV1.dest}"
+    }
+    from zipTree(downloadZipMobileNetV1.dest)
+    into targetMobileNetv1Folder
+    doLast {
+        println "Unzipped to ${targetMobileNetv1Folder}"
+    }
+}
+
+
+task extractModels(type: Copy) {
+    dependsOn downloadAndUnzipMobileNetV1
+    dependsOn downloadAndCopyMobileNetV2
+    dependsOn downloadAndCopyBlazefaceFront
+    dependsOn downloadAndCopyYoloV4
+    dependsOn downloadAndCopyFaceLandmark
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleDebug') {
+        task.dependsOn 'extractModels'
+    }
+    if (task.name == 'assembleRelease') {
+        task.dependsOn 'extractModels'
+    }
+}

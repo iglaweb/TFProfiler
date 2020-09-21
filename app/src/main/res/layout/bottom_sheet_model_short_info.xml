@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/delegateDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="18sp"
+        tools:text="Adapter from Single Shot Multibox Detector (SSD)" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Input image size"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/modelSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="18sp"
+        tools:text="320x320" />
+
+    <TextView
+        android:id="@+id/tvModelTypeFloating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/background_round_fill"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:textColor="@color/white_color"
+        android:textSize="18sp"
+        tools:text="Floating" />
+
+    <TextView
+        android:id="@+id/modelSourceTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Link to paper/source"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/modelSource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:autoLink="web"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="18sp"
+        tools:text="https://arxiv.org/abs/1907.05047" />
+
+</LinearLayout>

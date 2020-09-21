@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196f3</color>
+    <color name="colorPrimaryDark">#1769aa</color>
+    <color name="colorAccent">#f4511e</color>
+
+    <color name="tfe_semi_transparent">#66000000</color>
+
+    <color name="semi_transparent_bg">#ba262626</color>
+
+    <color name="almost_black">#222222</color>
+
+    <color name="about_text_secondary">#6e6e6e</color>
+
+    <color name="highlight_color">#FFFCE49B</color>
+    <color name="white_color">#FFFFFF</color>
+    <color name="black_color">#000000</color>
+    <color name="transparent_color">#00000000</color>
+    <color name="list_item_divider">#ffe1e5e8</color>
+    <color name="color_red">#ff0000</color>
+
+
+    <color name="ripple_color_normal_y">#FFCC00</color>
+    <color name="ripple_color_effect_y">#F2C200</color>
+
+    <color name="ripple_grey_color">#D9D9D9</color>
+
+    <color name="blue_grey_900">#263238</color>
+
+    <color name="blue_button_disabled">#8d9aa1</color>
+</resources>
