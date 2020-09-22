@@ -1,5 +1,6 @@
 # TFProfiler (work-in-progress 👷🔧️)
 
+[![Build Status][build-status-svg]][build-status-link]
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -94,5 +95,7 @@ feel free to file an [issue](https://github.com/iglaweb/TFProfiler/issues)
     See the License for the specific language governing permissions and
     limitations under the License.
 
+ [build-status-svg]: https://travis-ci.org/iglaweb/TFProfiler.svg?branch=master
+ [build-status-link]: https://travis-ci.org/github/iglaweb/TFProfiler
  [license-svg]: https://img.shields.io/badge/license-APACHE-lightgrey.svg
  [license-link]: https://github.com/iglaweb/TFProfiler/blob/master/LICENSE
