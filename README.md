@@ -43,11 +43,12 @@ App has built-in models that you can play with to see how inference performance 
 The app has built-in a subset of image dataset [Caltech 101](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). It is used for running model inteferences.
 
 ## Libraries
+* [TensorFlow Lite][tf-lite]
 * [Android Architecture Components][arch]
 * [Timber][timber] for logging
 * [Room][room] - Access your app's SQLite database with in-app objects and compile-time checks.
 
-
+[tf-lite]: https://www.tensorflow.org/lite
 [arch]: https://developer.android.com/arch
 [room]: https://developer.android.com/topic/libraries/architecture/room
 [timber]: https://github.com/JakeWharton/timber
@@ -68,6 +69,10 @@ Model optimization aims to create smaller models that are generally faster and m
 4. Try to use [quantization](https://www.tensorflow.org/lite/performance/model_optimization#quantization) to optimize model.
 
 5. Accelerate TFLite model on Qualcomm [Hexagon DSPs](https://blog.tensorflow.org/2019/12/accelerating-tensorflow-lite-on-qualcomm.html)
+
+6. Experiment with version of TensorFlow Lite library
+
+7. Deploy different models for different devices
 
 
 # Credits
