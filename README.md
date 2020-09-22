@@ -5,7 +5,7 @@
 
 # Overview
 
-TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model and measure its performance using FPS, inference time, memory consumption with different delegates (CPU, GPU, NNAPI, HEXAGON).
+TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model and measure its performance using FPS, model initialization time, model inference time, memory consumption, etc. You can tweak model runs with different delegates (CPU, GPU, NNAPI, HEXAGON), XNNPACK option, number of threads.
 
 - **API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
@@ -21,6 +21,35 @@ The app displays a list of models built inside the app that can be used to measu
 </div>
 
 <br/>
+
+
+## Built-in models
+
+App has built-in models that you can play with to see how inference performance is analyzed.
+
+* [MobileNetV1][tf-models]
+* [MobileNetV2][tf-models]
+* [YOLOV4][yolov4]
+* [Blazeface][blazeface]
+* [Facemesh][facemesh]
+
+[tf-models]: https://www.tensorflow.org/lite/guide/hosted_models
+[yolov4]: https://github.com/hunglc007/tensorflow-yolov4-tflite
+[facemesh]: https://google.github.io/mediapipe/solutions/face_mesh.html
+[blazeface]: https://google.github.io/mediapipe/solutions/face_detection.html
+
+## Image Dataset
+The app has built-in a subset of image dataset [Caltech 101](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). It is used for running model inteferences.
+
+## Libraries
+* [Android Architecture Components][arch]
+* [Timber][timber] for logging
+* [Room][room] - Access your app's SQLite database with in-app objects and compile-time checks.
+
+
+[arch]: https://developer.android.com/arch
+[room]: https://developer.android.com/topic/libraries/architecture/room
+[timber]: https://github.com/JakeWharton/timber
 
 
 # Performance tips
@@ -41,7 +70,7 @@ Model optimization aims to create smaller models that are generally faster and m
 
 
 # Credits
-Launcher icon: Icons made by [Becris](https://www.flaticon.com/authors/becris) from [https://www.flaticon.com/](www.flaticon.com)
+Launcher icon was built using [this one](https://www.flaticon.com/free-icon/neural_2103620). Icons made by [Becris](https://www.flaticon.com/authors/becris) from [https://www.flaticon.com/](www.flaticon.com)
 
 
 # Issues
