@@ -7,6 +7,7 @@ import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
 import ru.igla.tfprofiler.env.ImageUtils
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
+import ru.igla.tfprofiler.tflite_runners.Classifier
 import ru.igla.tfprofiler.tflite_runners.ImageRecognizer
 import ru.igla.tfprofiler.tflite_runners.ModelOptions
 import ru.igla.tfprofiler.utils.logI
@@ -25,12 +26,11 @@ class RunInterferenceCase(
 
     @Throws(java.lang.Exception::class)
     fun runImageInterference(
-        detector: ImageRecognizer<out Any>,
+        detector: ImageRecognizer<Classifier.Recognition>,
         modelEntity: ModelEntity,
         selectedModelOptions: ModelOptions,
         timestampBitmap: TimestampBitmap,
     ) {
-
         modelEntity.let { model ->
             val previewWidth = timestampBitmap.bitmap.width
             val previewHeight = timestampBitmap.bitmap.height
@@ -52,7 +52,7 @@ class RunInterferenceCase(
             recognizeImageCallback.onPreview(croppedBitmap)
 
             val startTime = SystemClock.uptimeMillis()
-            val results = detector.recognizeImage(croppedBitmap)
+            val results: List<Classifier.Recognition> = detector.recognizeImage(croppedBitmap)
             val lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
 
             logI {

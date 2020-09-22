@@ -22,8 +22,8 @@ import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.utils.StringUtils;
-import ru.igla.tfprofiler.utils.TFInterpeterThreadExecutor;
-import ru.igla.tfprofiler.utils.TFInterpreterWrapper;
+import ru.igla.tfprofiler.core.tflite.TFInterpeterThreadExecutor;
+import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

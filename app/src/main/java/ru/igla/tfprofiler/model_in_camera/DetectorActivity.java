@@ -25,6 +25,7 @@ import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
+import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.customview.OverlayView;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
@@ -48,8 +49,6 @@ import ru.igla.tfprofiler.utils.TimeWatchClockOS;
  */
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
 
-    // Minimum detection confidence to track a detection.
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
 
@@ -215,6 +214,37 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 () -> runRecognitionInterference(currTimestamp));
     }
 
+    private List<Classifier.Recognition> createMappedRecognitions(List<Classifier.Recognition> results) {
+        final List<Classifier.Recognition> mappedRecognitions =
+                new LinkedList<>();
+
+        for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null) {
+                debugDrawer.draw(location);
+
+                cropToFrameTransform.mapRect(location);
+                result.setLocation(location);
+            }
+
+            final List<Keypoint> keypoints = result.keypoints;
+            if (keypoints != null) {
+                float[] points = result.points;
+                if (points == null) {
+                    points = new float[keypoints.size() * 2];
+                    for (int k = 0; k < keypoints.size(); k++) {
+                        points[k * 2] = keypoints.get(k).x;
+                        points[k * 2 + 1] = keypoints.get(k).y;
+                    }
+                }
+                cropToFrameTransform.mapPoints(points);
+                result.setPoints(points);
+            }
+            mappedRecognitions.add(result);
+        }
+        return mappedRecognitions;
+    }
+
     private void runRecognitionInterference(long currTimestamp) {
         if (detector == null) return;
 
@@ -236,22 +266,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         debugDrawer.prepareOutput(croppedBitmap);
 
-        final List<Classifier.Recognition> mappedRecognitions =
-                new LinkedList<>();
-
-        for (final Classifier.Recognition result : results) {
-            final RectF location = result.getLocation();
-            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-                debugDrawer.draw(location);
-
-                cropToFrameTransform.mapRect(location);
-
-                result.setLocation(location);
-                mappedRecognitions.add(result);
-            }
-        }
-
-
+        final List<Classifier.Recognition> mappedRecognitions = createMappedRecognitions(results);
         debugDrawer.writeOutput();
 
         tracker.trackResults(mappedRecognitions, currTimestamp);

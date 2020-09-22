@@ -44,25 +44,4 @@ object SystemUtils {
         }
         return -1L
     }
-
-    @JvmStatic
-    private fun getMemoryInfo(context: Context): String? {
-        val memoryInfo = ActivityManager.MemoryInfo()
-        val activityManager =
-            context.getSystemService(ACTIVITY_SERVICE) as ActivityManager? ?: return null
-        activityManager.getMemoryInfo(memoryInfo)
-        val runtime = Runtime.getRuntime()
-        return """
-            Available Memory = ${memoryInfo.availMem}
-            Total Memory = ${memoryInfo.totalMem}
-            Runtime Max Memory = ${runtime.maxMemory()}
-            Runtime Total Memory = ${runtime.totalMemory()}
-            Runtime Free Memory = ${runtime.freeMemory()}
-            
-            """.trimIndent()
-    }
-
-    fun getFreeMemory(): Long {
-        return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()
-    }
 }

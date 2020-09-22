@@ -47,7 +47,7 @@ class RecognitionViewModel(
         .xnnpack(false)
         .build()
 
-    private var detector: Classifier<out Any>? = null
+    private var detector: Classifier<Classifier.Recognition>? = null
 
     val liveDataBitmapOutput = MutableLiveData<BitmapResult>()
 

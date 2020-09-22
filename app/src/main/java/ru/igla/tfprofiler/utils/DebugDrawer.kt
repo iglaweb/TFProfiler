@@ -4,7 +4,17 @@ import android.graphics.*
 import ru.igla.tfprofiler.env.ImageUtils
 
 class DebugDrawer {
-    private val SAVE_PREVIEW_BITMAP = false
+    companion object {
+        private const val SAVE_PREVIEW_BITMAP = false
+    }
+
+    private val paint by lazyNonSafe {
+        Paint().apply {
+            color = Color.RED
+            style = Paint.Style.STROKE
+            strokeWidth = 2.0f
+        }
+    }
 
     private var canvas1: Canvas? = null
     private var cropCopyBitmap: Bitmap? = null
@@ -29,12 +39,6 @@ class DebugDrawer {
         if (SAVE_PREVIEW_BITMAP) {
             ImageUtils.saveBitmap(cropCopyBitmap, "preview.png")
         }
-    }
-
-    private val paint = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 2.0f
     }
 
     fun draw(location: RectF) {

@@ -192,7 +192,7 @@ public class TensorFlowUtils {
         }
     }
 
-    public static float expit(final float x) {
+    public static float sigmoid(final float x) {
         return (float) (1. / (1. + Math.exp(-x)));
     }
 }

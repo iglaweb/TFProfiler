@@ -67,6 +67,11 @@ public interface Classifier<T> extends
 
         public List<Keypoint> keypoints;
 
+        /***
+         * Auxiliary array for keypoints
+         */
+        public float[] points;
+
         public Recognition(
                 final String id,
                 final Label label,
@@ -105,6 +110,10 @@ public interface Classifier<T> extends
             this(id, new Label(title, 0), confidence, location, keypoints);
         }
 
+        public float[] getPoints() {
+            return points;
+        }
+
         public String getId() {
             return id;
         }
@@ -127,6 +136,10 @@ public interface Classifier<T> extends
 
         public void setLocation(RectF location) {
             this.location = location;
+        }
+
+        public void setPoints(float[] points) {
+            this.points = points;
         }
 
         @NotNull

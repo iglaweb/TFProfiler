@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.utils
+package ru.igla.tfprofiler.core.tflite
 
 import android.content.Context
 import android.os.Build
@@ -9,7 +9,6 @@ import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import java.nio.MappedByteBuffer
 

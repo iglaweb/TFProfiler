@@ -8,7 +8,7 @@ import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.RoomModelsDbController
-import ru.igla.tfprofiler.utils.TFInterpreterWrapper
+import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper
 import java.io.File
 import kotlin.math.min
 

@@ -28,13 +28,11 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.util.TypedValue;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import ru.igla.tfprofiler.core.Timber;
-import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.env.BorderedText;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.tflite_runners.Classifier;
@@ -152,19 +150,12 @@ public class MultiBoxTracker {
             borderedText.drawText(
                     canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
 
-            // draw keypoints
-            float[] arr = new float[2];
-            for (Keypoint keypoint : recognition.keypoints) {
-                arr[0] = keypoint.x;
-                arr[1] = keypoint.y;
-                getFrameToCanvasMatrix().mapPoints(arr);
+            // keypoints
+            final float[] points = new float[recognition.points.length];
+            System.arraycopy(recognition.points, 0, points, 0, recognition.points.length);
 
-                //arr[0] = trackedPos.left + keypoint.x * trackedPos.width();
-                //arr[1] = trackedPos.top + keypoint.y * trackedPos.height();
-
-                final Keypoint keypoint1 = new Keypoint(arr[0], arr[1]);
-                canvas.drawCircle(keypoint1.x, keypoint1.y, 2, boxPaint);
-            }
+            getFrameToCanvasMatrix().mapPoints(points);
+            canvas.drawPoints(points, boxPaint);
         }
     }
 
@@ -207,9 +198,10 @@ public class MultiBoxTracker {
             trackedRecognition.detectionConfidence = potential.first;
             trackedRecognition.location = new RectF(potential.second.getLocation());
 
-            //keypoints
-            trackedRecognition.keypoints = new ArrayList<>(potential.second.keypoints);
-
+            float[] src = potential.second.points;
+            float[] dst = new float[src.length];
+            System.arraycopy(src, 0, dst, 0, src.length);
+            trackedRecognition.points = dst;
 
             trackedRecognition.title = potential.second.getTitle();
             trackedRecognition.color = COLORS[trackedObjects.size()];
@@ -226,6 +218,6 @@ public class MultiBoxTracker {
         float detectionConfidence;
         int color;
         String title;
-        List<Keypoint> keypoints;
+        float[] points;
     }
 }

@@ -39,6 +39,8 @@ import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,14 +50,13 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.core.Logger;
+import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
 import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 
 @SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends Fragment {
-    private static final Logger LOGGER = new Logger();
 
     /**
      * The camera preview size will be chosen to be the smallest frame by pixel size capable of
@@ -258,22 +259,22 @@ public class CameraConnectionFragment extends Fragment {
             }
         }
 
-        LOGGER.i("Desired size: " + desiredSize + ", min size: " + minSize + "x" + minSize);
-        LOGGER.i("Valid preview sizes: [" + TextUtils.join(", ", bigEnough) + "]");
-        LOGGER.i("Rejected preview sizes: [" + TextUtils.join(", ", tooSmall) + "]");
+        Timber.i("Desired size: " + desiredSize + ", min size: " + minSize + "x" + minSize);
+        Timber.i("Valid preview sizes: [" + TextUtils.join(", ", bigEnough) + "]");
+        Timber.i("Rejected preview sizes: [" + TextUtils.join(", ", tooSmall) + "]");
 
         if (exactSizeFound) {
-            LOGGER.i("Exact size match found.");
+            Timber.i("Exact size match found.");
             return desiredSize;
         }
 
         // Pick the smallest of those, assuming we found any
         if (bigEnough.size() > 0) {
             final Size chosenSize = Collections.min(bigEnough, new CompareSizesByArea());
-            LOGGER.i("Chosen size: " + chosenSize.getWidth() + "x" + chosenSize.getHeight());
+            Timber.i("Chosen size: " + chosenSize.getWidth() + "x" + chosenSize.getHeight());
             return chosenSize;
         } else {
-            LOGGER.e("Couldn't find any suitable preview size");
+            Timber.e("Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -408,7 +409,7 @@ public class CameraConnectionFragment extends Fragment {
                 textureView.setAspectRatio(previewSize.getHeight(), previewSize.getWidth());
             }
         } catch (final CameraAccessException e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         } catch (final NullPointerException e) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
@@ -434,7 +435,7 @@ public class CameraConnectionFragment extends Fragment {
             }
             manager.openCamera(cameraId, stateCallback, backgroundHandler);
         } catch (final CameraAccessException e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         } catch (final InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
@@ -484,7 +485,7 @@ public class CameraConnectionFragment extends Fragment {
             backgroundThread = null;
             backgroundHandler = null;
         } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         }
     }
 
@@ -506,7 +507,7 @@ public class CameraConnectionFragment extends Fragment {
             previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             previewRequestBuilder.addTarget(surface);
 
-            LOGGER.i("Opening camera preview: " + previewSize.getWidth() + "x" + previewSize.getHeight());
+            Timber.i("Opening camera preview: " + previewSize.getWidth() + "x" + previewSize.getHeight());
 
             // Create the reader for the preview frames.
             previewReader =
@@ -522,7 +523,7 @@ public class CameraConnectionFragment extends Fragment {
                     new CameraCaptureSession.StateCallback() {
 
                         @Override
-                        public void onConfigured(final CameraCaptureSession cameraCaptureSession) {
+                        public void onConfigured(@NotNull final CameraCaptureSession cameraCaptureSession) {
                             // The camera is already closed
                             if (null == cameraDevice) {
                                 return;
@@ -544,18 +545,18 @@ public class CameraConnectionFragment extends Fragment {
                                 captureSession.setRepeatingRequest(
                                         previewRequest, captureCallback, backgroundHandler);
                             } catch (final CameraAccessException e) {
-                                LOGGER.e(e, "Exception!");
+                                Timber.e(e, "Exception!");
                             }
                         }
 
                         @Override
-                        public void onConfigureFailed(final CameraCaptureSession cameraCaptureSession) {
+                        public void onConfigureFailed(@NotNull final CameraCaptureSession cameraCaptureSession) {
                             showToast("Failed");
                         }
                     },
                     null);
         } catch (final CameraAccessException e) {
-            LOGGER.e(e, "Exception!");
+            Timber.e(e, "Exception!");
         }
     }
 

@@ -23,12 +23,12 @@ import ru.igla.tfprofiler.core.blazeface.ssd.SingleShotMultiBoxDetector;
  */
 public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
 
+    // Minimum detection confidence to track a detection.
     private static final float THRESHOLD_DETECT = 0.1f;
     private float[][][] boxesResult;
     private float[][][] scoresResult;
     private final SingleShotMultiBoxDetector ssd = new SingleShotMultiBoxDetector();
     private static final String TAG = "tflite_blazeface";
-
 
     public TFLiteObjectDetectionAPIModelBlazeface() {
         super();
@@ -66,8 +66,8 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
                 List<Keypoint> output = new ArrayList<>();
                 for (Keypoint keypoint : keypoints) {
                     output.add(new Keypoint(
-                            keypoint.x,
-                            keypoint.y
+                            keypoint.x * inputSize,
+                            keypoint.y * inputSize
                     ));
                 }
 

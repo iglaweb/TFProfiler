@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.igla.tfprofiler.utils.TFInterpreterWrapper;
+import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

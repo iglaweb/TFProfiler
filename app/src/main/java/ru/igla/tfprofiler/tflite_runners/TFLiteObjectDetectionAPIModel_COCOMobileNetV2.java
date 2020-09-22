@@ -21,6 +21,8 @@ import java.util.Map;
  */
 public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
 
+    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+
     // Only return this many results.
     private static final int NUM_DETECTIONS = 100;
 
@@ -69,21 +71,24 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectD
 
         final List<Recognition> recognitions = new ArrayList<>(numDetectionsOutput);
         for (int i = 0; i < numDetectionsOutput; ++i) {
-            final RectF detection =
-                    new RectF(
-                            outputLocations[0][i][1] * inputSize,
-                            outputLocations[0][i][0] * inputSize,
-                            outputLocations[0][i][3] * inputSize,
-                            outputLocations[0][i][2] * inputSize);
-            // SSD Mobilenet V1 Model assumes class 0 is background class
-            // in label file and class labels start from 1 to number_of_classes+1,
-            // while outputClasses correspond to class index from 0 to number_of_classes
-            recognitions.add(
-                    new Recognition(
-                            "" + i,
-                            "Entity",
-                            outputScores[0][i],
-                            detection));
+            final float confidence = outputScores[0][i];
+            if (confidence > MINIMUM_CONFIDENCE_TF_OD_API) {
+                final RectF detection =
+                        new RectF(
+                                outputLocations[0][i][1] * inputSize,
+                                outputLocations[0][i][0] * inputSize,
+                                outputLocations[0][i][3] * inputSize,
+                                outputLocations[0][i][2] * inputSize);
+                // SSD Mobilenet V1 Model assumes class 0 is background class
+                // in label file and class labels start from 1 to number_of_classes+1,
+                // while outputClasses correspond to class index from 0 to number_of_classes
+                recognitions.add(
+                        new Recognition(
+                                "" + i,
+                                "Entity",
+                                outputScores[0][i],
+                                detection));
+            }
         }
         return recognitions;
     }

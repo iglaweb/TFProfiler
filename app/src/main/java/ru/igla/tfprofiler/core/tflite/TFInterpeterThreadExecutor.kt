@@ -1,9 +1,10 @@
-package ru.igla.tfprofiler.utils
+package ru.igla.tfprofiler.core.tflite
 
 import android.content.Context
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.utils.ExceptionHandler
 import java.util.concurrent.Executors
 
 class TFInterpeterThreadExecutor(val context: Context, private val modelPath: String) {

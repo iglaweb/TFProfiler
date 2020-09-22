@@ -18,6 +18,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import ru.igla.tfprofiler.TFProfilerApp;
+import ru.igla.tfprofiler.media_track.MediaPathProvider;
+
 
 public final class IOUtils {
 
@@ -129,7 +132,7 @@ public final class IOUtils {
 
     public static boolean writeBitmapExternalStorage(String filename, Bitmap bmp) {
         FileOutputStream outputStream = null;
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
+        File file = new File(MediaPathProvider.INSTANCE.getRootPath(TFProfilerApp.Companion.getInstance()), filename);
         try {
             outputStream = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
