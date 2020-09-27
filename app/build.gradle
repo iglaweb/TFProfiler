@@ -31,6 +31,8 @@ android {
         buildConfigField 'String', "ASSET_BLAZEFACE_FILE", "\"$project.ext.blazefacefront/$project.ext.blazefaceFrontLocalFile\""
         buildConfigField 'String', "ASSET_LANDMARK_FILE", "\"$project.ext.facelandmark/$project.ext.faceLandmarkLocalFile\""
 
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a'
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "room.incremental":"true"]
