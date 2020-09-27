@@ -17,7 +17,8 @@ TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorfl
 The app displays a list of models built inside the app that can be used to measure its performance on device. Also, you can upload your *.tflite model and see how it works on the smartphone.
 
 <div>
-  <img align="center" src="img/screenshot_config_options.jpg" alt="Configure options" width="220"> &nbsp;&nbsp;&nbsp;
+  <img align="center" src="img/screenshot_config_options.jpg" alt="Configure delegate options" width="220"> &nbsp;&nbsp;&nbsp;
+   <img align="center" src="img/screenshot_run_model.jpg" alt="Run model" width="220"> &nbsp;&nbsp;&nbsp;
    <img align="center" src="img/screenshot_report.jpg" alt="Report" width="220">
 </div>
 
