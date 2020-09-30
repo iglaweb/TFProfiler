@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.igla.tfprofiler.core.Resource
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.RefreshLiveData
@@ -25,7 +26,7 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         AddCustomModelUseCase(application)
     }
 
-    val liveDataAddNewModel = MutableLiveData<UseCase.Status>()
+    val liveDataAddNewModel = MutableLiveData<UseCase.Resource<AddCustomModelUseCase.ResponseValue>>()
 
     private val exceptionHandler = ExceptionHandler { _, _ -> }
 
@@ -46,7 +47,7 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
             if (response.isSuccess()) {
                 modelsListLiveData.refresh()
             }
-            liveDataAddNewModel.postValue(response.status)
+            liveDataAddNewModel.postValue(response)
         }
     }
 

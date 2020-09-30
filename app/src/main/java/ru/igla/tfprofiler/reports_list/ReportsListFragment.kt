@@ -2,9 +2,7 @@ package ru.igla.tfprofiler.reports_list
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -25,7 +23,7 @@ import ru.igla.tfprofiler.utils.inTransaction
 import kotlin.coroutines.CoroutineContext
 
 
-class ReportsListFragment : BaseFragment(), CoroutineScope {
+class ReportsListFragment : BaseFragment(R.layout.fragment_main_report_list), CoroutineScope {
 
     companion object {
         const val TAG = "report_detail"
@@ -41,14 +39,6 @@ class ReportsListFragment : BaseFragment(), CoroutineScope {
         get() = Job() + uiDispatcher
 
     private lateinit var modelsListAdapter: ReportsListRecyclerViewAdapter
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_main_report_list, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

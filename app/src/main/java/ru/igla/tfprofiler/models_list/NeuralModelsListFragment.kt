@@ -8,9 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -34,9 +32,9 @@ import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.ErrorDialog
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaTrackUtils
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
@@ -49,9 +47,11 @@ import ru.igla.tfprofiler.utils.ViewUtils
 import kotlin.coroutines.CoroutineContext
 
 
-class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
+class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list), CoroutineScope {
 
     companion object {
+        private const val FRAGMENT_DIALOG = "dialog"
+
         private const val REQUEST_PICK_MODEL = 42
         private const val REQUEST_SELECT_VIDEO = 43
 
@@ -83,14 +83,6 @@ class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
         Toaster(
             TFProfilerApp.instance
         )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_main_models_list, container, false)
     }
 
     @SuppressLint("SetTextI18n")
@@ -172,12 +164,13 @@ class NeuralModelsListFragment : BaseFragment(), CoroutineScope {
 
         listNeuralModelsViewModel.liveDataAddNewModel.observe(
             viewLifecycleOwner
-        ) { status: UseCase.Status ->
-            //refresh list
-            if (status == UseCase.Status.SUCCESS) {
+        ) { resource ->
+            if (resource.isSuccess()) {
                 mToaster.showToast("Successfully added model")
             } else {
-                mToaster.showToast("Failed to add model")
+                ErrorDialog
+                    .newInstance("Failed to add model.\r\nError: " + resource.t?.message)
+                    .show(childFragmentManager, FRAGMENT_DIALOG)
             }
         }
     }

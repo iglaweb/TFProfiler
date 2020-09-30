@@ -3,7 +3,6 @@ package ru.igla.tfprofiler.core.tflite;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.graphics.RectF;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -144,51 +143,6 @@ public class TensorFlowUtils {
         } catch (IOException e) {
             Timber.e(e);
             return AssetFileDescriptor.UNKNOWN_LENGTH;
-        }
-    }
-
-    public static float box_iou(RectF a, RectF b) {
-        return box_intersection(a, b) / box_union(a, b);
-    }
-
-    private static float box_intersection(RectF a, RectF b) {
-        float w = overlap((a.left + a.right) / 2, a.right - a.left,
-                (b.left + b.right) / 2, b.right - b.left);
-        float h = overlap((a.top + a.bottom) / 2, a.bottom - a.top,
-                (b.top + b.bottom) / 2, b.bottom - b.top);
-        if (w < 0 || h < 0) return 0;
-        float area = w * h;
-        return area;
-    }
-
-    private static float box_union(RectF a, RectF b) {
-        float i = box_intersection(a, b);
-        float u = (a.right - a.left) * (a.bottom - a.top) + (b.right - b.left) * (b.bottom - b.top) - i;
-        return u;
-    }
-
-    private static float overlap(float x1, float w1, float x2, float w2) {
-        float l1 = x1 - w1 / 2;
-        float l2 = x2 - w2 / 2;
-        float left = l1 > l2 ? l1 : l2;
-        float r1 = x1 + w1 / 2;
-        float r2 = x2 + w2 / 2;
-        float right = r1 < r2 ? r1 : r2;
-        return right - left;
-    }
-
-    public static void softmax(final float[] vals) {
-        float max = Float.NEGATIVE_INFINITY;
-        for (final float val : vals) {
-            max = Math.max(max, val);
-        }
-        float sum = 0.0f;
-        for (int i = 0; i < vals.length; ++i) {
-            vals[i] = (float) Math.exp(vals[i] - max);
-            sum += vals[i];
-        }
-        for (int i = 0; i < vals.length; ++i) {
-            vals[i] = vals[i] / sum;
         }
     }
 

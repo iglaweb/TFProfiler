@@ -2,10 +2,7 @@ package ru.igla.tfprofiler.model_in_camera;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -36,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +46,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import ru.igla.tfprofiler.R;
+import ru.igla.tfprofiler.core.ErrorDialog;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
 import ru.igla.tfprofiler.env.CameraUtils;
@@ -413,7 +410,7 @@ public class CameraConnectionFragment extends Fragment {
         } catch (final NullPointerException e) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
-            ErrorDialog.newInstance(getString(R.string.tfe_od_camera_error))
+            ErrorDialog.Companion.newInstance(getString(R.string.tfe_od_camera_error), (dialog, which) -> activity.finish())
                     .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             throw new IllegalStateException(getString(R.string.tfe_od_camera_error));
         }
@@ -611,37 +608,6 @@ public class CameraConnectionFragment extends Fragment {
             // We cast here to ensure the multiplications won't overflow
             return Long.signum(
                     (long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
-        }
-    }
-
-    /**
-     * Shows an error message dialog.
-     */
-    public static class ErrorDialog extends DialogFragment {
-        private static final String ARG_MESSAGE = "message";
-
-        public static ErrorDialog newInstance(final String message) {
-            final ErrorDialog dialog = new ErrorDialog();
-            final Bundle args = new Bundle();
-            args.putString(ARG_MESSAGE, message);
-            dialog.setArguments(args);
-            return dialog;
-        }
-
-        @Override
-        public Dialog onCreateDialog(final Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-            return new AlertDialog.Builder(activity)
-                    .setMessage(getArguments().getString(ARG_MESSAGE))
-                    .setPositiveButton(
-                            android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(final DialogInterface dialogInterface, final int i) {
-                                    activity.finish();
-                                }
-                            })
-                    .create();
         }
     }
 }

@@ -2,9 +2,10 @@ package ru.igla.tfprofiler.ui
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 
-open class BaseFragment : Fragment() {
+open class BaseFragment(@LayoutRes mContentLayoutId: Int = 0) : Fragment(mContentLayoutId) {
 
     private val mainThreadHandler: Handler by lazy { Handler(Looper.getMainLooper()) }
 

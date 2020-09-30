@@ -50,9 +50,9 @@ class AddCustomModelUseCase(val application: Application) :
             }
         } catch (e: Exception) {
             Timber.e(e)
-            return Resource.error(e.message)
+            return Resource.error(e.message, e)
         }
-        return Resource.error("Failed to add model")
+        return Resource.error("Unknown error occurred")
     }
 
     private fun addModelDb(

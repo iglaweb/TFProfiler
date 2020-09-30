@@ -39,7 +39,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class VideoRecognizeFragment :
-    BaseFragment(),
+    BaseFragment(R.layout.fragment_video_layout),
     CoroutineScope {
 
     private lateinit var recognitionViewModel: RecognitionViewModel
@@ -126,14 +126,6 @@ class VideoRecognizeFragment :
             )
             tvMeanInterferenceTime.text = statsStr
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_video_layout, container, false)
     }
 
     private fun openReport() {

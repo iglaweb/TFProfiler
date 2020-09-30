@@ -6,10 +6,8 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -19,11 +17,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_model_report_details_dialog.*
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.SharedViewModel
-import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.ui.BaseFragment
@@ -40,7 +38,7 @@ const val TAG_REPORT = "report_tag"
 const val REPORT_REQUEST_CODE = 100
 
 class ModelReportFragment :
-    BaseFragment(),
+    BaseFragment(R.layout.fragment_model_report_details_dialog),
     CoroutineScope {
 
     fun withArguments(data: ListReportEntity, edit: Boolean): ModelReportFragment =
@@ -58,14 +56,6 @@ class ModelReportFragment :
     private val sharedItem: SharedViewModel by activityViewModels()
 
     private lateinit var reportsListAdapterDetails: ModelsReportDetailsRecyclerViewAdapter
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_model_report_details_dialog, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

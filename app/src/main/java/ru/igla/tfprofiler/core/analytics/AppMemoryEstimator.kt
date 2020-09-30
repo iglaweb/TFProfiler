@@ -22,7 +22,7 @@ class AppMemoryEstimator(val context: Context) {
         TimeWatchClockOS()
     }
 
-    var lastMemoryUsage = -1L
+    private var lastMemoryUsage = -1L
 
     @Volatile
     var isRunning = false
