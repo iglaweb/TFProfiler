@@ -14,6 +14,7 @@ import androidx.room.TypeConverters
     ], version = 1
 )
 @TypeConverters(
+    ColorSpaceTypeConverter::class,
     ModelTypeConverter::class,
     DeviceConverter::class
 )

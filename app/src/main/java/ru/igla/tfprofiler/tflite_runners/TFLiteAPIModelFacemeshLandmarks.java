@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.igla.tfprofiler.core.BaseOpNormalizer;
-import ru.igla.tfprofiler.core.OpNormalizer;
+import ru.igla.tfprofiler.core.ColorSpace;
+import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
+import ru.igla.tfprofiler.core.ops.OpNormalizer;
 import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils;
 
@@ -40,7 +41,7 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
     }
 
     @Override
-    public OpNormalizer getNormalizer(boolean isQuantized) {
+    public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
         return new BaseOpNormalizer(isQuantized, 127.5f, 127.5f);
     }
 
@@ -68,8 +69,8 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
                     new RectF(
                             0f,
                             0f,
-                            inputSize - 1,
-                            inputSize - 1
+                            inputWidth - 1,
+                            inputHeight - 1
                     ),
                     output
             );

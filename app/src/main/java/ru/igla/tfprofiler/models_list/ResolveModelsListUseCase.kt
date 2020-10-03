@@ -1,8 +1,8 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
-import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.NeuralModelsProvider
@@ -24,7 +24,7 @@ class ResolveModelsListUseCase(val application: Application) :
         val items = NeuralModelsProvider.resolveBuiltInModels(application)
         var idStart = 0L
         for (item in items) {
-            val modelPath = item.modelFile
+            val modelPath = item.model.modelFile
             if (!TensorFlowUtils.isAssetFileExists(application, modelPath)) {
                 Timber.e(Exception("Predefined model assets/$modelPath not exists"))
                 continue
@@ -36,12 +36,16 @@ class ResolveModelsListUseCase(val application: Application) :
                     tableId = -1,
                     modelType = item.modelType,
                     name = item.modelType.title,
-                    details = item.details,
-                    inputSize = item.inputSize,
-                    quantized = item.quantized,
+                    details = item.model.details,
+
+                    inputWidth = item.model.imageWidth,
+                    inputHeight = item.model.imageHeight,
+                    quantized = item.model.quantized,
+                    colorSpace = item.model.colorSpace,
+
                     modelFile = modelPath,
-                    labelFile = item.labelFile,
-                    source = item.source
+                    labelFile = item.model.labelFile,
+                    source = item.model.source
                 )
             )
         }
@@ -65,8 +69,12 @@ class ResolveModelsListUseCase(val application: Application) :
                     modelType = it.modelType,
                     name = it.title,
                     details = "File: " + it.modelPath, //we do not have description
-                    inputSize = it.inputSize,
+
+                    inputWidth = it.inputWidth,
+                    inputHeight = it.inputHeight,
                     quantized = it.quantized,
+                    colorSpace = it.colorSpace,
+
                     modelFile = it.modelPath,
                     labelFile = ""
                 )

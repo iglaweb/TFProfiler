@@ -20,8 +20,10 @@ class DbModelReportItem(
 
     @ColumnInfo(name = "model_type")
     val modelType: ModelType,
-    @ColumnInfo(name = "input_size")
-    val inputSize: Int,
+    @ColumnInfo(name = "input_width")
+    val inputWidth: Int,
+    @ColumnInfo(name = "input_height")
+    val inputHeight: Int,
     @ColumnInfo(name = "quantized")
     val quantized: Boolean
 

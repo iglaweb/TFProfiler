@@ -19,11 +19,6 @@ class RunInterferenceCase(
     private val recognizeImageCallback: RecgonizeImageCallback
 ) {
 
-    interface RecgonizeImageCallback {
-        fun startRecognizeImage(timestampBitmap: BitmapResult)
-        fun onPreview(progress: Bitmap)
-    }
-
     @Throws(java.lang.Exception::class)
     fun runImageInterference(
         detector: ImageRecognizer<Classifier.Recognition>,
@@ -35,18 +30,21 @@ class RunInterferenceCase(
             val previewWidth = timestampBitmap.bitmap.width
             val previewHeight = timestampBitmap.bitmap.height
 
-            val cropSize: Int = model.inputSize
+            val cropWidth: Int = model.inputWidth
+            val cropHeight: Int = model.inputHeight
+
             val frameToCropTransform = ImageUtils.getTransformationMatrix(
                 previewWidth, previewHeight,
-                cropSize, cropSize,
+                cropWidth, cropHeight,
                 0,
                 false,
                 false
             )
 
-            val rgbFrameBitmap = timestampBitmap.bitmap
-            val croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888)
+
+            val croppedBitmap = Bitmap.createBitmap(cropWidth, cropHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(croppedBitmap)
+            val rgbFrameBitmap = timestampBitmap.bitmap
             canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null)
 
             recognizeImageCallback.onPreview(croppedBitmap)
@@ -55,9 +53,7 @@ class RunInterferenceCase(
             val results: List<Classifier.Recognition> = detector.recognizeImage(croppedBitmap)
             val lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
 
-            logI {
-                "Results = " + results.size
-            }
+            logI { "Results = " + results.size }
 
             statisticsEstimator.incrementFrameNumber(selectedModelOptions)
 

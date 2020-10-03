@@ -23,7 +23,8 @@ class SaveReportDbUseCase(val application: Application) :
 
         val dbModelReportItem = DbModelReportItem(
             modelType = data.modelType,
-            inputSize = data.inputSize,
+            inputWidth = data.inputWidth,
+            inputHeight = data.inputHeight,
             quantized = data.quantized
         )
 

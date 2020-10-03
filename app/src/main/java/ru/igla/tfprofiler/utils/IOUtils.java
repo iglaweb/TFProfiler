@@ -24,6 +24,9 @@ import ru.igla.tfprofiler.media_track.MediaPathProvider;
 
 public final class IOUtils {
 
+    private IOUtils() {
+    }
+
     /***
      * Represents the end-of-file (or stream).
      */

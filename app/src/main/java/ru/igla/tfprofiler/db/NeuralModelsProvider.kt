@@ -22,12 +22,7 @@ object NeuralModelsProvider {
             ModelItem(
                 1,
                 ModelType.BLAZEFACE_MEDIAPIPE,
-                "Based on Single Shot Multibox Detector (SSD)",
-                TFLiteModelBlazefaceFloatWrapper.TF_OD_API_INPUT_SIZE,
-                TFLiteModelBlazefaceFloatWrapper.TF_OD_API_IS_QUANTIZED,
-                TFLiteModelBlazefaceFloatWrapper.TF_OD_API_MODEL_FLOATING_FILE_FRONT_CAMERA,
-                "",
-                "https://arxiv.org/abs/1907.05047"
+                TFLiteModelBlazefaceFloatWrapper
             ).apply {
                 setMeta(
                     TensorFlowUtils.getMetaData(
@@ -39,56 +34,36 @@ object NeuralModelsProvider {
             ModelItem(
                 2,
                 ModelType.MOBILENET_V1_OBJECT_DETECT,
-                "Based on depth-wise separable convolutions",
-                CoCoMobileNetV1QuantConst.TF_OD_API_IMAGE_SIZE,
-                CoCoMobileNetV1QuantConst.TF_OD_API_IS_QUANTIZED,
-                CoCoMobileNetV1QuantConst.TF_OD_API_MODEL_FILE,
-                CoCoMobileNetV1QuantConst.TF_OD_API_LABELS_FILE,
-                "https://arxiv.org/pdf/1704.04861.pdf"
+                CoCoMobileNetV1QuantConst
             ).apply {
                 setMeta(
                     TensorFlowUtils.getMetaData(
                         context,
-                        CoCoMobileNetV1QuantConst.TF_OD_API_MODEL_FILE
+                        CoCoMobileNetV1QuantConst.modelFile
                     )
                 )
             },
             ModelItem(
                 3,
                 ModelType.MOBILENET_V2_OBJECT_DETECT,
-                "Convolutional neural network architecture",
-                CoCoMobileNetV2QuantConst.TF_OD_API_IMAGE_SIZE,
-                CoCoMobileNetV2QuantConst.TF_OD_API_IS_QUANTIZED,
-                CoCoMobileNetV2QuantConst.TF_OD_API_MODEL_FILE,
-                CoCoMobileNetV2QuantConst.TF_OD_API_LABELS_FILE,
-                "https://arxiv.org/abs/1801.04381"
+                CoCoMobileNetV2QuantConst
             ).apply {
                 setMeta(
                     TensorFlowUtils.getMetaData(
                         context,
-                        CoCoMobileNetV2QuantConst.TF_OD_API_MODEL_FILE
+                        CoCoMobileNetV2QuantConst.modelFile
                     )
                 )
             },
             ModelItem(
                 4,
                 ModelType.LANDMARKS468_MEDIAPIPE,
-                "",
-                TFLiteModelLandmarksSSD.TF_OD_API_INPUT_SIZE,
-                TFLiteModelLandmarksSSD.TF_OD_API_IS_QUANTIZED,
-                TFLiteModelLandmarksSSD.TF_OD_API_MODEL_FILE,
-                "",
-                "https://arxiv.org/abs/1907.06724"
+                TFLiteModelLandmarksSSD
             ),
             ModelItem(
                 5,
                 ModelType.YOLOV4,
-                "CSP connections with the Darknet-53",
-                YoloV4Const.TF_OD_API_INPUT_SIZE,
-                YoloV4Const.TF_OD_API_IS_QUANTIZED,
-                YoloV4Const.TF_OD_API_MODEL_FILE,
-                YoloV4Const.TF_OD_API_LABELS_FILE,
-                "https://arxiv.org/abs/2004.10934"
+                YoloV4Const
             )
         )
     }

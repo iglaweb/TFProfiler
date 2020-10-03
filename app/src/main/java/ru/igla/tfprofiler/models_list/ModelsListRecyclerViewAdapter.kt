@@ -55,7 +55,7 @@ class ModelsListRecyclerViewAdapter(
         holder.textViewQuantized.text = if (modelEntity.quantized) "Quantized" else "Floating"
         val fileSize = "File size: $fileSizeStr"
         holder.textViewModelSize.text =
-            "Image: " + modelEntity.inputSize + "x" + modelEntity.inputSize + ", " + fileSize
+            "Image: " + modelEntity.inputWidth + "x" + modelEntity.inputHeight + ", " + fileSize
         holder.itemView.setOnClickListener {
             listener.onClickItem(modelEntity)
         }

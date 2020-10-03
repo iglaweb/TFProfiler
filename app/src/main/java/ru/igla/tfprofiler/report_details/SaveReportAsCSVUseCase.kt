@@ -42,7 +42,7 @@ class SaveReportAsCSVUseCase(val context: Context) :
             for (item in data.reportDelegateItems) {
                 csvAppender.appendLine(
                     data.modelType.id,
-                    data.inputSize.toString(),
+                    "" + data.inputWidth + "x" + data.inputHeight,
                     if (data.quantized) "Quantized" else "Floating",
 
                     item.device.name,

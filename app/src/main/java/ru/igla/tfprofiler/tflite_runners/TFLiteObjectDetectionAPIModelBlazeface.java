@@ -57,17 +57,17 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
         final List<Recognition> detections = new ArrayList<>();
         for (Detection detection : detectionList) {
             if (detection.score > THRESHOLD_DETECT) {
-                float x = detection.xMin * inputSize;
-                float y = detection.yMin * inputSize;
-                float width = detection.width * inputSize;
-                float height = detection.height * inputSize;
+                float x = detection.xMin * inputWidth;
+                float y = detection.yMin * inputHeight;
+                float width = detection.width * inputWidth;
+                float height = detection.height * inputHeight;
 
                 List<Keypoint> keypoints = detection.keypoints;
                 List<Keypoint> output = new ArrayList<>();
                 for (Keypoint keypoint : keypoints) {
                     output.add(new Keypoint(
-                            keypoint.x * inputSize,
-                            keypoint.y * inputSize
+                            keypoint.x * inputWidth,
+                            keypoint.y * inputHeight
                     ));
                 }
 
@@ -78,8 +78,8 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
                         new RectF(
                                 x,
                                 y,
-                                Math.min(x + width - 1, inputSize - 1),
-                                Math.min(y + height - 1, inputSize - 1)
+                                Math.min(x + width - 1, inputWidth - 1),
+                                Math.min(y + height - 1, inputHeight - 1)
                         ),
                         output
                 );

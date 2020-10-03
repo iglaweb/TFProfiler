@@ -118,7 +118,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     public void onPreviewSizeChosen(final Size size, final int rotation) {
         tracker = new MultiBoxTracker(this);
 
-        final int cropSize = modelEntity.getInputSize();
+        final int cropWidth = modelEntity.getInputWidth();
+        final int cropHeight = modelEntity.getInputHeight();
         try {
             ModelOptions modelOptions = getCurrentModelOptions();
             recreateClassifier(modelOptions);
@@ -139,7 +140,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
+        croppedBitmap = Bitmap.createBitmap(cropWidth, cropHeight, Config.ARGB_8888);
 
 
         /*String fromCameraId = CameraUtils.getFrontFacingCameraId(getContext());
@@ -150,7 +151,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         frameToCropTransform =
                 ImageUtils.getTransformationMatrix(
                         previewWidth, previewHeight,
-                        cropSize, cropSize,
+                        cropWidth, cropHeight,
                         sensorOrientation, MAINTAIN_ASPECT,
                         false
                 );

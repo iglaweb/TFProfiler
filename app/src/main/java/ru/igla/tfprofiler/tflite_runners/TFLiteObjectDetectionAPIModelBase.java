@@ -14,16 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import ru.igla.tfprofiler.core.BaseOpNormalizer;
+import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.ModelType;
-import ru.igla.tfprofiler.core.OpNormalizer;
 import ru.igla.tfprofiler.core.Timber;
+import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
+import ru.igla.tfprofiler.core.ops.GrayOpNormalizer;
+import ru.igla.tfprofiler.core.ops.OpNormalizer;
+import ru.igla.tfprofiler.core.tflite.TFInterpeterThreadExecutor;
+import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.utils.StringUtils;
-import ru.igla.tfprofiler.core.tflite.TFInterpeterThreadExecutor;
-import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -40,8 +42,9 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     public abstract List<T> getDetections();
 
-    // Config values.
-    int inputSize;
+    int inputWidth;
+    int inputHeight;
+
     // Pre-allocated buffers.
     Vector<String> labels = new Vector<>();
     private int[] intValues;
@@ -50,7 +53,9 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     protected TFInterpeterThreadExecutor tfLiteExecutor;
 
-    private static final int DIM_PIXEL_SIZE = 3;
+    private static final int COLOR_PIXEL_SIZE = 3;
+    private static final int GRAY_PIXEL_SIZE = 1;
+
     private static final int DIM_BATCH_SIZE = 1;
 
     private OpNormalizer opNormalizer;
@@ -85,14 +90,14 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
-        final int inputSize = modelEntity.getInputSize();
+
+        this.inputWidth = modelEntity.getInputWidth();
+        this.inputHeight = modelEntity.getInputHeight();
 
         if (!StringUtils.isNullOrEmpty(labelFilename)) {
             String actualFilename = labelFilename.split("file:///android_asset/")[1];
             this.labels = TensorFlowUtils.loadLabelList(context.getAssets(), actualFilename);
         }
-
-        this.inputSize = inputSize;
 
         try {
             tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
@@ -116,7 +121,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             isModelQuantized = modelEntity.getQuantized();
         }
 
-        this.opNormalizer = getNormalizer(isModelQuantized);
+        this.opNormalizer = getNormalizer(isModelQuantized, modelEntity.getColorSpace());
 
         // Pre-allocate buffers.
         final int numBytesPerChannel;
@@ -127,15 +132,17 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
         }
 
         //https://www.tensorflow.org/hub/common_signatures/images#input
+
+        final int pixelSize = modelEntity.getColorSpace() == ColorSpace.GRAYSCALE ? GRAY_PIXEL_SIZE : COLOR_PIXEL_SIZE;
         this.imgData = ByteBuffer.allocateDirect(
                 DIM_BATCH_SIZE *
-                        this.inputSize *
-                        this.inputSize *
-                        DIM_PIXEL_SIZE *
+                        this.inputWidth *
+                        this.inputHeight *
+                        pixelSize *
                         numBytesPerChannel
         );
         this.imgData.order(ByteOrder.nativeOrder());
-        this.intValues = new int[this.inputSize * this.inputSize];
+        this.intValues = new int[this.inputWidth * this.inputHeight];
         return this;
     }
 
@@ -144,11 +151,11 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
         // on the provided parameters.
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         imgData.rewind();
-        opNormalizer.convertBitmapToByteBuffer(imgData, intValues, inputSize);
+        opNormalizer.convertBitmapToByteBuffer(imgData, intValues, inputWidth, inputHeight);
     }
 
-    public OpNormalizer getNormalizer(boolean isQuantized) {
-        return new BaseOpNormalizer(isQuantized);
+    public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
+        return colorSpace == ColorSpace.COLOR ? new BaseOpNormalizer(isQuantized) : new GrayOpNormalizer(isQuantized);
     }
 
     @NotNull

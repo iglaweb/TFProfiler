@@ -44,7 +44,7 @@ class ReportsListRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ListReportHolder, position: Int) {
         val modelHolder = modelHolderList[position]
 
-        val sizes = "" + modelHolder.inputSize + "x" + modelHolder.inputSize
+        val sizes = "" + modelHolder.inputWidth + "x" + modelHolder.inputHeight
         val floating = if (modelHolder.quantized) "Quantized" else "Floating"
         val title = String.format("%s (%s, %s)", modelHolder.modelType.title, floating, sizes)
 

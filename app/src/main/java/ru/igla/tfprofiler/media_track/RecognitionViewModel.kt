@@ -163,7 +163,7 @@ class RecognitionViewModel(
         RunInterferenceCase(
             statisticsEstimator,
             preferenceManager,
-            object : RunInterferenceCase.RecgonizeImageCallback {
+            object : RecgonizeImageCallback {
                 override fun startRecognizeImage(timestampBitmap: BitmapResult) {
                     liveDataBitmapOutput.sendValueIfNew(timestampBitmap)
                 }

@@ -50,7 +50,8 @@ class StatisticsEstimator(context: Context) {
             idReport = 1L,
             createdAt = DateUtils.getCurrentDateInMs(),
             modelType = modelEntity.modelType,
-            inputSize = modelEntity.inputSize,
+            inputWidth = modelEntity.inputWidth,
+            inputHeight = modelEntity.inputHeight,
             quantized = modelEntity.quantized,
             reportDelegateItems = reportItems
         )

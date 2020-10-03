@@ -11,7 +11,8 @@ data class ListReportEntity(
     var createdAt: Long,
 
     val modelType: ModelType,
-    val inputSize: Int,
+    val inputWidth: Int,
+    val inputHeight: Int,
     val quantized: Boolean,
 
     val reportDelegateItems: List<ReportDelegateItem>

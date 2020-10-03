@@ -1,4 +1,6 @@
-package ru.igla.tfprofiler.core;
+package ru.igla.tfprofiler.core.ops;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
@@ -28,10 +30,10 @@ public class BaseOpNormalizer implements OpNormalizer {
     }
 
     @Override
-    public void convertBitmapToByteBuffer(ByteBuffer imgData, int[] intValues, int inputSize) {
-        for (int i = 0; i < inputSize; ++i) {
-            for (int j = 0; j < inputSize; ++j) {
-                int pixelValue = intValues[i * inputSize + j];
+    public void convertBitmapToByteBuffer(@NotNull ByteBuffer imgData, @NotNull int[] intValues, int inputWidth, int inputHeight) {
+        for (int i = 0; i < inputWidth; ++i) {
+            for (int j = 0; j < inputHeight; ++j) {
+                int pixelValue = intValues[i * inputWidth + j];
                 if (isModelQuantized) {
                     // Quantized model
                     imgData.put((byte) ((pixelValue >> 16) & 0xFF));

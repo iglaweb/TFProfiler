@@ -74,10 +74,10 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV1 extends TFLiteObjectD
             if (confidence > MINIMUM_CONFIDENCE_TF_OD_API) {
                 final RectF detection =
                         new RectF(
-                                outputLocations[0][i][1] * inputSize,
-                                outputLocations[0][i][0] * inputSize,
-                                outputLocations[0][i][3] * inputSize,
-                                outputLocations[0][i][2] * inputSize);
+                                outputLocations[0][i][1] * inputWidth,
+                                outputLocations[0][i][0] * inputHeight,
+                                outputLocations[0][i][3] * inputWidth,
+                                outputLocations[0][i][2] * inputHeight);
                 // SSD Mobilenet V1 Model assumes class 0 is background class
                 // in label file and class labels start from 1 to number_of_classes+1,
                 // while outputClasses correspond to class index from 0 to number_of_classes

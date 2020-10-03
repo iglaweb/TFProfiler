@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import ru.igla.tfprofiler.core.OpNormalizer;
-import ru.igla.tfprofiler.yolov4.YoloNormalizer;
+import ru.igla.tfprofiler.core.ColorSpace;
+import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
+import ru.igla.tfprofiler.core.ops.OpNormalizer;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -26,8 +27,10 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
 
     private static final float THRESHOLD_DETECT = 0.1f;
 
+    private static final float IMAGE_STD = 255.0f;
+
     // tiny or not
-    private static boolean isTiny = true;
+    private static final boolean IS_TINY = true;
 
     protected float mNmsThresh = 0.6f;
 
@@ -45,7 +48,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
     public Map<Integer, Object> prepareOutputImage() {
         Map<Integer, Object> outputMap = new HashMap<>();
 
-        if (isTiny) {
+        if (IS_TINY) {
             bboxes = new float[1][OUTPUT_WIDTH_TINY[0]][4];
             out_score = new float[1][OUTPUT_WIDTH_TINY[1]][labels.size()];
         } else {
@@ -133,8 +136,8 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
     }
 
     @Override
-    public OpNormalizer getNormalizer(boolean isQuantized) {
-        return new YoloNormalizer();
+    public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
+        return new BaseOpNormalizer(isQuantized, 0, IMAGE_STD);
     }
 
     /**
@@ -171,8 +174,8 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(inputSize - 1, xPos + w / 2),
-                        Math.min(inputSize - 1, yPos + h / 2));
+                        Math.min(inputWidth - 1, xPos + w / 2),
+                        Math.min(inputHeight - 1, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
                 detections.add(new Recognition("" + i, label, score, rectF));
             }
@@ -207,8 +210,8 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(inputSize - 1, xPos + w / 2),
-                        Math.min(inputSize - 1, yPos + h / 2));
+                        Math.min(inputWidth - 1, xPos + w / 2),
+                        Math.min(inputHeight - 1, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
                 detections.add(new Recognition("" + i, label, score, rectF));
             }
@@ -219,7 +222,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
     @Override
     public List<Recognition> getDetections() {
         List<Recognition> detections;
-        if (isTiny) {
+        if (IS_TINY) {
             detections = getDetectionsForTiny();
         } else {
             detections = getDetectionsForFull();

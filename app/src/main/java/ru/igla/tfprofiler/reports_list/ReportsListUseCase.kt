@@ -59,7 +59,8 @@ class ReportsListUseCase(val application: Application) :
                             createdAt = DateUtils.getCurrentDateInMs(),
                             reportDelegateItems = reportItems,
                             modelType = modelItem.modelType,
-                            inputSize = modelItem.inputSize,
+                            inputWidth = modelItem.inputWidth,
+                            inputHeight = modelItem.inputHeight,
                             quantized = modelItem.quantized
                         )
                     )

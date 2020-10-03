@@ -116,7 +116,7 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
             tvModelDetails.text = item.details
 
             val tvModelSize: TextView = customView.findViewById(R.id.modelSize)
-            tvModelSize.text = "${item.inputSize}x${item.inputSize}"
+            tvModelSize.text = "${item.inputWidth}x${item.inputHeight}"
 
             val tvModelType: TextView = customView.findViewById(R.id.tvModelTypeFloating)
             tvModelType.text = if (item.quantized) "Quantized" else "Floating"
@@ -179,15 +179,17 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
         val dialog = AlertDialog.Builder(requireContext())
             .setMessage("Select TFLite model from your phone. Model interference will be measured.")
             .setPositiveButton("Pick") { _, _ ->
-                val intent = Intent().apply {
-                    type = "file/*"
-                    action = Intent.ACTION_GET_CONTENT
+                runWithPermissions(Permission.WRITE_EXTERNAL_STORAGE) {// to copy model
+                    val intent = Intent().apply {
+                        type = "file/*"
+                        action = Intent.ACTION_GET_CONTENT
+                    }
+                    IntentUtils.startFragmentForResultSafely(
+                        this,
+                        REQUEST_PICK_MODEL,
+                        Intent.createChooser(intent, "Select model")
+                    )
                 }
-                IntentUtils.startFragmentForResultSafely(
-                    this,
-                    REQUEST_PICK_MODEL,
-                    Intent.createChooser(intent, "Select model")
-                )
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

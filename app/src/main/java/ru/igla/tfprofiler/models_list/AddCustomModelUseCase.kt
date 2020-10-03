@@ -2,15 +2,15 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.Application
 import org.tensorflow.lite.DataType
-import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.RoomModelsDbController
-import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper
 import java.io.File
-import kotlin.math.min
 
 class AddCustomModelUseCase(val application: Application) :
     UseCase<AddCustomModelUseCase.RequestValues,
@@ -34,6 +34,7 @@ class AddCustomModelUseCase(val application: Application) :
                     .shape() // {1, height, width, 3}
                 val imageSizeY = imageShape[1]
                 val imageSizeX = imageShape[2]
+                val colorSpace = if (imageShape[3] == 1) ColorSpace.GRAYSCALE else ColorSpace.COLOR
 
                 val probabilityTensorIndex = 0
                 val probabilityDataType: DataType =
@@ -42,7 +43,14 @@ class AddCustomModelUseCase(val application: Application) :
 
                 val file = File(modelPath)
                 val modelId =
-                    addModelDb(file.name, modelPath, min(imageSizeX, imageSizeY), isModelQuantized)
+                    addModelDb(
+                        file.name,
+                        modelPath,
+                        imageSizeX,
+                        imageSizeY,
+                        isModelQuantized,
+                        colorSpace
+                    )
                 if (modelId != -1L) {
                     val responseValue = ResponseValue()
                     return Resource.success(responseValue)
@@ -58,16 +66,20 @@ class AddCustomModelUseCase(val application: Application) :
     private fun addModelDb(
         filename: String,
         modelPath: String,
-        inputSize: Int,
-        quantized: Boolean
+        inputWidth: Int,
+        inputHeight: Int,
+        quantized: Boolean,
+        colorSpace: ColorSpace
     ): Long {
         val item = DbModelItem(
             idModel = 0,
             modelType = ModelType.CUSTOM,
             title = filename,
-            inputSize = inputSize,
+            inputWidth = inputWidth,
+            inputHeight = inputHeight,
             modelPath = modelPath,
-            quantized = quantized
+            quantized = quantized,
+            colorSpace = colorSpace
         )
         return roomModelsDbController.insertModel(item)
     }
