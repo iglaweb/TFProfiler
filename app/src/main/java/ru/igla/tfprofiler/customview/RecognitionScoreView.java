@@ -24,7 +24,7 @@ import android.view.View;
 
 import java.util.List;
 
-import ru.igla.tfprofiler.tflite_runners.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
 
 public class RecognitionScoreView extends View implements ResultsView {
     private static final float TEXT_SIZE_DIP = 14;

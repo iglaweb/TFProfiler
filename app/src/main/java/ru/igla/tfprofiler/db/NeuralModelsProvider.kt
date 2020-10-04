@@ -2,13 +2,13 @@ package ru.igla.tfprofiler.db
 
 import android.content.Context
 import ru.igla.tfprofiler.core.ModelType
-import ru.igla.tfprofiler.core.blazeface.TFLiteModelBlazefaceFloatWrapper
-import ru.igla.tfprofiler.core.landmarks.TFLiteModelLandmarksSSD
+import ru.igla.tfprofiler.tflite_runners.blazeface.TFLiteModelBlazefaceFloatConst
+import ru.igla.tfprofiler.tflite_runners.TFLiteModelLandmarksSSD
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.models_list.ModelItem
 import ru.igla.tfprofiler.tflite_runners.CoCoMobileNetV1QuantConst
 import ru.igla.tfprofiler.tflite_runners.CoCoMobileNetV2QuantConst
-import ru.igla.tfprofiler.yolov4.YoloV4Const
+import ru.igla.tfprofiler.tflite_runners.YoloV4Const
 
 /***
  * For other models look here:
@@ -22,12 +22,12 @@ object NeuralModelsProvider {
             ModelItem(
                 1,
                 ModelType.BLAZEFACE_MEDIAPIPE,
-                TFLiteModelBlazefaceFloatWrapper
+                TFLiteModelBlazefaceFloatConst
             ).apply {
                 setMeta(
                     TensorFlowUtils.getMetaData(
                         context,
-                        TFLiteModelBlazefaceFloatWrapper.TF_OD_API_MODEL_FLOATING_FILE_FRONT_CAMERA
+                        TFLiteModelBlazefaceFloatConst.TF_OD_API_MODEL_FLOATING_FILE_FRONT_CAMERA
                     )
                 )
             },

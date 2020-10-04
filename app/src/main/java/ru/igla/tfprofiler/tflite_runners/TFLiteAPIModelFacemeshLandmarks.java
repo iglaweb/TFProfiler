@@ -10,8 +10,10 @@ import java.util.Map;
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
-import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 
 /***
  * https://google.github.io/mediapipe/solutions/face_mesh.html

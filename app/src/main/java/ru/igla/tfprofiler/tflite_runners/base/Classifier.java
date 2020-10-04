@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.tflite_runners;
+package ru.igla.tfprofiler.tflite_runners.base;
 
 import android.content.Context;
 import android.graphics.RectF;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 
 /**

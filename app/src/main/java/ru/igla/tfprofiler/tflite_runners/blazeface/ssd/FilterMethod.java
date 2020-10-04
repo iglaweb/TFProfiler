@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core.blazeface.ssd;
+package ru.igla.tfprofiler.tflite_runners.blazeface.ssd;
 
 enum FilterMethod {
     HIGHEST_SCORE,

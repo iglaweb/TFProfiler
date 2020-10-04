@@ -86,7 +86,6 @@ public class JCodecExtractor implements ReadVideoFileInterface {
         Picture picture = null;
         int frameNumber = 0;
 
-
         while (true) {
             try {
                 if (null == (picture = frameGrab.getNativeFrame())) break;

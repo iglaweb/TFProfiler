@@ -25,20 +25,18 @@ import com.afollestad.materialdialogs.ModalDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.bottom_sheet_model_short_info.view.*
 import kotlinx.android.synthetic.main.fragment_main_models_list.*
 import kotlinx.coroutines.*
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
-import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.ErrorDialog
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.media_track.MediaTrackUtils
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
-import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
@@ -47,21 +45,19 @@ import ru.igla.tfprofiler.utils.ViewUtils
 import kotlin.coroutines.CoroutineContext
 
 
-class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list), CoroutineScope {
+class NeuralModelsListFragment :
+    BaseFragment(R.layout.fragment_main_models_list),
+    CoroutineScope {
 
     companion object {
         private const val FRAGMENT_DIALOG = "dialog"
 
-        private const val REQUEST_PICK_MODEL = 42
-        private const val REQUEST_SELECT_VIDEO = 43
-
         const val MODEL_OPTIONS = "model_options"
         const val MEDIA_ITEM = "media_item"
         const val EXTRA_CAMERA_TYPE = "camera_type"
-    }
 
-    private val modelDeleteUseCase by lazy {
-        ModelDeleteUseCase(TFProfilerApp.instance)
+        private const val REQUEST_PICK_MODEL = 42
+        private const val REQUEST_SELECT_VIDEO = 43
     }
 
     private var configureRunTFDialog: Dialog? = null
@@ -74,8 +70,6 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
 
     override val coroutineContext: CoroutineContext
         get() = Job() + uiDispatcher
-
-    private val preferenceManager by lazy { AndroidPreferenceManager(TFProfilerApp.instance).defaultPrefs }
 
     private lateinit var modelsListAdapter: ModelsListRecyclerViewAdapter
 
@@ -111,30 +105,29 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
         }
         // Setup custom view content
         dialog.getCustomView().let { customView ->
-
-            val tvModelDetails: TextView = customView.findViewById(R.id.delegateDetails)
+            val tvModelDetails: TextView = customView.delegateDetails
             tvModelDetails.text = item.details
 
-            val tvModelSize: TextView = customView.findViewById(R.id.modelSize)
+            val tvModelSize: TextView = customView.modelSize
             tvModelSize.text = "${item.inputWidth}x${item.inputHeight}"
 
-            val tvModelType: TextView = customView.findViewById(R.id.tvModelTypeFloating)
+            val tvModelType: TextView = customView.tvModelTypeFloating
             tvModelType.text = if (item.quantized) "Quantized" else "Floating"
 
             if (StringUtils.isNullOrEmpty(item.source)) {
-                customView.findViewById<View>(R.id.modelSource).visibility = View.GONE
-                customView.findViewById<View>(R.id.modelSourceTitle).visibility = View.GONE
+                customView.modelSource.visibility = View.GONE
+                customView.modelSourceTitle.visibility = View.GONE
             } else {
-                val tvModelSource: TextView = customView.findViewById(R.id.modelSource)
+                val tvModelSource: TextView = customView.modelSource
                 tvModelSource.text = item.source
                 tvModelSource.visibility = View.VISIBLE
-                customView.findViewById<View>(R.id.modelSourceTitle).visibility = View.VISIBLE
+                customView.modelSourceTitle.visibility = View.VISIBLE
             }
         }
     }
 
     private fun openModel(requestMode: RequestMode, item: ModelEntity) {
-        val cameraType = preferenceManager.cameraType
+        val cameraType = listNeuralModelsViewModel.getCameraType()
         openModelItem(item, requestMode, cameraType)
     }
 
@@ -154,7 +147,7 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (view.findViewById(R.id.fab) as FloatingActionButton).apply {
+        fab.apply {
             setOnClickListener {
                 pickTfliteModel()
             }
@@ -243,23 +236,17 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
     private fun openVideo(selectedImageUri: Uri) {
         launch(Dispatchers.IO) {
             try {
-                val selectedImagePath =
-                    MediaTrackUtils.getRealFilePath(requireContext(), selectedImageUri).trim()
-                withContext(Dispatchers.Main) {
-                    mToaster.showToast("Selected file: $selectedImagePath")
-                }
+                val mediaRequest = listNeuralModelsViewModel.getMediaRequest(
+                    selectedImageUri,
+                    selectedModelOptionsVideo
+                )
 
-                val modelEntity =
-                    selectedModelOptionsVideo ?: throw Exception("Passed model entity is null")
-
-                val delegateRunRequest = getDelegateRequest()
+                val delegateRunRequest = listNeuralModelsViewModel.getDelegateRequest()
                 if (delegateRunRequest.deviceList.isEmpty()) {
                     throw Exception("None of the delegates selected")
                 }
 
                 val intent = Intent(context, VideoRecognizeActivity::class.java).apply {
-                    val mediaRequest =
-                        MediaRequest(RequestMode.VIDEO, selectedImagePath, modelEntity)
                     putExtra(MEDIA_ITEM, mediaRequest)
                     putExtra(MODEL_OPTIONS, delegateRunRequest)
                 }
@@ -285,9 +272,7 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
 
                     override fun onDeleteItem(item: ModelEntity) {
                         launch(Dispatchers.IO) {
-                            modelDeleteUseCase.executeUseCase(
-                                ModelDeleteUseCase.RequestValues(item.tableId)
-                            )
+                            listNeuralModelsViewModel.deleteCustomModel(item)
                         }
                     }
                 }
@@ -364,7 +349,7 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
     }
 
     private fun onClickDataset(requestMode: RequestMode, modelEntity: ModelEntity) {
-        val delegateRunRequest = getDelegateRequest()
+        val delegateRunRequest = listNeuralModelsViewModel.getDelegateRequest()
         if (delegateRunRequest.deviceList.isEmpty()) {
             mToaster.showToast("None of the delegates selected")
             return
@@ -381,32 +366,6 @@ class NeuralModelsListFragment : BaseFragment(R.layout.fragment_main_models_list
         IntentUtils.startActivitySafely(
             requireContext(),
             intent
-        )
-    }
-
-    private fun getDelegateRequest(): DelegateRunRequest {
-        val modelList = mutableListOf<Device>().apply {
-            if (preferenceManager.cpuDelegateEnabled) {
-                add(Device.CPU)
-            }
-            if (preferenceManager.gpuDelegateEnabled) {
-                add(Device.GPU)
-            }
-            if (preferenceManager.nnapiDelegateEnabled) {
-                add(Device.NNAPI)
-            }
-            if (preferenceManager.hexagonDelegateEnabled) {
-                add(Device.HEXAGON)
-            }
-        }
-
-        return DelegateRunRequest(
-            IntRange(
-                preferenceManager.threadRangeMin,
-                preferenceManager.threadRangeMax
-            ),
-            modelList,
-            preferenceManager.xnnpackEnabled
         )
     }
 }

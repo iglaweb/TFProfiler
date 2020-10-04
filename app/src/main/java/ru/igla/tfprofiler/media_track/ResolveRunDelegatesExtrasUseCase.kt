@@ -4,7 +4,7 @@ import android.app.Application
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.tflite_runners.ModelOptions
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import java.util.*
 

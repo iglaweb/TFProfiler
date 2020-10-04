@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.tflite_runners
+package ru.igla.tfprofiler.tflite_runners.base
 
 import ru.igla.tfprofiler.core.Device
 

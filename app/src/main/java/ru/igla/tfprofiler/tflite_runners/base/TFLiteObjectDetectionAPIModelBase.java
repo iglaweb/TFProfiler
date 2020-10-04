@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.tflite_runners;
+package ru.igla.tfprofiler.tflite_runners.base;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -42,11 +42,11 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     public abstract List<T> getDetections();
 
-    int inputWidth;
-    int inputHeight;
+    protected int inputWidth;
+    protected int inputHeight;
 
     // Pre-allocated buffers.
-    Vector<String> labels = new Vector<>();
+    protected Vector<String> labels = new Vector<>();
     private int[] intValues;
 
     private ByteBuffer imgData;
@@ -60,7 +60,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     private OpNormalizer opNormalizer;
 
-    TFLiteObjectDetectionAPIModelBase() {
+    public TFLiteObjectDetectionAPIModelBase() {
     }
 
     @Override

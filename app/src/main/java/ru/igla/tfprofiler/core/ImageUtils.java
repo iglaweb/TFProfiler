@@ -6,10 +6,17 @@ import android.os.Environment;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import ru.igla.tfprofiler.utils.IOUtils;
+
 /**
  * Utility class for manipulating images.
  */
-public class ImageUtils {
+public final class ImageUtils {
+
+    private ImageUtils() {
+        //no impl
+    }
+
     /**
      * Utility method to compute the allocated size in bytes of a YUV420SP image of the given
      * dimensions.
@@ -50,18 +57,20 @@ public class ImageUtils {
             Timber.i("Make dir failed");
         }
 
-        final String fname = filename;
-        final File file = new File(myDir, fname);
+        final File file = new File(myDir, filename);
         if (file.exists()) {
             file.delete();
         }
+
+        FileOutputStream out = null;
         try {
-            final FileOutputStream out = new FileOutputStream(file);
+            out = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 99, out);
             out.flush();
-            out.close();
         } catch (final Exception e) {
-            Timber.e(e, "Exception!");
+            Timber.e(e);
+        } finally {
+            IOUtils.closeQuietly(out);
         }
     }
 }

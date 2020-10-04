@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

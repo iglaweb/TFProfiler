@@ -35,7 +35,7 @@ import java.util.Locale;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.env.BorderedText;
 import ru.igla.tfprofiler.env.ImageUtils;
-import ru.igla.tfprofiler.tflite_runners.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
 
 /**
  * A tracker that handles non-max suppression and matches existing objects to new detections.

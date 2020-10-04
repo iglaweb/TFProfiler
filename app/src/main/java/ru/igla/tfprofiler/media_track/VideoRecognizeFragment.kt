@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
@@ -17,8 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_video_layout.*
 import kotlinx.android.synthetic.main.inference_info.*
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Status
 import ru.igla.tfprofiler.core.Timber
@@ -29,7 +27,7 @@ import ru.igla.tfprofiler.models_list.NeuralModelsListFragment
 import ru.igla.tfprofiler.report_details.EXTRA_KEY_REPORT_DATA
 import ru.igla.tfprofiler.report_details.ModelReportActivity
 import ru.igla.tfprofiler.report_details.REPORT_REQUEST_CODE
-import ru.igla.tfprofiler.tflite_runners.ModelOptions
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.*
@@ -41,6 +39,8 @@ import kotlin.coroutines.CoroutineContext
 class VideoRecognizeFragment :
     BaseFragment(R.layout.fragment_video_layout),
     CoroutineScope {
+
+    private val exceptionHandler by lazy { ExceptionHandler { _, _ -> } } // for cancellation exception
 
     private lateinit var recognitionViewModel: RecognitionViewModel
 
@@ -256,8 +256,6 @@ class VideoRecognizeFragment :
             showMeanTime(it.meanTime, it.stdTime)
         }
     }
-
-    private val exceptionHandler by lazy { ExceptionHandler { _, _ -> } } // for cancellation exception
 
     private fun runRecognition(
         mediaRequest: MediaRequest,

@@ -13,6 +13,8 @@ import java.util.PriorityQueue;
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

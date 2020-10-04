@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.igla.tfprofiler.core.blazeface.ssd.Detection;
-import ru.igla.tfprofiler.core.blazeface.ssd.Keypoint;
-import ru.igla.tfprofiler.core.blazeface.ssd.SingleShotMultiBoxDetector;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Detection;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.SingleShotMultiBoxDetector;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

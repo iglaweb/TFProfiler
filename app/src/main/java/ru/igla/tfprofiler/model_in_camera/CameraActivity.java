@@ -49,7 +49,7 @@ import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.report_details.ModelReportActivity;
 import ru.igla.tfprofiler.report_details.ModelReportFragmentKt;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
-import ru.igla.tfprofiler.tflite_runners.ModelOptions;
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.utils.IntentUtils;
 import ru.igla.tfprofiler.utils.PermissionUtils;
 import ru.igla.tfprofiler.utils.StringUtils;

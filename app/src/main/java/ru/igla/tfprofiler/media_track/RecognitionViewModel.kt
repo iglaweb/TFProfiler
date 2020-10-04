@@ -21,9 +21,9 @@ import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.ListReportEntity
-import ru.igla.tfprofiler.tflite_runners.Classifier
-import ru.igla.tfprofiler.tflite_runners.ClassifierFactory
-import ru.igla.tfprofiler.tflite_runners.ModelOptions
+import ru.igla.tfprofiler.tflite_runners.base.Classifier
+import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.*
 import ru.igla.tfprofiler.video.TakeVideoFrameListener
 import ru.igla.tfprofiler.video.TimestampBitmap

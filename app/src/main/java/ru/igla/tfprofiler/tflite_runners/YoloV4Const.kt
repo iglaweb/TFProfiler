@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.yolov4
+package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel

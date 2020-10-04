@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core.landmarks
+package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel
@@ -12,7 +12,7 @@ object TFLiteModelLandmarksSSD : BuiltModel {
     private const val TF_OD_API_MODEL_FILE = BuildConfig.ASSET_LANDMARK_FILE
     private const val TF_OD_API_IS_QUANTIZED = false
     override val details: String
-        get() = ""
+        get() = "3D mesh representation of a human face with 468 vertices"
 
     override val imageHeight: Int
         get() = TF_OD_API_INPUT_SIZE

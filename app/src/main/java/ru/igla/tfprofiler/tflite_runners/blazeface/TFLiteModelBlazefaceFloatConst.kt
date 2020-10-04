@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core.blazeface
+package ru.igla.tfprofiler.tflite_runners.blazeface
 
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel
@@ -9,7 +9,7 @@ import ru.igla.tfprofiler.core.ColorSpace
  * Selfie camera https://github.com/google/mediapipe/blob/master/mediapipe/models/face_detection_front.tflite
  * Back camera https://github.com/google/mediapipe/blob/master/mediapipe/models/face_detection_back.tflite
  */
-object TFLiteModelBlazefaceFloatWrapper : BuiltModel {
+object TFLiteModelBlazefaceFloatConst : BuiltModel {
 
     private const val TF_OD_API_INPUT_SIZE = 128
     const val TF_OD_API_MODEL_FLOATING_FILE_FRONT_CAMERA = BuildConfig.ASSET_BLAZEFACE_FILE

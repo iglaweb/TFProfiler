@@ -20,7 +20,5 @@ enum class CameraType(val value: String) {
         fun get(name: String?): CameraType? {
             return ENUM_MAP[name]
         }
-
-        fun getEnumMap() = map
     }
 }

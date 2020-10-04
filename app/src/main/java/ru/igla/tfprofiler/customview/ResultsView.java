@@ -17,7 +17,7 @@ package ru.igla.tfprofiler.customview;
 
 import java.util.List;
 
-import ru.igla.tfprofiler.tflite_runners.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.Classifier;
 
 public interface ResultsView {
     void setResults(final List<Classifier.Recognition> results);
