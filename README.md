@@ -40,6 +40,11 @@ App has built-in models that you can play with to see how inference performance 
 [facemesh]: https://google.github.io/mediapipe/solutions/face_mesh.html
 [blazeface]: https://google.github.io/mediapipe/solutions/face_detection.html
 
+
+## Release
+
+Latest `apk` release can be found on release [page](https://github.com/iglaweb/TFProfiler/releases).
+
 ## Image Dataset
 The app has built-in a subset of image dataset [Caltech 101](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). It is used for running model inteferences.
 
