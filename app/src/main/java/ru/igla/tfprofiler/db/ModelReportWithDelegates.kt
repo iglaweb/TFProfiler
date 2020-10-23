@@ -9,5 +9,11 @@ data class ModelReportWithDelegates(
         parentColumn = "id_model_report",
         entityColumn = "model_report_id"
     )
-    val reportDelegateItems: List<DbReportDelegateItem>
+    val reportDelegateItems: List<DbReportDelegateItem>,
+
+    @Relation(
+        parentColumn = "model_id",
+        entityColumn = "id_model"
+    )
+    val modelItem: DbModelItem
 )

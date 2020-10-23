@@ -1,12 +1,15 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
+import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.db.AppDatabase
+import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.NeuralModelsProvider
 import ru.igla.tfprofiler.db.RoomModelsDbController
+import ru.igla.tfprofiler.utils.forEachNoIterator
 import java.io.File
 
 class ResolveModelsListUseCase(val application: Application) :
@@ -20,65 +23,76 @@ class ResolveModelsListUseCase(val application: Application) :
     }
 
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-        val list = mutableListOf<ModelEntity>()
-        val items = NeuralModelsProvider.resolveBuiltInModels(application)
-        var idStart = 0L
-        for (item in items) {
-            val modelPath = item.model.modelFile
-            if (!TensorFlowUtils.isAssetFileExists(application, modelPath)) {
-                Timber.e(Exception("Predefined model assets/$modelPath not exists"))
-                continue
+
+        val dbModels = roomModelsDbController.getModels()
+        if (dbModels.isEmpty()) { //first start
+            val items = NeuralModelsProvider.resolveBuiltInModels(application)
+            items.forEachNoIterator {
+                val modelPath = it.model.modelFile
+                if (!TensorFlowUtils.isAssetFileExists(application, modelPath)) {
+                    Timber.e(Exception("Predefined model assets/$modelPath not exists"))
+                } else {
+                    val item = DbModelItem(
+                        idModel = it.id,
+                        modelType = it.modelType,
+                        title = it.modelType.title,
+                        inputWidth = it.model.imageWidth,
+                        inputHeight = it.model.imageHeight,
+                        modelPath = it.model.modelFile,
+                        labelPath = it.model.labelFile,
+                        source = it.model.source,
+                        details = it.model.details,
+                        quantized = it.model.quantized,
+                        colorSpace = it.model.colorSpace
+                    )
+                    roomModelsDbController.insertModel(item)
+                }
             }
-            idStart = kotlin.math.max(item.id, idStart)
-            list.add(
-                ModelEntity(
-                    id = item.id,
-                    tableId = -1,
-                    modelType = item.modelType,
-                    name = item.modelType.title,
-                    details = item.model.details,
-
-                    inputWidth = item.model.imageWidth,
-                    inputHeight = item.model.imageHeight,
-                    quantized = item.model.quantized,
-                    colorSpace = item.model.colorSpace,
-
-                    modelFile = modelPath,
-                    labelFile = item.model.labelFile,
-                    source = item.model.source
-                )
-            )
         }
-        //add custom models
-        val customModels = getDbCustomModels(++idStart)
-        list.addAll(customModels)
+
+        var id = 1L
+        val list = roomModelsDbController.getModels().filter {
+            it.modelType != ModelType.CUSTOM || File(it.modelPath).exists() //filter out non existing custom models
+        }
+            .map { item ->
+                val modelConfig = ModelConfig(
+                    item.idModel,
+                    item.inputWidth,
+                    item.inputHeight,
+                    item.quantized,
+                    item.colorSpace
+                )
+                if (item.modelType == ModelType.CUSTOM) {
+                    ModelEntity(
+                        id = id++,
+                        modelType = item.modelType,
+                        name = item.title,
+                        details = "File: " + item.modelPath, //we do not have description
+
+                        modelConfig = modelConfig,
+
+                        modelFile = item.modelPath,
+                        labelFile = ""
+                    )
+                } else {
+                    ModelEntity(
+                        id = id++,
+                        modelType = item.modelType,
+                        name = item.modelType.title,
+                        details = item.details,
+
+                        modelConfig = modelConfig,
+
+                        modelFile = item.modelPath,
+                        labelFile = item.labelPath,
+                        source = item.source
+                    )
+                }
+            }
+
 
         val responseValue = ResponseValue(list)
         return Resource.success(responseValue)
-    }
-
-    private fun getDbCustomModels(idStart: Long): List<ModelEntity> {
-        var id = idStart
-        return roomModelsDbController.getModels().filter {
-            File(it.modelPath).exists()
-        }
-            .map {
-                ModelEntity(
-                    id = id++,
-                    tableId = it.idModel,
-                    modelType = it.modelType,
-                    name = it.title,
-                    details = "File: " + it.modelPath, //we do not have description
-
-                    inputWidth = it.inputWidth,
-                    inputHeight = it.inputHeight,
-                    quantized = it.quantized,
-                    colorSpace = it.colorSpace,
-
-                    modelFile = it.modelPath,
-                    labelFile = ""
-                )
-            }
     }
 
     class RequestValues : UseCase.RequestValues

@@ -128,9 +128,7 @@ dependencies {
     implementation "androidx.browser:browser:1.2.0"
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-    implementation 'androidx.fragment:fragment:1.2.5'
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
-
 
 
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"

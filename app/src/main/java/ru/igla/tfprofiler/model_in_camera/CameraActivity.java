@@ -47,14 +47,13 @@ import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.report_details.ModelReportActivity;
-import ru.igla.tfprofiler.report_details.ModelReportFragmentKt;
+import ru.igla.tfprofiler.report_details.ModelReportFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.utils.IntentUtils;
 import ru.igla.tfprofiler.utils.PermissionUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
 
-import static ru.igla.tfprofiler.report_details.ModelReportFragmentKt.REPORT_REQUEST_CODE;
 
 public abstract class CameraActivity extends AppCompatActivity
         implements OnImageAvailableListener,
@@ -156,8 +155,8 @@ public abstract class CameraActivity extends AppCompatActivity
             model.setModelData(getReportData());
 
             Intent intent = new Intent(this, ModelReportActivity.class);
-            intent.putExtra(ModelReportFragmentKt.EXTRA_KEY_REPORT_DATA, getReportData());
-            IntentUtils.startActivityForResultSafely(this, REPORT_REQUEST_CODE, intent);
+            intent.putExtra(ModelReportFragment.EXTRA_KEY_REPORT_DATA, getReportData());
+            IntentUtils.startActivityForResultSafely(this, ModelReportFragment.REPORT_REQUEST_CODE, intent);
         });
 
         ImageView ivToogleCamera = findViewById(R.id.toggleCamera);
@@ -185,7 +184,7 @@ public abstract class CameraActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REPORT_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == ModelReportFragment.REPORT_REQUEST_CODE && resultCode == RESULT_OK) {
             finish();
         }
     }

@@ -3,6 +3,8 @@ package ru.igla.tfprofiler.reports_list
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import ru.igla.tfprofiler.core.ModelType
+import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.utils.forEachNoIterator
 
 @Parcelize
 data class ListReportEntity(
@@ -11,9 +13,8 @@ data class ListReportEntity(
     var createdAt: Long,
 
     val modelType: ModelType,
-    val inputWidth: Int,
-    val inputHeight: Int,
-    val quantized: Boolean,
+    val modelName: String,
+    val modelConfig: ModelConfig,
 
     val reportDelegateItems: List<ReportDelegateItem>
 
@@ -22,7 +23,7 @@ data class ListReportEntity(
      * Check whether it contains invalid values
      */
     fun hasInvalidValues(): Boolean {
-        reportDelegateItems.forEach {
+        reportDelegateItems.forEachNoIterator {
             if (it.meanTime.isNaN()) {
                 return true
             }

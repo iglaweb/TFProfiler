@@ -78,6 +78,9 @@ class AddCustomModelUseCase(val application: Application) :
             inputWidth = inputWidth,
             inputHeight = inputHeight,
             modelPath = modelPath,
+            labelPath = "", //default
+            source = "",
+            details = "",
             quantized = quantized,
             colorSpace = colorSpace
         )

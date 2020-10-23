@@ -19,10 +19,6 @@
     <color name="list_item_divider">#ffe1e5e8</color>
     <color name="color_red">#ff0000</color>
 
-
-    <color name="ripple_color_normal_y">#FFCC00</color>
-    <color name="ripple_color_effect_y">#F2C200</color>
-
     <color name="ripple_grey_color">#D9D9D9</color>
 
     <color name="blue_grey_900">#263238</color>

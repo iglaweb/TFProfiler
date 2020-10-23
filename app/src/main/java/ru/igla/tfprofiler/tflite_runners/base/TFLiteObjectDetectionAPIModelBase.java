@@ -91,8 +91,8 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
 
-        this.inputWidth = modelEntity.getInputWidth();
-        this.inputHeight = modelEntity.getInputHeight();
+        this.inputWidth = modelEntity.getModelConfig().getInputWidth();
+        this.inputHeight = modelEntity.getModelConfig().getInputHeight();
 
         if (!StringUtils.isNullOrEmpty(labelFilename)) {
             String actualFilename = labelFilename.split("file:///android_asset/")[1];
@@ -118,10 +118,10 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             DataType probabilityDataType = interpreter.getInterpreter().getOutputTensor(probabilityTensorIndex).dataType();
             isModelQuantized = probabilityDataType == DataType.UINT8;
         } else {
-            isModelQuantized = modelEntity.getQuantized();
+            isModelQuantized = modelEntity.getModelConfig().getQuantized();
         }
 
-        this.opNormalizer = getNormalizer(isModelQuantized, modelEntity.getColorSpace());
+        this.opNormalizer = getNormalizer(isModelQuantized, modelEntity.getModelConfig().getColorSpace());
 
         // Pre-allocate buffers.
         final int numBytesPerChannel;
@@ -133,7 +133,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
         //https://www.tensorflow.org/hub/common_signatures/images#input
 
-        final int pixelSize = modelEntity.getColorSpace() == ColorSpace.GRAYSCALE ? GRAY_PIXEL_SIZE : COLOR_PIXEL_SIZE;
+        final int pixelSize = modelEntity.getModelConfig().getColorSpace() == ColorSpace.GRAYSCALE ? GRAY_PIXEL_SIZE : COLOR_PIXEL_SIZE;
         this.imgData = ByteBuffer.allocateDirect(
                 DIM_BATCH_SIZE *
                         this.inputWidth *

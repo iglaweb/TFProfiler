@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
-import ru.igla.tfprofiler.core.ModelType
 
 const val MODEL_REPORTS_TABLE = "model_reports"
 
@@ -18,13 +17,10 @@ class DbModelReportItem(
     @PrimaryKey(autoGenerate = true)
     var idModelReport: Long = 0,
 
-    @ColumnInfo(name = "model_type")
-    val modelType: ModelType,
-    @ColumnInfo(name = "input_width")
-    val inputWidth: Int,
-    @ColumnInfo(name = "input_height")
-    val inputHeight: Int,
-    @ColumnInfo(name = "quantized")
-    val quantized: Boolean
+    @ColumnInfo(name = "model_id")
+    val modelId: Long,
+
+    @ColumnInfo(name = "created_at")
+    var createdAt: Long
 
 ) : Parcelable

@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelReportsDbController
-import ru.igla.tfprofiler.utils.DateUtils
+import ru.igla.tfprofiler.models_list.ModelConfig
 import ru.igla.tfprofiler.utils.forEachNoIterator
 
 class ReportsListUseCase(val application: Application) :
@@ -27,6 +27,7 @@ class ReportsListUseCase(val application: Application) :
                 val list = mutableListOf<ListReportEntity>()
                 dbItems.forEachNoIterator { data ->
 
+                    val modelEntity = data.modelItem
                     val modelItem = data.modelReportItem
                     val delegates = data.reportDelegateItems
 
@@ -56,12 +57,18 @@ class ReportsListUseCase(val application: Application) :
                     list.add(
                         ListReportEntity(
                             idReport = modelItem.idModelReport,
-                            createdAt = DateUtils.getCurrentDateInMs(),
+                            createdAt = modelItem.createdAt,
                             reportDelegateItems = reportItems,
-                            modelType = modelItem.modelType,
-                            inputWidth = modelItem.inputWidth,
-                            inputHeight = modelItem.inputHeight,
-                            quantized = modelItem.quantized
+                            modelType = modelEntity.modelType,
+                            modelName = modelEntity.title,
+
+                            modelConfig = ModelConfig(
+                                tableId = modelEntity.idModel,
+                                inputWidth = modelEntity.inputWidth,
+                                inputHeight = modelEntity.inputHeight,
+                                quantized = modelEntity.quantized,
+                                colorSpace = modelEntity.colorSpace
+                            )
                         )
                     )
                 }

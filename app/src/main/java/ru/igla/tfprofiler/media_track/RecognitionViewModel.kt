@@ -68,8 +68,8 @@ class RecognitionViewModel(
 
     private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
         val recognizeAssetFolderCase = RecognizeAssetFolderCase(
-            object : RecognizeAssetFolderCase.RecgonizeImageCallback {
-                override fun startRecognizeImage(timestampBitmap: TimestampBitmap) {
+            object : RecognizeAssetFolderCase.OnReadAssetImageCallback {
+                override fun onReadAssetImage(timestampBitmap: TimestampBitmap) {
                     runImageInterference(timestampBitmap)
                 }
 

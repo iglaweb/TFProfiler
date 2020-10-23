@@ -25,7 +25,6 @@ import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
-import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.customview.OverlayView;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
@@ -36,6 +35,7 @@ import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.Classifier;
 import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
+import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.tracking.MultiBoxTracker;
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 import ru.igla.tfprofiler.utils.DebugDrawer;
@@ -74,7 +74,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private CameraType cameraType;
 
     @Nullable
-    Toaster mToaster;
+    private Toaster mToaster;
 
     @Nullable
     private StatisticsEstimator statisticsEstimator;
@@ -118,8 +118,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     public void onPreviewSizeChosen(final Size size, final int rotation) {
         tracker = new MultiBoxTracker(this);
 
-        final int cropWidth = modelEntity.getInputWidth();
-        final int cropHeight = modelEntity.getInputHeight();
+        final int cropWidth = modelEntity.getModelConfig().getInputWidth();
+        final int cropHeight = modelEntity.getModelConfig().getInputHeight();
         try {
             ModelOptions modelOptions = getCurrentModelOptions();
             recreateClassifier(modelOptions);
@@ -354,7 +354,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         closeClassifier();
 
         if (modelOptions.getDevice() == Device.GPU
-                && (modelEntity != null && modelEntity.getQuantized())) {
+                && (modelEntity != null && modelEntity.getModelConfig().getQuantized())) {
             Timber.d("Not creating classifier: GPU doesn't support quantized models.");
             runOnUiThread(
                     () -> showToast(getString(R.string.tfe_ic_gpu_quant_error)));

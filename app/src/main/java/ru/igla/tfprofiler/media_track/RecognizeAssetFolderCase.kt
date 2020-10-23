@@ -3,18 +3,18 @@ package ru.igla.tfprofiler.media_track
 import android.content.Context
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.*
-import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.video.TimestampBitmap
 import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
 class RecognizeAssetFolderCase(
-    private val recognizeImageCallback: RecgonizeImageCallback
+    private val onReadAssetImageCallback: OnReadAssetImageCallback
 ) {
 
-    interface RecgonizeImageCallback {
-        fun startRecognizeImage(timestampBitmap: TimestampBitmap)
+    interface OnReadAssetImageCallback {
+        fun onReadAssetImage(timestampBitmap: TimestampBitmap)
         fun onProgress(progress: FrameInformation)
     }
 
@@ -42,7 +42,7 @@ class RecognizeAssetFolderCase(
                 Timber.i("Resolved $listSize images (png,jpeg,jpg)")
 
                 if (listSize == 0) {
-                    throw (Exception("No images found in $imagesFolder"))
+                    throw Exception("No images found in $imagesFolder")
                 }
 
                 var count = 0
@@ -52,14 +52,14 @@ class RecognizeAssetFolderCase(
                     val path = "$imagesFolder/${imagePath}"
                     context.assets.open(path).use {
                         val bmp = BitmapFactory.decodeStream(it)
-                        recognizeImageCallback.startRecognizeImage(
+                        onReadAssetImageCallback.onReadAssetImage(
                             TimestampBitmap(
                                 bmp
                             )
                         )
                     }
                     count++
-                    recognizeImageCallback.onProgress(
+                    onReadAssetImageCallback.onProgress(
                         FrameInformation(
                             listSize, count
                         )

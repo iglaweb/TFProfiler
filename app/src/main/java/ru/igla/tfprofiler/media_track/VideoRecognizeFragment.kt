@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_video_layout.*
@@ -24,9 +23,8 @@ import ru.igla.tfprofiler.core.intents.IntentManager
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.MediaRequest
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment
-import ru.igla.tfprofiler.report_details.EXTRA_KEY_REPORT_DATA
 import ru.igla.tfprofiler.report_details.ModelReportActivity
-import ru.igla.tfprofiler.report_details.REPORT_REQUEST_CODE
+import ru.igla.tfprofiler.report_details.ModelReportFragment
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
@@ -130,9 +128,9 @@ class VideoRecognizeFragment :
 
     private fun openReport() {
         val intent = Intent(context, ModelReportActivity::class.java).apply {
-            putExtra(EXTRA_KEY_REPORT_DATA, recognitionViewModel.getReportData())
+            putExtra(ModelReportFragment.EXTRA_KEY_REPORT_DATA, recognitionViewModel.getReportData())
         }
-        IntentUtils.startFragmentForResultSafely(this, REPORT_REQUEST_CODE, intent)
+        IntentUtils.startFragmentForResultSafely(this, ModelReportFragment.REPORT_REQUEST_CODE, intent)
     }
 
     @SuppressLint("SetTextI18n")
@@ -341,7 +339,7 @@ class VideoRecognizeFragment :
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == ImageIntentUtils.SELECT_PICTURE_REQUEST_CODE) {
                 onSelectRequestCode(data)
-            } else if (requestCode == REPORT_REQUEST_CODE) {
+            } else if (requestCode == ModelReportFragment.REPORT_REQUEST_CODE) {
                 activity?.finish()
             }
         }

@@ -30,8 +30,8 @@ class RunInterferenceCase(
             val previewWidth = timestampBitmap.bitmap.width
             val previewHeight = timestampBitmap.bitmap.height
 
-            val cropWidth: Int = model.inputWidth
-            val cropHeight: Int = model.inputHeight
+            val cropWidth: Int = model.modelConfig.inputWidth
+            val cropHeight: Int = model.modelConfig.inputHeight
 
             val frameToCropTransform = ImageUtils.getTransformationMatrix(
                 previewWidth, previewHeight,

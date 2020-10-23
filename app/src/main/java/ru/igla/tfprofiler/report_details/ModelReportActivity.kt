@@ -17,7 +17,7 @@ class ModelReportActivity : AppCompatActivity() {
         setContentView(R.layout.activity_report_model)
 
         if (savedInstanceState == null) {
-            val reportData = intent?.getParcelableExtra<ListReportEntity>(EXTRA_KEY_REPORT_DATA)
+            val reportData = intent?.getParcelableExtra<ListReportEntity>(ModelReportFragment.EXTRA_KEY_REPORT_DATA)
             check(reportData != null) { "Report data is not provided" }
 
             reportData.apply {
@@ -29,7 +29,7 @@ class ModelReportActivity : AppCompatActivity() {
                             reportData,
                             true
                         ),
-                        TAG_REPORT
+                        ModelReportFragment.TAG_REPORT
                     )
                 }
             }

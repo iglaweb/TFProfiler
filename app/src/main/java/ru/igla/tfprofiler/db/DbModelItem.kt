@@ -25,6 +25,16 @@ class DbModelItem(
     @ColumnInfo(name = "model_path")
     val modelPath: String,
 
+    @ColumnInfo(name = "label_path")
+    val labelPath: String,
+
+    @ColumnInfo(name = "source")
+    val source: String,
+
+    @ColumnInfo(name = "details")
+    val details: String,
+
+
     @ColumnInfo(name = "model_type")
     val modelType: ModelType,
 

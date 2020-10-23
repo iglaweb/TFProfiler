@@ -44,9 +44,10 @@ class ReportsListRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ListReportHolder, position: Int) {
         val modelHolder = modelHolderList[position]
 
-        val sizes = "" + modelHolder.inputWidth + "x" + modelHolder.inputHeight
-        val floating = if (modelHolder.quantized) "Quantized" else "Floating"
-        val title = String.format("%s (%s, %s)", modelHolder.modelType.title, floating, sizes)
+        val modelConfig = modelHolder.modelConfig
+        val sizes = "" + modelConfig.inputWidth + "x" + modelConfig.inputHeight
+        val floating = modelConfig.quantizedStr()
+        val title = String.format("%s (%s, %s)", modelHolder.modelName, floating, sizes)
 
         holder.textViewTitle.text = title
         val date = DateUtils.getSimpleReadableDateTime(modelHolder.createdAt)
@@ -67,12 +68,13 @@ class ReportsListRecyclerViewAdapter(
     private fun getText(listReportEntity: ListReportEntity): String {
         val reportItems = listReportEntity.reportDelegateItems
 
-        val strDetails = StringBuilder()
+
         var maxThreads = reportItems.firstOrNull()?.threads ?: 1
         var minThreads = reportItems.firstOrNull()?.threads ?: 1
         var useXnnpack = false
 
         devices.clear()
+        val strDetails = StringBuilder()
         reportItems.forEachNoIterator { item ->
             if (item.useXnnpack) {
                 useXnnpack = true

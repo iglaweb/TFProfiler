@@ -52,10 +52,10 @@ class ModelsListRecyclerViewAdapter(
             TensorFlowUtils.getModelFileSize(context.applicationContext, modelEntity)
         val fileSizeStr = StringUtils.getReadableFileSize(fileModelSize, true)
         holder.textViewTitle.text = modelEntity.name
-        holder.textViewQuantized.text = if (modelEntity.quantized) "Quantized" else "Floating"
+        holder.textViewQuantized.text = modelEntity.modelConfig.quantizedStr()
         val fileSize = "File size: $fileSizeStr"
         holder.textViewModelSize.text =
-            "Image: " + modelEntity.inputWidth + "x" + modelEntity.inputHeight + ", " + fileSize
+            "Image: " + modelEntity.modelConfig.inputWidth + "x" + modelEntity.modelConfig.inputHeight + ", " + fileSize
         holder.itemView.setOnClickListener {
             listener.onClickItem(modelEntity)
         }

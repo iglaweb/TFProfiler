@@ -2,8 +2,6 @@ package ru.igla.tfprofiler.ui.widgets.toast;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -11,27 +9,29 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /**
  * @author drakeet
  */
 final class SafeToastContext extends ContextWrapper {
 
-    private @NonNull Toast toast;
+    private @NonNull
+    final Toast toast;
 
-    private @Nullable BadTokenListener badTokenListener;
-
+    private @Nullable
+    BadTokenListener badTokenListener;
 
     SafeToastContext(@NonNull Context base, @NonNull Toast toast) {
         super(base);
         this.toast = toast;
     }
 
-
     @Override
     public Context getApplicationContext() {
         return new ApplicationContextWrapper(getBaseContext().getApplicationContext());
     }
-
 
     public void setBadTokenListener(@NonNull BadTokenListener badTokenListener) {
         this.badTokenListener = badTokenListener;
@@ -48,7 +48,6 @@ final class SafeToastContext extends ContextWrapper {
         @Override
         public Object getSystemService(@NonNull String name) {
             if (Context.WINDOW_SERVICE.equals(name)) {
-                // noinspection ConstantConditions
                 return new WindowManagerWrapper((WindowManager) getBaseContext().getSystemService(name));
             }
             return super.getSystemService(name);
@@ -59,7 +58,8 @@ final class SafeToastContext extends ContextWrapper {
     private final class WindowManagerWrapper implements WindowManager {
 
         private static final String TAG = "WindowManagerWrapper";
-        private final @NonNull WindowManager base;
+        private final @NonNull
+        WindowManager base;
 
 
         private WindowManagerWrapper(@NonNull WindowManager base) {
@@ -94,12 +94,10 @@ final class SafeToastContext extends ContextWrapper {
             }
         }
 
-
         @Override
         public void updateViewLayout(View view, ViewGroup.LayoutParams params) {
             base.updateViewLayout(view, params);
         }
-
 
         @Override
         public void removeView(View view) {

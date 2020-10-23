@@ -8,17 +8,24 @@ import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.ModelType
 
 @Parcelize
-data class ModelEntity(
-    val id: Long,
+data class ModelConfig(
     val tableId: Long,
-    val modelType: ModelType,
-    val name: String,
-    val details: String,
-
     val inputWidth: Int,
     val inputHeight: Int,
     val quantized: Boolean,
     val colorSpace: ColorSpace,
+) : Parcelable {
+    fun quantizedStr() = if (quantized) "Quantized" else "Floating"
+}
+
+@Parcelize
+data class ModelEntity(
+    val id: Long,
+    val modelType: ModelType,
+    val name: String,
+    val details: String,
+
+    val modelConfig: ModelConfig,
 
     val modelFile: String,
     val labelFile: String,

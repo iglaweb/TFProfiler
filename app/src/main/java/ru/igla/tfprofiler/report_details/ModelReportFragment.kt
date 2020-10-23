@@ -1,11 +1,19 @@
 package ru.igla.tfprofiler.report_details
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -24,22 +32,26 @@ import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
+import ru.igla.tfprofiler.reports_list.ReportDelegateItem
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
+import ru.igla.tfprofiler.utils.forEachNoIterator
 import kotlin.coroutines.CoroutineContext
 
-
-const val EXTRA_KEY_REPORT_DATA = "data_report"
-const val EXTRA_KEY_EDIT_DATA = "edit_report"
-
-const val TAG_REPORT = "report_tag"
-
-const val REPORT_REQUEST_CODE = 100
 
 class ModelReportFragment :
     BaseFragment(R.layout.fragment_model_report_details_dialog),
     CoroutineScope {
+
+    companion object {
+        const val EXTRA_KEY_REPORT_DATA = "data_report"
+        const val EXTRA_KEY_EDIT_DATA = "edit_report"
+
+        const val TAG_REPORT = "report_tag"
+
+        const val REPORT_REQUEST_CODE = 100
+    }
 
     fun withArguments(data: ListReportEntity, edit: Boolean): ModelReportFragment =
         apply {
@@ -120,14 +132,86 @@ class ModelReportFragment :
         }
 
         reportDetailsViewModel.liveDataCsvReport.observe(viewLifecycleOwner, {
-            mToaster.showToast("Report csv saved")
+            mToaster.showToast("CSV Report saved")
         })
 
         initAdapter(requireContext())
-        sharedItem.modelsLiveData.observe(viewLifecycleOwner, {
-
-            reportsListAdapterDetails.notifyAdapterItems(it)
+        sharedItem.modelsLiveData.observe(viewLifecycleOwner, { entity ->
+            showBestResult(entity)
+            reportsListAdapterDetails.notifyAdapterItems(entity)
         })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showBestResult(entity: ListReportEntity) {
+        if (entity.reportDelegateItems.size > 1) {
+            var minItem: ReportDelegateItem? = null
+            var curIndex = 0
+            var selectedIndex = -1
+            entity.reportDelegateItems.forEachNoIterator { item ->
+                if (item.exception.isNullOrEmpty()) {
+                    minItem?.let {
+                        if (item.meanTime < it.meanTime) {
+                            minItem = item
+                            selectedIndex = curIndex
+                        }
+                    }
+                    if (minItem == null) minItem = item
+                }
+                curIndex++
+            }
+
+            with(minItem) {
+                if (this == null) {
+                    tvBestResult.visibility = View.GONE
+                } else {
+
+                    if (selectedIndex == entity.reportDelegateItems.size - 1) { //no need to scroll, on top
+                        tvBestResult.visibility = View.VISIBLE
+                        tvBestResult.text = "Fastest result: " + this.device
+                    } else {
+                        val link = "Go to"
+                        val ss =
+                            SpannableString("Fastest result: " + this.device + ". " + link)
+                        val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                            override fun onClick(textView: View) {
+                                if (selectedIndex != -1) {
+                                    listReports.layoutManager?.scrollToPosition(selectedIndex)
+                                }
+                            }
+
+                            override fun updateDrawState(textPaint: TextPaint) {
+                                super.updateDrawState(textPaint)
+                                textPaint.color = textPaint.linkColor
+                                textPaint.isUnderlineText = false
+                            }
+                        }
+                        val start = ss.length - link.length
+                        val end = ss.length
+                        val fcs = ForegroundColorSpan(Color.BLUE)
+                        ss.setSpan(
+                            fcs,
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                        ss.setSpan(
+                            clickableSpan,
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+
+                        tvBestResult.visibility = View.VISIBLE
+                        tvBestResult.movementMethod = LinkMovementMethod.getInstance()
+                        tvBestResult.text = ss
+                    }
+                }
+            }
+
+        } else {
+            tvBestResult.visibility = View.GONE
+        }
     }
 
     private fun openCsvWith(fileUriString: String) {

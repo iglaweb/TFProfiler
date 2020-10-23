@@ -87,15 +87,17 @@
             android:layout_marginTop="10dp"
             android:background="@android:color/darker_gray" />
 
-
         <TextView
             android:id="@+id/tvError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
+            android:focusable="true"
+            android:longClickable="true"
             android:text="Error"
             android:textColor="@color/black_color"
+            android:textIsSelectable="true"
             android:textSize="16sp" />
 
 

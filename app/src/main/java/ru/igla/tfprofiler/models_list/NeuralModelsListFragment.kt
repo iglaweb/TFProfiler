@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.assent.Permission
@@ -108,11 +107,12 @@ class NeuralModelsListFragment :
             val tvModelDetails: TextView = customView.delegateDetails
             tvModelDetails.text = item.details
 
+            val modelConfig = item.modelConfig
             val tvModelSize: TextView = customView.modelSize
-            tvModelSize.text = "${item.inputWidth}x${item.inputHeight}"
+            tvModelSize.text = "${modelConfig.inputWidth}x${modelConfig.inputHeight}"
 
             val tvModelType: TextView = customView.tvModelTypeFloating
-            tvModelType.text = if (item.quantized) "Quantized" else "Floating"
+            tvModelType.text = modelConfig.quantizedStr()
 
             if (StringUtils.isNullOrEmpty(item.source)) {
                 customView.modelSource.visibility = View.GONE

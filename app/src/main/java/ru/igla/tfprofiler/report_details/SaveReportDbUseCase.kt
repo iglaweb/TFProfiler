@@ -1,6 +1,8 @@
 package ru.igla.tfprofiler.report_details
 
 import android.app.Application
+import ru.igla.tfprofiler.core.ColorSpace
+import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.*
 import ru.igla.tfprofiler.reports_list.ListReportEntity
@@ -22,10 +24,8 @@ class SaveReportDbUseCase(val application: Application) :
         }
 
         val dbModelReportItem = DbModelReportItem(
-            modelType = data.modelType,
-            inputWidth = data.inputWidth,
-            inputHeight = data.inputHeight,
-            quantized = data.quantized
+            modelId = data.modelConfig.tableId,
+            createdAt = data.createdAt
         )
 
         val reportList = data.reportDelegateItems.map { item ->
@@ -59,7 +59,22 @@ class SaveReportDbUseCase(val application: Application) :
             )
         }
 
-        val modelReportWithDelegates = ModelReportWithDelegates(dbModelReportItem, reportList)
+        val modelEntity = DbModelItem(
+            idModel = 0,
+            modelType = ModelType.CUSTOM,
+            title = "filename",
+            inputWidth = 1,
+            inputHeight = 1,
+            modelPath = "modelPath",
+            labelPath = "", //default
+            source = "",
+            details = "",
+            quantized = true,
+            colorSpace = ColorSpace.COLOR
+        )
+
+        val modelReportWithDelegates =
+            ModelReportWithDelegates(dbModelReportItem, reportList, modelEntity)
         roomReportDbController.addReportItem(modelReportWithDelegates)
         return Resource.success(ResponseValue())
     }

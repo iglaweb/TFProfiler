@@ -54,7 +54,7 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
 
     fun deleteCustomModel(item: ModelEntity) {
         modelDeleteUseCase.executeUseCase(
-            ModelDeleteUseCase.RequestValues(item.tableId)
+            ModelDeleteUseCase.RequestValues(item.modelConfig.tableId)
         )
     }
 

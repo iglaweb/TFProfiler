@@ -49,11 +49,12 @@ class StatisticsEstimator(context: Context) {
         return ListReportEntity(
             idReport = 1L,
             createdAt = DateUtils.getCurrentDateInMs(),
+
+            modelName = modelEntity.name,
             modelType = modelEntity.modelType,
-            inputWidth = modelEntity.inputWidth,
-            inputHeight = modelEntity.inputHeight,
-            quantized = modelEntity.quantized,
-            reportDelegateItems = reportItems
+            reportDelegateItems = reportItems,
+
+            modelConfig = modelEntity.modelConfig
         )
     }
 

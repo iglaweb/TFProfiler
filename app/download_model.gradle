@@ -2,7 +2,7 @@ def mobileNetV1DownloadUrl = 'http://storage.googleapis.com/download.tensorflow.
 def mobileNetV2DownloadUrl = 'https://storage.googleapis.com/tfhub-lite-models/google/lite-model/object_detection/mobile_object_localizer_v1/1/default/1.tflite'
 def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_front.tflite'
 //or switch back to back camera specific model
-def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
+//def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
 def yolov4DownloadUrl = 'https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite'
 def faceLandmarkUrl = "https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_landmark.tflite"
 
@@ -37,7 +37,7 @@ task downloadTfliteFaceLandmark(type: Download) {
     }
     src faceLandmarkUrl
     dest new File(buildDir, project.ext.faceLandmarkLocalFile)
-    overwrite true
+    overwrite false
 }
 
 task downloadAndCopyFaceLandmark(dependsOn: downloadTfliteFaceLandmark, type: Copy) {
@@ -59,7 +59,7 @@ task downloadTfliteYoloV4(type: Download) {
     }
     src yolov4DownloadUrl
     dest new File(buildDir, project.ext.yolov4LocalFile)
-    overwrite true
+    overwrite false
 }
 
 task downloadAndCopyYoloV4(dependsOn: downloadTfliteYoloV4, type: Copy) {
@@ -82,7 +82,7 @@ task downloadTfliteBlazefaceFront(type: Download) {
     }
     src blazefaceFrontCameraUrl
     dest new File(buildDir, project.ext.blazefaceFrontLocalFile)
-    overwrite true
+    overwrite false
 }
 
 task downloadAndCopyBlazefaceFront(dependsOn: downloadTfliteBlazefaceFront, type: Copy) {
@@ -105,7 +105,7 @@ task downloadTfliteMobileNetV2(type: Download) {
     }
     src mobileNetV2DownloadUrl
     dest new File(buildDir, project.ext.mobilenetv2LocalFile)
-    overwrite true
+    overwrite false
 }
 
 task downloadAndCopyMobileNetV2(dependsOn: downloadTfliteMobileNetV2, type: Copy) {
@@ -128,7 +128,7 @@ task downloadZipMobileNetV1(type: Download) {
     }
     src mobileNetV1DownloadUrl
     dest new File(buildDir, 'mobilenet_v1_1.0.zip')
-    overwrite true
+    overwrite false
 }
 
 task downloadAndUnzipMobileNetV1(dependsOn: downloadZipMobileNetV1, type: Copy) {
