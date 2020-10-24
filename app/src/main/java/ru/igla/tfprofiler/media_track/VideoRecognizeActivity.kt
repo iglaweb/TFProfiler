@@ -16,10 +16,9 @@ class VideoRecognizeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val intent = intent
         val mediaRequest: MediaRequest? =
             intent?.getParcelableExtra(NeuralModelsListFragment.MEDIA_ITEM)
-        mediaRequest ?: return
+        check(mediaRequest != null) { "MediaRequest is not provided" }
 
         if (mediaRequest.mediaPath.isEmpty()) {
             mToaster.showToast("File path is empty. Finish activity")
@@ -28,7 +27,7 @@ class VideoRecognizeActivity : AppCompatActivity() {
         }
 
         val delegateRunRequest: DelegateRunRequest? =
-            intent.getParcelableExtra(NeuralModelsListFragment.MODEL_OPTIONS)
+            intent?.getParcelableExtra(NeuralModelsListFragment.MODEL_OPTIONS)
         check(delegateRunRequest != null) { "Delegate is not provided" }
 
         setContentView(R.layout.activity_video_layout)

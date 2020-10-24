@@ -11,7 +11,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import io.apptik.widget.MultiSlider
@@ -21,6 +20,7 @@ import kotlinx.coroutines.*
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.ui.AboutDialog
+import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.utils.ViewUtils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -28,10 +28,8 @@ import kotlin.coroutines.CoroutineContext
 
 
 class MainViewPagerFragment :
-    Fragment(),
+    BaseFragment(R.layout.fragment_neural_pager),
     CoroutineScope {
-
-    class GPUInfo(val vendorName: String, val modelName: String)
 
     private var gpuInfo: GPUInfo? = null
 
@@ -46,14 +44,6 @@ class MainViewPagerFragment :
     override val coroutineContext: CoroutineContext
         get() = Job() + uiDispatcher
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_neural_pager, container, false)
-    }
-
     override fun onStop() {
         ViewUtils.dismissDialogSafety(deviceInfoDialog)
         super.onStop()
@@ -62,6 +52,13 @@ class MainViewPagerFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setToolbar()
+        setAdapter()
+
+        configureSettings()
+        getGPUInformation()
+    }
+
+    private fun setAdapter() {
         viewpager.adapter = MainModelsViewPagerAdapter(this)
         TabLayoutMediator(tabLayout, viewpager) { tab, position ->
             if (position == 0) {
@@ -70,9 +67,6 @@ class MainViewPagerFragment :
                 tab.text = "Reports"
             }
         }.attach()
-
-        configureSettings()
-        getGPUInformation()
     }
 
     private fun getGPUInformation() {
@@ -135,9 +129,8 @@ class MainViewPagerFragment :
 
     private fun showDeviceDialog() {
         launch(Dispatchers.IO) {
-            val generatedText = mainViewPagerViewModel.generateDeviceText(gpuInfo)
+            val text = mainViewPagerViewModel.getDeviceTextViewHtml(gpuInfo)
             withContext(Dispatchers.Main) {
-                val text = mainViewPagerViewModel.getTextViewHTML(generatedText)
                 deviceInfoDialog = AlertDialog.Builder(context).create().apply {
                     setTitle("Device information")
                     setMessage(text)

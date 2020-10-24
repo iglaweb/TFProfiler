@@ -176,6 +176,7 @@ class NeuralModelsListFragment :
                     val intent = Intent().apply {
                         type = "file/*"
                         action = Intent.ACTION_GET_CONTENT
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     IntentUtils.startFragmentForResultSafely(
                         this,

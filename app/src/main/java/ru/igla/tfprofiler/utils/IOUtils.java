@@ -1,22 +1,15 @@
 package ru.igla.tfprofiler.utils;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 import ru.igla.tfprofiler.TFProfilerApp;
 import ru.igla.tfprofiler.media_track.MediaPathProvider;
@@ -25,14 +18,8 @@ import ru.igla.tfprofiler.media_track.MediaPathProvider;
 public final class IOUtils {
 
     private IOUtils() {
+        //ignore
     }
-
-    /***
-     * Represents the end-of-file (or stream).
-     */
-    private static final int EOF = -1;
-
-    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     private static String combinePaths(@NonNull String... paths) {
         if (paths.length == 0) return "";
@@ -85,49 +72,6 @@ public final class IOUtils {
         return f.exists() && f.canWrite();
     }
 
-    public static int copy(final InputStream input, final OutputStream output) throws IOException {
-        final long count = copyLarge(input, output, new byte[DEFAULT_BUFFER_SIZE]);
-        if (count > Integer.MAX_VALUE) {
-            return -1;
-        }
-        return (int) count;
-    }
-
-    public static long copyLarge(final InputStream input, final OutputStream output, final byte[] buffer)
-            throws IOException {
-        long count = 0;
-        int n = 0;
-        while (EOF != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
-    }
-
-    /***
-     * Read stream is
-     * @param is input stream
-     * @return result as a string
-     */
-    public static String readStream(InputStream is) throws IOException {
-        BufferedReader isr = null;
-        int charRead;
-        final int bufSize = 1024 * 8;
-        char[] inputBuffer = new char[bufSize];
-
-        StringBuilder str = new StringBuilder();
-        try {
-            isr = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            while ((charRead = isr.read(inputBuffer, 0, bufSize)) != EOF) {
-                str.append(String.copyValueOf(
-                        inputBuffer, 0, charRead));
-            }
-        } finally {
-            closeQuietly(isr);
-        }
-        return str.toString();
-    }
-
     private static boolean checkFileExistsInternalStorage(Context ctx, String filename) {
         File file = ctx.getFileStreamPath(filename);
         return file.exists();
@@ -147,19 +91,6 @@ public final class IOUtils {
             closeQuietly(outputStream);
         }
         return true;
-    }
-
-    /***
-     * Explicit cursor close due to issue http://stackoverflow.com/questions/13878908/sqlitedatabase-does-not-implement-interface
-     * @param c cursor to close
-     */
-    public static void closeQuietly(@Nullable Cursor c) {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (Exception ignored) {
-            }
-        }
     }
 
     /**

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
@@ -90,9 +91,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         Intent intent = getIntent();
         if (intent != null) {
             MediaRequest mediaRequest = intent.getParcelableExtra(NeuralModelsListFragment.MEDIA_ITEM);
-            if (mediaRequest == null) {
-                return;
-            }
+            Objects.requireNonNull(mediaRequest, "MediaRequest is null");
 
             this.modelEntity = mediaRequest.getModelEntity();
             String cameraType = intent.getStringExtra(NeuralModelsListFragment.EXTRA_CAMERA_TYPE);
@@ -102,14 +101,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             }
             this.cameraType = CameraType.valueOf(cameraType);
         }
-        if (this.modelEntity == null) {
-            showToast("Model is empty. Finish activity");
-            finish();
-        }
-        if (this.cameraType == null) {
-            showToast("Camera is empty. Finish activity");
-            finish();
-        }
+
+        Objects.requireNonNull(this.modelEntity, "ModelEntity is null");
+        Objects.requireNonNull(this.modelEntity, "CameraType is null");
+
         this.statisticsEstimator = new StatisticsEstimator(getApplicationContext());
         super.onCreate(savedInstanceState);
     }

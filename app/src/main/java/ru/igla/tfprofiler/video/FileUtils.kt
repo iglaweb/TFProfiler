@@ -11,30 +11,23 @@ import java.io.*
 object FileUtils {
 
     fun tryGetRealPathFromURI(context: Context?, contentURI: Uri): String? {
-        val result: String?
         val cursor = context?.contentResolver?.query(contentURI, null, null, null, null)
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.path
+        return if (cursor == null) { // Source is Dropbox or other similar local file path
+            contentURI.path
         } else {
-            cursor.moveToFirst()
-            val idx =
-                cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA) //we cannot get physical address of a file (Picassa folder)
-            if (idx == -1) return null
-            result = cursor.getString(idx)
-            IOUtils.closeQuietly(cursor)
+            cursor.use {
+                cursor.moveToFirst()
+                val idx =
+                    cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA) //we cannot get physical address of a file (Picassa folder)
+                if (idx == -1) return null
+                cursor.getString(idx)
+            }
         }
-        return result
     }
 
     fun copyFileByUri(context: Context, uri: Uri, filename: String = "temp_video.mp4"): String {
         val sourceFilename: String = RealPathUtil.getRealPath(context, uri)
         val destinationFilename = MediaPathProvider.getMediaPath(context) + "/" + filename
-
-        //delete temp file if exists
-        val file = File(destinationFilename)
-        if (file.exists()) {
-            file.delete()
-        }
         return copyFile(sourceFilename, destinationFilename)
     }
 
@@ -42,6 +35,7 @@ object FileUtils {
         sourceFilename: String,
         destinationFilename: String
     ): String {
+        //delete temp file if exists
         val file = File(destinationFilename)
         if (file.exists()) {
             file.delete()

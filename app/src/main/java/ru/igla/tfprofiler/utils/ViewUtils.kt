@@ -22,10 +22,6 @@ object ViewUtils {
         }
     }
 
-    fun runOnUiThread(action: Runnable, delay: Long) {
-        uiHandler.postDelayed(action, delay)
-    }
-
     @JvmStatic
     fun stopHandler(backgroundHandler: Handler?) {
         backgroundHandler?.looper?.apply {
