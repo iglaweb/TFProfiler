@@ -56,8 +56,11 @@ android {
         }
     }
 
+    def localPropsFile = 'local.properties'
     def localProperties = new Properties()
-    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+    if (rootProject.file(localPropsFile).exists()) {
+        localProperties.load(new FileInputStream(rootProject.file(localPropsFile)))
+    }
     def debugMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
     def releaseMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
 
