@@ -80,7 +80,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
      * @param context     The asset manager to be used to load assets.
      * @param modelEntity The filepath of the model GraphDef protocol buffer.
      */
-    public Classifier create(
+    public Classifier<T> create(
             final Context context,
             ModelEntity modelEntity,
             Device device,

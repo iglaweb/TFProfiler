@@ -4,6 +4,9 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'de.undercouch.download'
 
+apply plugin: 'com.google.gms.google-services' // Google Services Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'
+
 // Download default models; if you wish to use your own models then
 // place them in the "assets" directory and comment out this line.
 apply from:'download_model.gradle'
@@ -16,7 +19,7 @@ android {
         applicationId "ru.igla.tfprofiler"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3
+        versionCode 4
         versionName "0.92"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -25,7 +28,6 @@ android {
 
 
         buildConfigField 'String', "ASSET_MOBILENETV1_FILE", "\"$project.ext.mobilenetv1/\""
-
         buildConfigField 'String', "ASSET_MOBILENETV2_FILE", "\"$project.ext.mobilenetv2/$project.ext.mobilenetv2LocalFile\""
         buildConfigField 'String', "ASSET_YOLOV4_FILE", "\"$project.ext.yolov4/$project.ext.yolov4LocalFile\""
         buildConfigField 'String', "ASSET_BLAZEFACE_FILE", "\"$project.ext.blazefacefront/$project.ext.blazefaceFrontLocalFile\""
@@ -39,10 +41,38 @@ android {
             }
         }
     }
+
+    def releasePropsFile = 'release_tfprofiler.properties'
+    signingConfigs {
+        if (rootProject.file(releasePropsFile).exists()) {
+            def props = new Properties()
+            props.load(new FileInputStream(rootProject.file(releasePropsFile)))
+            release {
+                storeFile rootProject.file(props.keyStore)
+                storePassword props.storePassword
+                keyAlias props.keyAlias
+                keyPassword props.keyPassword
+            }
+        }
+    }
+
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+    def debugMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
+    def releaseMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (rootProject.file(releasePropsFile).exists()) {
+                signingConfig signingConfigs.release
+            }
+            buildConfigField 'String', 'METRICA_KEY', debugMetricaKey
+        }
+        debug {
+            debuggable true
+            buildConfigField 'String', 'METRICA_KEY', releaseMetricaKey
         }
     }
     aaptOptions {
@@ -92,10 +122,18 @@ def tensorflow = '2.3.0'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation platform('com.google.firebase:firebase-bom:26.0.0')
+    // Add the dependency for the Firebase SDK for Google Analytics
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    implementation 'com.yandex.android:mobmetricalib:3.16.1'
 
     implementation 'de.siegmar:fastcsv:1.0.3' //export csv
 

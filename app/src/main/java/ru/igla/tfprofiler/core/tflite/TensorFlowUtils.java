@@ -25,7 +25,10 @@ import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.utils.IOUtils;
 
 
-public class TensorFlowUtils {
+public final class TensorFlowUtils {
+
+    private TensorFlowUtils() {
+    }
 
     /***
      * https://www.tensorflow.org/lite/performance/nnapi#create_a_device_exclusion_list

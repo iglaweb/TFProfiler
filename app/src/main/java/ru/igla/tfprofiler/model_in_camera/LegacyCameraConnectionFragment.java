@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.List;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.core.ImageUtils;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
+import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 
 public class LegacyCameraConnectionFragment extends Fragment {

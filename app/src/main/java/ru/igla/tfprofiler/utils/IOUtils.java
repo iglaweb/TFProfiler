@@ -64,19 +64,6 @@ public final class IOUtils {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
-    public static boolean isPathCorrectAndWritable(String path) {
-        if (StringUtils.isNullOrEmpty(path)) {
-            return false;
-        }
-        File f = new File(path);
-        return f.exists() && f.canWrite();
-    }
-
-    private static boolean checkFileExistsInternalStorage(Context ctx, String filename) {
-        File file = ctx.getFileStreamPath(filename);
-        return file.exists();
-    }
-
     public static boolean writeBitmapExternalStorage(String filename, Bitmap bmp) {
         FileOutputStream outputStream = null;
         File file = new File(MediaPathProvider.INSTANCE.getRootPath(TFProfilerApp.Companion.getInstance()), filename);

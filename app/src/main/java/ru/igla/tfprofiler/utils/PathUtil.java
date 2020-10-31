@@ -16,7 +16,11 @@ import ru.igla.tfprofiler.core.Timber;
  * Created by Aki on 1/7/2017.
  */
 
-public class PathUtil {
+public final class PathUtil {
+
+    private PathUtil() {
+    }
+
     /*
      * Gets the file path of the given Uri.
      */

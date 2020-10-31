@@ -1,13 +1,11 @@
 package ru.igla.tfprofiler.utils
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -17,9 +15,6 @@ import ru.igla.tfprofiler.core.Timber
 import kotlin.math.ceil
 import kotlin.math.floor
 
-fun allPermissionsGranted(grantResults: IntArray) = grantResults.all {
-    it == PackageManager.PERMISSION_GRANTED
-}
 
 fun Int.toDp(displayMetrics: DisplayMetrics): Float = this.toFloat() / displayMetrics.density
 fun Int.toSp(displayMetrics: DisplayMetrics): Float = this.toFloat() / displayMetrics.scaledDensity
@@ -68,31 +63,6 @@ inline fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T
     return if (p1 != null && p2 != null) block(p1, p2) else null
 }
 
-inline fun <T1 : Any, T2 : Any, T3 : Any, R : Any> safeLet(
-    p1: T1?,
-    p2: T2?,
-    p3: T3?,
-    block: (T1, T2, T3) -> R?
-): R? {
-    return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
-}
-
-/**
- * Created by igor-lashkov on 25/10/2017.
- */
-
-private const val TAG = "TFProfiler-android"
-
-fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, message, duration).show()
-}
-
-fun Any.toast(context: Context) {
-    Toast.makeText(context, this.toString(), Toast.LENGTH_LONG).show()
-}
-
-internal fun Context.dp(dp: Float): Double = dpF(dp).toDouble()
-fun Context.dpToPx(dp: Float): Int = Math.round(dpF(dp))
 fun Context.dpF(dp: Float): Float = dp * resources.displayMetrics.density
 
 fun <T> lazyNonSafe(initializer: () -> T): Lazy<T> = lazy(LazyThreadSafetyMode.NONE, initializer)
