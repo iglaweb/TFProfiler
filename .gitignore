@@ -64,5 +64,4 @@ proguard/
 
 *.pepk
 release_tfprofiler.properties
-app/google-services.json
 app/src/main/assets/*/*.tflite

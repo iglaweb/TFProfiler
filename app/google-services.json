@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "761579713703",
+    "firebase_url": "https://tfprofiler.firebaseio.com",
+    "project_id": "tfprofiler",
+    "storage_bucket": "tfprofiler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761579713703:android:cb286602832dcb5a15d782",
+        "android_client_info": {
+          "package_name": "ru.igla.tfprofiler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761579713703-u0v97j5u07rr9u26tuoeeh1up893fn68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9e_mgk2JDGtOoD5HZqwoWdMsXeV6z8Uo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761579713703-u0v97j5u07rr9u26tuoeeh1up893fn68.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
