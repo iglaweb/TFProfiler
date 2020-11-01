@@ -46,10 +46,13 @@ class TFProfilerApp : Application() {
     }
 
     private fun initTrackers() {
-        val metricaTracker: ILogger = MetricaTracker(this, BuildConfig.METRICA_KEY)
-        AndroidLogger.instance.register(metricaTracker)
-        val crashlyticsTracker: ILogger = CrashlyticsTracker(this)
-        AndroidLogger.instance.register(crashlyticsTracker)
+        AndroidLogger.instance.apply {
+            val metricaTracker: ILogger =
+                MetricaTracker(this@TFProfilerApp, BuildConfig.METRICA_KEY)
+            register(metricaTracker)
+            val crashlyticsTracker: ILogger = CrashlyticsTracker(this@TFProfilerApp)
+            register(crashlyticsTracker)
+        }
     }
 
     companion object {

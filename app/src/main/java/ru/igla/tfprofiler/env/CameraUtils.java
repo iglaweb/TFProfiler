@@ -12,7 +12,10 @@ import androidx.annotation.Nullable;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.models_list.CameraType;
 
-public class CameraUtils {
+public final class CameraUtils {
+
+    private CameraUtils() {
+    }
 
     @Nullable
     public static Pair<String, Boolean> chooseCamera(CameraType cameraType, Context context) {

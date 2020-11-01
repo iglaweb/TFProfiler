@@ -62,7 +62,7 @@ android {
         localProperties.load(new FileInputStream(rootProject.file(localPropsFile)))
     }
     def debugMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
-    def releaseMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
+    def releaseMetricaKey = localProperties['apiMetricaReleaseKey'] ?: ''
 
     buildTypes {
         release {
@@ -71,11 +71,11 @@ android {
             if (rootProject.file(releasePropsFile).exists()) {
                 signingConfig signingConfigs.release
             }
-            buildConfigField 'String', 'METRICA_KEY', debugMetricaKey
+            buildConfigField 'String', 'METRICA_KEY', releaseMetricaKey
         }
         debug {
             debuggable true
-            buildConfigField 'String', 'METRICA_KEY', releaseMetricaKey
+            buildConfigField 'String', 'METRICA_KEY', debugMetricaKey
         }
     }
     aaptOptions {
@@ -148,7 +148,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.exifinterface:exifinterface:1.2.0'
+    implementation 'androidx.exifinterface:exifinterface:1.3.1'
 
     implementation 'io.apptik.widget:multislider:1.3'
 

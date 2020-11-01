@@ -54,7 +54,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
 
     OverlayView trackingOverlay;
-    private Integer sensorOrientation;
 
     @Nullable
     private Classifier<Classifier.Recognition> detector;
@@ -94,16 +93,16 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             Objects.requireNonNull(mediaRequest, "MediaRequest is null");
 
             this.modelEntity = mediaRequest.getModelEntity();
-            String cameraType = intent.getStringExtra(NeuralModelsListFragment.EXTRA_CAMERA_TYPE);
-            if (StringUtils.isNullOrEmpty(cameraType)) {
+            String extraCameraType = intent.getStringExtra(NeuralModelsListFragment.EXTRA_CAMERA_TYPE);
+            if (StringUtils.isNullOrEmpty(extraCameraType)) {
                 showToast("Camera type is empty. Finish activity");
                 finish();
             }
-            this.cameraType = CameraType.valueOf(cameraType);
+            this.cameraType = CameraType.valueOf(extraCameraType);
         }
 
         Objects.requireNonNull(this.modelEntity, "ModelEntity is null");
-        Objects.requireNonNull(this.modelEntity, "CameraType is null");
+        Objects.requireNonNull(this.cameraType, "CameraType is null");
 
         this.statisticsEstimator = new StatisticsEstimator(getApplicationContext());
         super.onCreate(savedInstanceState);
@@ -130,7 +129,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 
-        sensorOrientation = rotation - getScreenOrientation();
+        Integer sensorOrientation = rotation - getScreenOrientation();
         Timber.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
 
         Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
@@ -369,7 +368,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     modelOptions
             );
         } catch (Exception e) {
-            Timber.e(e, "Failed to create classifier.");
+            Timber.e(e);
+            showToast("Classifier failed to create. \n" + e.getMessage());
         } finally {
             setModelOptions(modelOptions);
             clearStats();

@@ -26,6 +26,7 @@ captures/
 # Built application files
 *.apk
 *.ap_
+*.aab
 
 # Files for the Dalvik VM
 *.dex
@@ -59,6 +60,9 @@ proguard/
 
 # Keystore files
 *.jks
-my-release-key.keystore
+*.keystore
 
+*.pepk
+release_tfprofiler.properties
+app/google-services.json
 app/src/main/assets/*/*.tflite

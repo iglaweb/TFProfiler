@@ -96,14 +96,14 @@ public class MultiBoxTracker {
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(60.0f);
 
-        final Paint boxPaint = new Paint();
-        boxPaint.setColor(Color.RED);
-        boxPaint.setAlpha(200);
-        boxPaint.setStyle(Style.STROKE);
+        final Paint debugBoxPaint = new Paint();
+        debugBoxPaint.setColor(Color.RED);
+        debugBoxPaint.setAlpha(200);
+        debugBoxPaint.setStyle(Style.STROKE);
 
         for (final Pair<Float, RectF> detection : screenRects) {
             final RectF rect = detection.second;
-            canvas.drawRect(rect, boxPaint);
+            canvas.drawRect(rect, debugBoxPaint);
             canvas.drawText("" + detection.first, rect.left, rect.top, textPaint);
             borderedText.drawText(canvas, rect.centerX(), rect.centerY(), "" + detection.first);
         }

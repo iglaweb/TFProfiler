@@ -224,7 +224,7 @@ class VideoRecognizeFragment :
 
                     //get next request
                     if (isActive) {
-                        mToaster.showToast("Classifier is not created. \n" + it.message)
+                        mToaster.showToast("Classifier failed to create. \n" + it.message)
                         // run remaining options
                         queue.poll()?.apply {
                             recognitionViewModel.setModelOptions(this)

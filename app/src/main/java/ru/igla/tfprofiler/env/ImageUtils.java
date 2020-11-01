@@ -13,14 +13,14 @@ import ru.igla.tfprofiler.media_track.MediaPathProvider;
 /**
  * Utility class for manipulating images.
  */
-public class ImageUtils {
+public final class ImageUtils {
 
     private ImageUtils() {
     }
 
     // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
     // are normalized to eight bits.
-    private static final int kMaxChannelValue = 262143;
+    private static final int K_MAX_CHANNEL_VALUE = 262143;
 
     /**
      * Saves a Bitmap object to disk for analysis.
@@ -85,9 +85,9 @@ public class ImageUtils {
         int b = (y1192 + 2066 * u);
 
         // Clipping RGB values to be inside boundaries [ 0 , kMaxChannelValue ]
-        r = r > kMaxChannelValue ? kMaxChannelValue : (r < 0 ? 0 : r);
-        g = g > kMaxChannelValue ? kMaxChannelValue : (g < 0 ? 0 : g);
-        b = b > kMaxChannelValue ? kMaxChannelValue : (b < 0 ? 0 : b);
+        r = r > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (r < 0 ? 0 : r);
+        g = g > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (g < 0 ? 0 : g);
+        b = b > K_MAX_CHANNEL_VALUE ? K_MAX_CHANNEL_VALUE : (b < 0 ? 0 : b);
 
         return 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);
     }

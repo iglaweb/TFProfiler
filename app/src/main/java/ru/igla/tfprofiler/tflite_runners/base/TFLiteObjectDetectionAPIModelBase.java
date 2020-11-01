@@ -7,7 +7,6 @@ import android.os.Trace;
 import org.jetbrains.annotations.NotNull;
 import org.tensorflow.lite.DataType;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
@@ -17,10 +16,10 @@ import java.util.Vector;
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.ModelType;
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.GrayOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
+import ru.igla.tfprofiler.core.tflite.FailedCreateTFDelegate;
 import ru.igla.tfprofiler.core.tflite.TFInterpeterThreadExecutor;
 import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils;
@@ -86,7 +85,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             Device device,
             int numThreads,
             boolean useXnnpack)
-            throws IOException {
+            throws Exception {
 
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
@@ -99,19 +98,14 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             this.labels = TensorFlowUtils.loadLabelList(context.getAssets(), actualFilename);
         }
 
-        try {
-            tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
-            tfLiteExecutor.init(device, numThreads, useXnnpack);
-        } catch (Exception e) {
-            Timber.e(e);
-            throw new RuntimeException(e);
-        }
+        tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
+        tfLiteExecutor.init(device, numThreads, useXnnpack);
 
         boolean isModelQuantized;
         if (modelEntity.getModelType() == ModelType.CUSTOM) {
             TFInterpreterWrapper interpreter = tfLiteExecutor.getTfLite();
             if (interpreter == null) {
-                throw new RuntimeException("Interpreter is not configured");
+                throw new FailedCreateTFDelegate(device, "Interpreter is not configured");
             }
             int probabilityTensorIndex = 0;
             // Creates the output tensor and its processor.
