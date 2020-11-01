@@ -21,6 +21,7 @@ import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.ui.AboutDialog
 import ru.igla.tfprofiler.ui.BaseFragment
+import ru.igla.tfprofiler.utils.SystemUtils
 import ru.igla.tfprofiler.utils.ViewUtils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -76,14 +77,21 @@ class MainViewPagerFragment :
                 gl?.apply {
                     val gpuCardName = gl.glGetString(GL10.GL_RENDERER)
                     val vendorName = gl.glGetString(GL10.GL_VENDOR)
-                    gpuInfo = GPUInfo(vendorName, gpuCardName)
+
+                    val glEsVersion = SystemUtils.getGLESVersionFromPackageManager(requireContext())
+                    val major = SystemUtils.getMajorVersionGLES(glEsVersion)
+                    val minor = SystemUtils.getMinorVersionGLES(glEsVersion)
+                    val glEsVersionStr = "$major.$minor"
+                    gpuInfo = GPUInfo(glEsVersionStr, vendorName, gpuCardName)
                 }
             }
 
             override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+                //no impl
             }
 
             override fun onDrawFrame(gl: GL10?) {
+                //no impl
             }
         })
 

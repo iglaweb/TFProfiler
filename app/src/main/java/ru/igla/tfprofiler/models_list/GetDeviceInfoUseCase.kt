@@ -82,6 +82,8 @@ class GetDeviceInfoUseCase(val application: Application) :
 
             gpuInfo?.let { gpu ->
                 append("<br><br><b>GPU: </b>")
+                append(gpu.glEsVersionStr)
+                append(" GLES, ")
                 append(gpu.vendorName)
                 append(", ")
                 append(gpu.modelName)

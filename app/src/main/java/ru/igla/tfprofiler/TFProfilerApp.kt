@@ -5,10 +5,7 @@ import android.app.Application
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import com.facebook.stetho.Stetho
-import ru.igla.tfprofiler.analytics.AndroidLogger
-import ru.igla.tfprofiler.analytics.CrashlyticsTracker
-import ru.igla.tfprofiler.analytics.ILogger
-import ru.igla.tfprofiler.analytics.MetricaTracker
+import ru.igla.tfprofiler.analytics.InitAnalyticsImpl
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.DevelopReportingTree
 
@@ -46,13 +43,8 @@ class TFProfilerApp : Application() {
     }
 
     private fun initTrackers() {
-        AndroidLogger.instance.apply {
-            val metricaTracker: ILogger =
-                MetricaTracker(this@TFProfilerApp, BuildConfig.METRICA_KEY)
-            register(metricaTracker)
-            val crashlyticsTracker: ILogger = CrashlyticsTracker(this@TFProfilerApp)
-            register(crashlyticsTracker)
-        }
+        val initAnalytics = InitAnalyticsImpl()
+        initAnalytics.init(this)
     }
 
     companion object {

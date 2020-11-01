@@ -19,8 +19,8 @@ android {
         applicationId "ru.igla.tfprofiler"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 4
-        versionName "0.92"
+        versionCode 5
+        versionName "0.93"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         //http://www.vision.caltech.edu/Image_Datasets/Caltech101/
@@ -61,8 +61,8 @@ android {
     if (rootProject.file(localPropsFile).exists()) {
         localProperties.load(new FileInputStream(rootProject.file(localPropsFile)))
     }
-    def debugMetricaKey = localProperties['apiMetricaDebugKey'] ?: ''
-    def releaseMetricaKey = localProperties['apiMetricaReleaseKey'] ?: ''
+    def debugMetricaKey = localProperties['apiMetricaDebugKey'] ?: "\"\""
+    def releaseMetricaKey = localProperties['apiMetricaReleaseKey'] ?: "\"\""
 
     buildTypes {
         release {
