@@ -21,8 +21,18 @@ The app displays a list of models built inside the app that can be used to measu
    <img align="center" src="img/screenshot_run_model.jpg" alt="Run model" width="220"> &nbsp;&nbsp;&nbsp;
    <img align="center" src="img/screenshot_report.jpg" alt="Report" width="220">
 </div>
-
 <br/>
+
+
+## Download
+
+Latest `apk` release can be found on release [page](https://github.com/iglaweb/TFProfiler/releases).
+
+Or download app via Google Play:
+
+<a href="https://play.google.com/store/apps/details?id=ru.igla.tfprofiler" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
+</a>
 
 
 ## Built-in models
@@ -40,10 +50,6 @@ App has built-in models that you can play with to see how inference performance 
 [facemesh]: https://google.github.io/mediapipe/solutions/face_mesh.html
 [blazeface]: https://google.github.io/mediapipe/solutions/face_detection.html
 
-
-## Release
-
-Latest `apk` release can be found on release [page](https://github.com/iglaweb/TFProfiler/releases).
 
 ## Image Dataset
 The app has built-in a subset of image dataset [Caltech 101](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). It is used for running model inteferences.
