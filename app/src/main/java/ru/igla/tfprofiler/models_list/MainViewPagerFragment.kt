@@ -2,6 +2,7 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import io.apptik.widget.MultiSlider
 import kotlinx.android.synthetic.main.dialog_configure_run_tf.*
@@ -120,6 +122,10 @@ class MainViewPagerFragment :
             }
             R.id.action_about -> {
                 AboutDialog.show(requireActivity())
+            }
+            R.id.licenses -> {
+                OssLicensesMenuActivity.setActivityTitle(getString(R.string.about_license_title))
+                startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)

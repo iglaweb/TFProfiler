@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.TakeVideoFrameListener;
-import ru.igla.tfprofiler.video.TimestampBitmap;
 import ru.igla.tfprofiler.video.UpdateProgressListener;
 
 public class JCodecExtractor implements ReadVideoFileInterface {
@@ -103,7 +102,7 @@ public class JCodecExtractor implements ReadVideoFileInterface {
             Timber.i(picture.getWidth() + "x" + picture.getHeight() + " " + picture.getColor());
 
             // IOUtils.writeBitmapExternalStorage("bmp_video_" + frameNumber, bitmap);
-            takeVideoFrameListener.onTakeFrame(new TimestampBitmap(bitmap));
+            takeVideoFrameListener.onTakeFrame(bitmap);
         }
 
         IOUtils.closeQuietly(fileChannelWrapper);

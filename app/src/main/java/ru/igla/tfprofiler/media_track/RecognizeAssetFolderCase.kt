@@ -1,11 +1,12 @@
 package ru.igla.tfprofiler.media_track
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.*
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
-import ru.igla.tfprofiler.video.TimestampBitmap
+import ru.igla.tfprofiler.video.FileUtils
 import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
@@ -14,7 +15,7 @@ class RecognizeAssetFolderCase(
 ) {
 
     interface OnReadAssetImageCallback {
-        fun onReadAssetImage(timestampBitmap: TimestampBitmap)
+        fun onReadAssetImage(bitmap: Bitmap)
         fun onProgress(progress: FrameInformation)
     }
 
@@ -24,7 +25,7 @@ class RecognizeAssetFolderCase(
             if (!coroutineContext.isActive) {
                 throw CancellationException()
             }
-            val isImage = MediaTrackUtils.isImage(it)
+            val isImage = FileUtils.isImage(it)
             if (isImage) imageList.add(it)
         }
         return imageList
@@ -52,11 +53,7 @@ class RecognizeAssetFolderCase(
                     val path = "$imagesFolder/${imagePath}"
                     context.assets.open(path).use {
                         val bmp = BitmapFactory.decodeStream(it)
-                        onReadAssetImageCallback.onReadAssetImage(
-                            TimestampBitmap(
-                                bmp
-                            )
-                        )
+                        onReadAssetImageCallback.onReadAssetImage(bmp)
                     }
                     count++
                     onReadAssetImageCallback.onProgress(

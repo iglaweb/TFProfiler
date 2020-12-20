@@ -13,15 +13,15 @@ import java.io.IOException;
 import java.util.Locale;
 
 import ru.igla.tfprofiler.core.FileNameLibraryLoader;
+import ru.igla.tfprofiler.core.LibraryLoader;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.TakeVideoFrameListener;
-import ru.igla.tfprofiler.video.TimestampBitmap;
 import ru.igla.tfprofiler.video.UpdateProgressListener;
 
 public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
 
     static {
-        FileNameLibraryLoader fileNameLibraryLoader = new FileNameLibraryLoader();
+        LibraryLoader fileNameLibraryLoader = new FileNameLibraryLoader();
         fileNameLibraryLoader.loadLibraryFile("opencv_java4");
     }
 
@@ -44,7 +44,6 @@ public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
         Timber.i("FPS: " + fpsRate + "; total frames: " + frameCount);
 
         int frameNumber = 0;
-
         while (true) {
             Mat matFrame = new Mat();
             try {
@@ -58,7 +57,7 @@ public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
 
                     Bitmap bitmap = Bitmap.createBitmap(matFrame.width(), matFrame.height(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(matFrame, bitmap);
-                    takeVideoFrameListener.onTakeFrame(new TimestampBitmap(bitmap));
+                    takeVideoFrameListener.onTakeFrame(bitmap);
 
                 } else {
                     Timber.i("Frame is not obtained. Break!");

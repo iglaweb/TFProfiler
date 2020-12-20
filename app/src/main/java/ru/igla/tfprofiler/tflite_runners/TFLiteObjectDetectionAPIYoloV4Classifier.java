@@ -41,7 +41,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
     private static final int[] OUTPUT_WIDTH_FULL = new int[]{10647, 10647};
 
     private float[][][] bboxes;
-    private float[][][] out_score;
+    private float[][][] outScore;
 
     public TFLiteObjectDetectionAPIYoloV4Classifier() {
     }
@@ -52,14 +52,14 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
 
         if (IS_TINY) {
             bboxes = new float[1][OUTPUT_WIDTH_TINY[0]][4];
-            out_score = new float[1][OUTPUT_WIDTH_TINY[1]][labels.size()];
+            outScore = new float[1][OUTPUT_WIDTH_TINY[1]][labels.size()];
         } else {
             bboxes = new float[1][OUTPUT_WIDTH_FULL[0]][4];
-            out_score = new float[1][OUTPUT_WIDTH_FULL[1]][labels.size()];
+            outScore = new float[1][OUTPUT_WIDTH_FULL[1]][labels.size()];
         }
 
         outputMap.put(0, bboxes);
-        outputMap.put(1, out_score);
+        outputMap.put(1, outScore);
         return outputMap;
     }
 
@@ -159,7 +159,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
             int detectedClass = -1;
             final float[] classes = new float[labels.size()];
             for (int c = 0; c < labels.size(); c++) {
-                classes[c] = out_score[0][i][c];
+                classes[c] = outScore[0][i][c];
             }
             for (int c = 0; c < labels.size(); ++c) {
                 if (classes[c] > maxClass) {
@@ -195,7 +195,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends TFLiteObjectDetect
             int detectedClass = -1;
             final float[] classes = new float[labels.size()];
             for (int c = 0; c < labels.size(); c++) {
-                classes[c] = out_score[0][i][c];
+                classes[c] = outScore[0][i][c];
             }
             for (int c = 0; c < labels.size(); ++c) {
                 if (classes[c] > maxClass) {

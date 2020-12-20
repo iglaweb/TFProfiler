@@ -18,9 +18,7 @@ public class BaseOpNormalizer implements OpNormalizer {
     private final boolean isModelQuantized;
 
     public BaseOpNormalizer(boolean isModelQuantized) {
-        this.isModelQuantized = isModelQuantized;
-        this.mean = IMAGE_MEAN;
-        this.std = IMAGE_STD;
+        this(isModelQuantized, IMAGE_MEAN, IMAGE_STD);
     }
 
     public BaseOpNormalizer(boolean isModelQuantized, float mean, float std) {

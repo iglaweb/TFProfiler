@@ -4,7 +4,7 @@ package ru.igla.tfprofiler.utils;
 import ru.igla.tfprofiler.BuildConfig;
 
 @SuppressWarnings("ALL")
-public class Log {
+public final class Log {
     private static final String TAG = "TFProfiler";
 
     private static boolean ENABLED = BuildConfig.DEBUG;

@@ -3,8 +3,8 @@ package ru.igla.tfprofiler.report_details
 import android.content.Context
 import de.siegmar.fastcsv.writer.CsvWriter
 import ru.igla.tfprofiler.core.UseCase
-import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
+import ru.igla.tfprofiler.video.FileUtils
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -12,7 +12,7 @@ class SaveReportAsCSVUseCase(val context: Context) :
     UseCase<SaveReportAsCSVUseCase.RequestValues, SaveReportAsCSVUseCase.ResponseValue>() {
 
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-        val csvPath = MediaPathProvider.getRootPath(context) + "/model_report.csv"
+        val csvPath = FileUtils.getRootPath(context) + "/model_report.csv"
         val file = File(csvPath)
         val csvWriter = CsvWriter()
         csvWriter.append(file, StandardCharsets.UTF_8).use { csvAppender ->

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.tensorflow.lite.TensorFlowLite;
 import org.tensorflow.lite.support.metadata.MetadataExtractor;
 
 import java.io.BufferedReader;
@@ -17,7 +18,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.igla.tfprofiler.core.ModelType;
 import ru.igla.tfprofiler.core.Timber;
@@ -66,8 +68,8 @@ public final class TensorFlowUtils {
     }
 
     @NonNull
-    public static Vector<String> loadLabelList(AssetManager assetManager, String labelPath) throws IOException {
-        Vector<String> labelList = new Vector<>();
+    public static List<String> loadLabelList(AssetManager assetManager, String labelPath) throws IOException {
+        List<String> labelList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(assetManager.open(labelPath)))) {
             String line;

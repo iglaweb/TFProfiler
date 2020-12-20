@@ -12,12 +12,7 @@ public class RefreshLiveData<T> extends MutableLiveData<T> {
     }
 
     private final RefreshAction<T> refreshAction;
-    private final RefreshAction.Callback<T> callback = new RefreshAction.Callback<T>() {
-          @Override
-          public void onDataLoaded(T t) {
-               postValue(t);
-          }
-    };
+    private final RefreshAction.Callback<T> callback = this::postValue;
 
     public RefreshLiveData(RefreshAction<T> refreshAction) {
         this.refreshAction = refreshAction;

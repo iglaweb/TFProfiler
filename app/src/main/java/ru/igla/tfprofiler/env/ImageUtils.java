@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 
 import ru.igla.tfprofiler.TFProfilerApp;
 import ru.igla.tfprofiler.core.Timber;
-import ru.igla.tfprofiler.media_track.MediaPathProvider;
+import ru.igla.tfprofiler.video.FileUtils;
 
 /**
  * Utility class for manipulating images.
@@ -29,7 +29,7 @@ public final class ImageUtils {
      * @param filename The location to save the bitmap to.
      */
     public static void saveBitmap(final Bitmap bitmap, final String filename) {
-        final String root = MediaPathProvider.getMediaPath(TFProfilerApp.Companion.getInstance()) + File.separator + "tensorflow";
+        final String root = FileUtils.getMediaPath(TFProfilerApp.Companion.getInstance()) + File.separator + "tensorflow";
         Timber.i("Saving %dx%d bitmap to %s.", bitmap.getWidth(), bitmap.getHeight(), root);
         final File dir = new File(root);
         if (!dir.mkdirs()) {

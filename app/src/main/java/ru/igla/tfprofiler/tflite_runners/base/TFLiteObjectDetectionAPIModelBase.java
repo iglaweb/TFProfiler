@@ -9,9 +9,9 @@ import org.tensorflow.lite.DataType;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.Device;
@@ -45,7 +45,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
     protected int inputHeight;
 
     // Pre-allocated buffers.
-    protected Vector<String> labels = new Vector<>();
+    protected List<String> labels = new ArrayList<>();
     private int[] intValues;
 
     private ByteBuffer imgData;

@@ -12,8 +12,6 @@ import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.UseCase
-import ru.igla.tfprofiler.media_track.MediaPathProvider
-import ru.igla.tfprofiler.media_track.MediaTrackUtils
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.RefreshLiveData
 import ru.igla.tfprofiler.reports_list.RefreshLiveData.RefreshAction
@@ -68,7 +66,7 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         selectedModelOptionsVideo: ModelEntity?
     ): MediaRequest {
         val selectedImagePath =
-            MediaTrackUtils.getRealFilePath(getApplication(), selectedImageUri).trim()
+            FileUtils.getRealFilePath(getApplication(), selectedImageUri).trim()
         withContext(Dispatchers.Main) {
             logI { "Selected file: $selectedImagePath" }
         }
@@ -115,7 +113,7 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
             val file = File(path)
             val filename = file.name
             val destinationFilename =
-                MediaPathProvider.getCustomModelsPath(getApplication()) + "/" + filename
+                FileUtils.getCustomModelsPath(getApplication()) + "/" + filename
             val destFile = FileUtils.copyFile(path, destinationFilename)
 
             val response =

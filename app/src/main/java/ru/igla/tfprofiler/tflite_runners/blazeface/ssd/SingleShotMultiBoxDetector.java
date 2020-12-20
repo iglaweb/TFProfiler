@@ -13,11 +13,11 @@ import ru.igla.tfprofiler.utils.Log;
  * Created by Michael Dietz on 07.11.2019.
  */
 public class SingleShotMultiBoxDetector {
-    private AnchorOptions anchorOptions;
-    private CalculatorOptions calculatorOptions;
+    private final AnchorOptions anchorOptions;
+    private final CalculatorOptions calculatorOptions;
 
-    private List<Anchor> anchorList;
-    private Comparator<Detection> detectionComparator;
+    private final List<Anchor> anchorList;
+    private final Comparator<Detection> detectionComparator;
 
     public SingleShotMultiBoxDetector() {
         this(new AnchorOptions(), new CalculatorOptions());
@@ -27,13 +27,8 @@ public class SingleShotMultiBoxDetector {
         this.anchorOptions = anchorOptions;
         this.calculatorOptions = calculatorOptions;
 
-        anchorList = getAnchors();
-        detectionComparator = new Comparator<Detection>() {
-            @Override
-            public int compare(Detection d1, Detection d2) {
-                return Float.compare(d1.score, d2.score);
-            }
-        };
+        this.anchorList = getAnchors();
+        this.detectionComparator = (d1, d2) -> Float.compare(d1.score, d2.score);
     }
 
     private float calculateScale(float minScale, float maxScale, float strideIndex, int numStrides) {

@@ -26,7 +26,6 @@ import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.*
 import ru.igla.tfprofiler.video.TakeVideoFrameListener
-import ru.igla.tfprofiler.video.TimestampBitmap
 import ru.igla.tfprofiler.video.UpdateProgressListener
 import java.util.*
 
@@ -69,8 +68,8 @@ class RecognitionViewModel(
     private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
         val recognizeAssetFolderCase = RecognizeAssetFolderCase(
             object : RecognizeAssetFolderCase.OnReadAssetImageCallback {
-                override fun onReadAssetImage(timestampBitmap: TimestampBitmap) {
-                    runImageInterference(timestampBitmap)
+                override fun onReadAssetImage(bitmap: Bitmap) {
+                    runImageInterference(bitmap)
                 }
 
                 override fun onProgress(progress: FrameInformation) {
@@ -100,7 +99,7 @@ class RecognitionViewModel(
 
     private val takeVideoFramesListener by lazy {
         object : TakeVideoFrameListener {
-            override fun onTakeFrame(bitmap: TimestampBitmap) {
+            override fun onTakeFrame(bitmap: Bitmap) {
                 if (!viewModelScope.isActive) {
                     throw CancellationException()
                 }
@@ -112,9 +111,7 @@ class RecognitionViewModel(
     fun recognizeVideo(filePath: String) {
         val timeWatchClockOS = TimeWatchClockOS()
         timeWatchClockOS.start()
-        logI {
-            "START recognize video $filePath"
-        }
+        logI { "START recognize video $filePath" }
         try {
             if (filePath.endsWith(".avi")) { //we can use opencv
                 // https://stackoverflow.com/questions/43382359/andriod-studio-opencv-3-2-cannot-open-video-file-or-android-camera-with-native
@@ -153,9 +150,9 @@ class RecognitionViewModel(
             return false
         }
 
-        Timber.i("START recognize image")
-        runImageInterference(TimestampBitmap(bitmap))
-        Timber.i("END recognize image")
+        logI { "START recognize image" }
+        runImageInterference(bitmap)
+        logI { "END recognize image" }
         return true
     }
 
@@ -175,13 +172,13 @@ class RecognitionViewModel(
     }
 
     @WorkerThread
-    fun runImageInterference(timestampBitmap: TimestampBitmap) {
+    fun runImageInterference(bitmap: Bitmap) {
         val detector = detector ?: return
         runInterferenceCase.runImageInterference(
             detector,
             modelEntity,
             selectedModelOptions,
-            timestampBitmap
+            bitmap
         )
     }
 

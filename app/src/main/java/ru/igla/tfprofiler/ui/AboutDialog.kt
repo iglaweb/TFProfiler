@@ -5,8 +5,10 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.afollestad.materialdialogs.MaterialDialog
+import org.tensorflow.lite.TensorFlowLite
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.R
+import java.util.*
 
 class AboutDialog : DialogFragment() {
 
@@ -20,9 +22,15 @@ class AboutDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = activity ?: throw IllegalStateException("No activity provided!")
         val realUrlLauncher = RealUrlLauncher(requireContext())
+
+        val body = String.format(
+            Locale.US,
+            getString(R.string.about_body),
+            TensorFlowLite.runtimeVersion()
+        )
         return MaterialDialog(context)
             .title(text = getString(R.string.about_title, BuildConfig.VERSION_NAME))
-            .message(res = R.string.about_body) {
+            .message(text = body) {
                 html { realUrlLauncher.viewUrl(it) }
                 lineSpacing(1.4f)
             }

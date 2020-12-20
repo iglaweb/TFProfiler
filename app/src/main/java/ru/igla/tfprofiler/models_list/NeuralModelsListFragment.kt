@@ -33,7 +33,6 @@ import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.ErrorDialog
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.media_track.MediaTrackUtils
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
 import ru.igla.tfprofiler.ui.BaseFragment
@@ -41,6 +40,7 @@ import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.StringUtils
 import ru.igla.tfprofiler.utils.ViewUtils
+import ru.igla.tfprofiler.video.FileUtils
 import kotlin.coroutines.CoroutineContext
 
 
@@ -219,7 +219,7 @@ class NeuralModelsListFragment :
     private fun onSelectTfliteModel(uri: Uri) {
         launch(Dispatchers.IO) {
             val filePath =
-                MediaTrackUtils.getRealFilePath(requireContext(), uri).trim()
+                FileUtils.getRealFilePath(requireContext(), uri).trim()
 
             if (filePath.endsWith(".tflite")) {
                 withContext(Dispatchers.Main) {

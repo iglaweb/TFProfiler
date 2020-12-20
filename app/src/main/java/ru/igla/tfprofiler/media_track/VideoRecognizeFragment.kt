@@ -29,6 +29,7 @@ import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.*
+import ru.igla.tfprofiler.video.FileUtils
 import ru.igla.tfprofiler.video.ImageIntentUtils
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -180,9 +181,7 @@ class VideoRecognizeFragment :
             livedataProcessFrameInfo.observe(
                 viewLifecycleOwner
             ) {
-                logI {
-                    "Progress: ${it.progress}%"
-                }
+                logI { "Progress: ${it.progress}%" }
 
                 progressBar.progress = it.progress
                 val frameNumber = it.frameNumber
@@ -308,7 +307,7 @@ class VideoRecognizeFragment :
     private fun recognizeUri(context: Context, selectedImageUri: Uri) {
         onStartRecognition()
         launch(Dispatchers.Default) {
-            val filePath = MediaTrackUtils.getRealFilePath(context, selectedImageUri)
+            val filePath = FileUtils.getRealFilePath(context, selectedImageUri)
             Timber.i(filePath)
 
             val type = ImageIntentUtils.getMimeType(context, selectedImageUri)
@@ -330,7 +329,7 @@ class VideoRecognizeFragment :
 
     private fun recognizeVideo(context: Context, selectedImageUri: Uri) {
         Timber.i("Read image frames...")
-        val filePath = MediaTrackUtils.getRealFilePath(context, selectedImageUri).trim()
+        val filePath = FileUtils.getRealFilePath(context, selectedImageUri).trim()
         recognitionViewModel.recognizeVideo(filePath)
     }
 

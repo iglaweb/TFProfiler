@@ -1,7 +1,6 @@
 package ru.igla.tfprofiler.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
@@ -9,10 +8,6 @@ import androidx.annotation.Nullable;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
-
-import ru.igla.tfprofiler.TFProfilerApp;
-import ru.igla.tfprofiler.media_track.MediaPathProvider;
 
 
 public final class IOUtils {
@@ -64,22 +59,6 @@ public final class IOUtils {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
-    public static boolean writeBitmapExternalStorage(String filename, Bitmap bmp) {
-        FileOutputStream outputStream = null;
-        File file = new File(MediaPathProvider.INSTANCE.getRootPath(TFProfilerApp.Companion.getInstance()), filename);
-        try {
-            outputStream = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-        } catch (Exception e) {
-            Log.w(e.getMessage());
-            return false;
-        } finally {
-            closeQuietly(outputStream);
-        }
-        return true;
-    }
-
     /**
      * Closes 'closeable', ignoring any checked exceptions. Does nothing if 'closeable' is null.
      */
@@ -88,6 +67,7 @@ public final class IOUtils {
             try {
                 closeable.close();
             } catch (Exception ignored) {
+                //ignore
             }
         }
     }

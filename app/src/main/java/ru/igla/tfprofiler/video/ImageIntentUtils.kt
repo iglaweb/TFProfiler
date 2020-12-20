@@ -9,7 +9,6 @@ import android.os.Parcelable
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import ru.igla.tfprofiler.core.intents.IntentManager
-import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.utils.DateUtils
 import java.io.File
 import java.util.*
@@ -44,7 +43,7 @@ object ImageIntentUtils {
     fun openImageIntent(intentManager: IntentManager): Uri {
 
         // Determine Uri of camera image to save.
-        val path = MediaPathProvider.getMediaPath(intentManager.context)
+        val path = FileUtils.getMediaPath(intentManager.context)
         val root = File("$path/")
         root.mkdirs()
         val fileName = "JPEG_" + DateUtils.getCurrentDateInMs() + ".jpg"

@@ -1,14 +1,74 @@
 package ru.igla.tfprofiler.video
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.annotation.WorkerThread
+import ru.igla.tfprofiler.TFProfilerApp.Companion.instance
 import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.utils.IOUtils
+import ru.igla.tfprofiler.utils.PathUtil
 import java.io.*
+import java.util.*
 
 object FileUtils {
+
+    private val okFileExtensions = arrayOf(
+        "jpg",
+        "png",
+        "gif",
+        "jpeg"
+    )
+
+    fun isImage(path: String): Boolean {
+        for (extension in okFileExtensions) {
+            if (path.toLowerCase(Locale.US).endsWith(extension)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    @WorkerThread
+    fun getRealFilePath(context: Context, selectedImageUri: Uri): String {
+        val path = PathUtil.getPath(context, selectedImageUri)
+        if (path.isNullOrEmpty()) {
+            //copy file to output directory on sdcard
+            return FileUtils.tryGetRealPathFromURI(context, selectedImageUri)
+                ?: return FileUtils.copyFileByUri(context, selectedImageUri)
+        }
+        return path
+    }
+
+    fun isMediaStoragePath(context: Context, path: String): Boolean {
+        val diskPath = getPath(context, "").trim()
+        return path.trim().startsWith(diskPath)
+    }
+
+    private fun getPath(context: Context, postfix: String): String {
+        val externalFilesDir =
+            IOUtils.getAppSpecificFilesDirAbsolutePath(context.applicationContext)
+        val modelDir = File(externalFilesDir, postfix)
+        if (!modelDir.exists()) {
+            modelDir.mkdirs()
+        }
+        return modelDir.absolutePath
+    }
+
+    fun getRootPath(context: Context): String {
+        return getPath(context, "")
+    }
+
+    @JvmStatic
+    fun getMediaPath(context: Context): String {
+        return getPath(context, "/media")
+    }
+
+    @JvmStatic
+    fun getCustomModelsPath(context: Context): String {
+        return getPath(context, "/custom_models")
+    }
 
     fun tryGetRealPathFromURI(context: Context?, contentURI: Uri): String? {
         val cursor = context?.contentResolver?.query(contentURI, null, null, null, null)
@@ -27,7 +87,7 @@ object FileUtils {
 
     fun copyFileByUri(context: Context, uri: Uri, filename: String = "temp_video.mp4"): String {
         val sourceFilename: String = RealPathUtil.getRealPath(context, uri)
-        val destinationFilename = MediaPathProvider.getMediaPath(context) + "/" + filename
+        val destinationFilename = getMediaPath(context) + "/" + filename
         return copyFile(sourceFilename, destinationFilename)
     }
 
@@ -58,5 +118,19 @@ object FileUtils {
             IOUtils.closeQuietly(bos)
         }
         return destinationFilename
+    }
+
+    fun writeBitmapExternalStorage(filename: String, bmp: Bitmap): Boolean {
+        val file = File(getRootPath(instance), filename)
+        try {
+            FileOutputStream(file).use { outputStream ->
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.flush()
+            }
+        } catch (e: Exception) {
+            Timber.w(e.message)
+            return false
+        }
+        return true
     }
 }

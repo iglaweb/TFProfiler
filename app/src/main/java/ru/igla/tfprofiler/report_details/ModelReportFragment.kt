@@ -30,13 +30,13 @@ import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.SharedViewModel
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
-import ru.igla.tfprofiler.media_track.MediaPathProvider
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.reports_list.ReportDelegateItem
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.forEachNoIterator
+import ru.igla.tfprofiler.video.FileUtils
 import kotlin.coroutines.CoroutineContext
 
 
@@ -118,7 +118,7 @@ class ModelReportFragment :
             setOnMenuItemClickListener { item ->
                 if (item.itemId == itemExportButtonId) {
                     launch(Dispatchers.Main) {
-                        val csvPath = MediaPathProvider.getRootPath(requireContext()) + "/file.csv"
+                        val csvPath = FileUtils.getRootPath(requireContext()) + "/file.csv"
                         sharedItem.modelsLiveData.value?.apply {
                             reportDetailsViewModel.saveReportCsv(this)
                         }

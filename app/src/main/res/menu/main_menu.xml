@@ -4,12 +4,12 @@
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_baseline_tune_24"
-        android:title="Settings"
-        app:showAsAction="always" />
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_info"
         android:icon="@drawable/ic_baseline_info_24"
-        android:title="Device info"
+        android:title="@string/device_info"
         app:showAsAction="never" />
 
     <item
@@ -17,4 +17,11 @@
         android:icon="@drawable/ic_baseline_info_24"
         android:title="@string/about"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/licenses"
+        android:icon="@drawable/ic_baseline_copyright_24"
+        android:title="@string/about_license_title"
+        app:showAsAction="never" />
+
 </menu>

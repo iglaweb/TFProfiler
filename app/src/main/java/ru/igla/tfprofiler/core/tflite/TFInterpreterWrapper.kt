@@ -9,7 +9,7 @@ import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.media_track.MediaPathProvider
+import ru.igla.tfprofiler.video.FileUtils
 import java.nio.MappedByteBuffer
 
 class TFInterpreterWrapper(
@@ -133,6 +133,7 @@ class TFInterpreterWrapper(
         ): TFInterpreterWrapper {
             return try {
                 val options: Interpreter.Options = Interpreter.Options()
+                    .setCancellable(true)
                 val delegate = requestDelegate(context, device)
                 if (delegate != null) {
                     options.addDelegate(delegate.delegate)
@@ -157,7 +158,7 @@ class TFInterpreterWrapper(
             context: Context,
             modelPath: String
         ): MappedByteBuffer {
-            return if (MediaPathProvider.isMediaStoragePath(context, modelPath)) {
+            return if (FileUtils.isMediaStoragePath(context, modelPath)) {
                 TensorFlowUtils.loadModelFileFromExternal(modelPath)
             } else {
                 TensorFlowUtils.loadModelFileFromAssets(context, modelPath)

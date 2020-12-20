@@ -53,7 +53,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
 
-    OverlayView trackingOverlay;
+    private OverlayView trackingOverlay;
 
     @Nullable
     private Classifier<Classifier.Recognition> detector;
@@ -75,6 +75,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     @Nullable
     private Toaster mToaster;
+
+    private final DebugDrawer debugDrawer = new DebugDrawer();
 
     @Nullable
     private StatisticsEstimator statisticsEstimator;
@@ -129,7 +131,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 
-        Integer sensorOrientation = rotation - getScreenOrientation();
+        int sensorOrientation = rotation - getScreenOrientation();
         Timber.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
 
         Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
@@ -179,8 +181,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             }
         }
     }
-
-    DebugDrawer debugDrawer = new DebugDrawer();
 
     @Override
     protected void processImage() {
