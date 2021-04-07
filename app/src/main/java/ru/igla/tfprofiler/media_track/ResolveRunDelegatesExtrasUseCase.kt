@@ -1,8 +1,8 @@
 package ru.igla.tfprofiler.media_track
 
 import android.app.Application
-import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
@@ -23,11 +23,12 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
         return if (delegateRunRequest == null || delegateRunRequest.deviceList.isEmpty()) {
             ArrayDeque(
                 listOf(
-                    ModelOptions.Builder()
-                        .device(Device.CPU)
-                        .numThreads(4)
-                        .xnnpack(false)
-                        .build()
+                    ModelOptions(
+                        device = Device.CPU,
+                        numThreads = 4,
+                        useXnnpack = false,
+                        numberOfInputImages = 1
+                    )
                 )
             )
         } else {
@@ -36,19 +37,21 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                 if (device == Device.CPU) {
                     delegateRunRequest.threadsRange.forEach {
                         deque.add(
-                            ModelOptions.Builder()
-                                .device(device)
-                                .numThreads(it)
-                                .xnnpack(delegateRunRequest.xnnpack)
-                                .build()
+                            ModelOptions(
+                                device = device,
+                                numThreads = it,
+                                useXnnpack = delegateRunRequest.xnnpack,
+                                numberOfInputImages = delegateRunRequest.batchImageCount
+                            )
                         )
                     }
                 } else {
                     deque.add(
-                        ModelOptions.Builder()
-                            .device(device)
-                            .xnnpack(delegateRunRequest.xnnpack)
-                            .build()
+                        ModelOptions(
+                            device = device,
+                            useXnnpack = delegateRunRequest.xnnpack,
+                            numberOfInputImages = delegateRunRequest.batchImageCount
+                        )
                     )
                 }
             }

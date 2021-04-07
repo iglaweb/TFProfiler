@@ -161,6 +161,7 @@ class MainViewPagerFragment :
         launch(Dispatchers.IO) {
             preferenceManager.apply {
                 warmupRuns = etWarmupRuns.text.toString().toInt()
+                batchImageCount = etBatchImageCount.text.toString().toInt()
 
                 cpuDelegateEnabled = sc_cpu_delegate.isChecked
                 gpuDelegateEnabled = sc_gpu_delegate.isChecked
@@ -176,6 +177,7 @@ class MainViewPagerFragment :
 
     private fun configureSettings() {
         etWarmupRuns.setText(preferenceManager.warmupRuns.toString())
+        etBatchImageCount.setText(preferenceManager.batchImageCount.toString())
 
         sc_cpu_delegate.isChecked = preferenceManager.cpuDelegateEnabled
         sc_gpu_delegate.isChecked = preferenceManager.gpuDelegateEnabled

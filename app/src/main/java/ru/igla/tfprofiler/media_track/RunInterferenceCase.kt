@@ -7,9 +7,10 @@ import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
 import ru.igla.tfprofiler.env.ImageUtils
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
-import ru.igla.tfprofiler.tflite_runners.base.Classifier
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
 import ru.igla.tfprofiler.tflite_runners.base.ImageRecognizer
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
+import ru.igla.tfprofiler.tflite_runners.base.ProcessType
 import ru.igla.tfprofiler.utils.logI
 
 class RunInterferenceCase(
@@ -20,11 +21,15 @@ class RunInterferenceCase(
 
     @Throws(java.lang.Exception::class)
     fun runImageInterference(
-        detector: ImageRecognizer<Classifier.Recognition>,
+        detector: ImageRecognizer<ImageBatchProcessing.ImageResult>,
         modelEntity: ModelEntity,
         selectedModelOptions: ModelOptions,
         bitmap: Bitmap
     ) {
+        if (selectedModelOptions.numberOfInputImages > 1) {
+            ImageBatchProcessing.init(detector, selectedModelOptions.numberOfInputImages)
+        }
+
         modelEntity.let { model ->
             val previewWidth = bitmap.width
             val previewHeight = bitmap.height
@@ -40,54 +45,63 @@ class RunInterferenceCase(
                 false
             )
 
-
             val croppedBitmap = Bitmap.createBitmap(cropWidth, cropHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(croppedBitmap)
-            val rgbFrameBitmap = bitmap
-            canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null)
+            canvas.drawBitmap(bitmap, frameToCropTransform, null)
 
             recognizeImageCallback.onPreview(croppedBitmap)
 
             val startTime = SystemClock.uptimeMillis()
-            val results: List<Classifier.Recognition> = detector.recognizeImage(croppedBitmap)
+            val ret: ImageBatchProcessing.RecognitionBatch =
+                if (selectedModelOptions.numberOfInputImages == 1) {
+                    val results = detector.recognizeImage(listOf(croppedBitmap))
+                    ImageBatchProcessing.RecognitionBatch(
+                        ProcessType.PROCESSED, results, -1, -1
+                    )
+                } else {
+                    ImageBatchProcessing.addImage(croppedBitmap)
+                    ImageBatchProcessing.recognizeBatch()
+                }
+
             val lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+            logI { "Results = " + ret.results.size }
 
-            logI { "Results = " + results.size }
+            if (ret.type == ProcessType.PROCESSED) {
+                statisticsEstimator.incrementFrameNumber(selectedModelOptions)
 
-            statisticsEstimator.incrementFrameNumber(selectedModelOptions)
+                // warmup run check
+                val prefWarmupRuns = preferenceManager.defaultPrefs.warmupRuns
+                val frameNumber = statisticsEstimator.getFrameNumber(selectedModelOptions)
+                if (frameNumber < prefWarmupRuns) return
 
-            // warmup run check
-            val prefWarmupRuns = preferenceManager.defaultPrefs.warmupRuns
-            val frameNumber = statisticsEstimator.getFrameNumber(selectedModelOptions)
-            if (frameNumber < prefWarmupRuns) return
+                statisticsEstimator.setInterferenceTime(selectedModelOptions, lastProcessingTimeMs)
+                val fps = statisticsEstimator.calcFps(selectedModelOptions)
+                val memoryUsage = statisticsEstimator.appMemoryEstimator.getMemory()
+                statisticsEstimator.setMemoryUsage(selectedModelOptions, memoryUsage)
 
-            statisticsEstimator.setInterferenceTime(selectedModelOptions, lastProcessingTimeMs)
-            val fps = statisticsEstimator.calcFps(selectedModelOptions)
-            val memoryUsage = statisticsEstimator.appMemoryEstimator.getMemory()
-            statisticsEstimator.setMemoryUsage(selectedModelOptions, memoryUsage)
+                val descriptiveStatistics =
+                    statisticsEstimator.getStats(selectedModelOptions).statistics
+                val std = descriptiveStatistics.standardDeviation
+                val mean = descriptiveStatistics.mean
 
-            val descriptiveStatistics =
-                statisticsEstimator.getStats(selectedModelOptions).statistics
-            val std = descriptiveStatistics.standardDeviation
-            val mean = descriptiveStatistics.mean
+                val initTime = statisticsEstimator.getStats(selectedModelOptions).initializationTime
 
-            val initTime = statisticsEstimator.getStats(selectedModelOptions).initializationTime
+                recognizeImageCallback.startRecognizeImage(
+                    BitmapResult(
+                        previewWidth,
+                        previewHeight,
+                        croppedBitmap.width,
+                        croppedBitmap.height,
 
-            recognizeImageCallback.startRecognizeImage(
-                BitmapResult(
-                    previewWidth,
-                    previewHeight,
-                    croppedBitmap.width,
-                    croppedBitmap.height,
-
-                    initTime,
-                    lastProcessingTimeMs,
-                    mean,
-                    std,
-                    fps,
-                    memoryUsage
+                        initTime,
+                        lastProcessingTimeMs,
+                        mean,
+                        std,
+                        fps,
+                        memoryUsage
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -59,6 +59,12 @@ class ModelsReportDetailsRecyclerViewAdapter(val context: Context) :
             holder.textViewXnnpack.visibility = View.GONE
         }
 
+        holder.textViewBatchCount.text = if (modelHolder.batchImageCount == 1) {
+            "" + modelHolder.batchImageCount + " Image per run"
+        } else {
+            "" + modelHolder.batchImageCount + " Images per run"
+        }
+
         if (modelHolder.exception.isNullOrEmpty()) {
             holder.errorContainer.visibility = View.GONE
             holder.statsContainer.visibility = View.VISIBLE

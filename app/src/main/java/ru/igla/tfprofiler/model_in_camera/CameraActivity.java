@@ -89,17 +89,24 @@ public abstract class CameraActivity extends AppCompatActivity
             fpsTextView;
     protected TextView inferenceTimeMin, inferenceTimeMax, inferenceMemory;
 
+    private TextView batchImgCountTextView;
     private SwitchCompat xnnpackSwitch;
     private Spinner deviceSpinner;
     protected ImageView bottomSheetArrowImageView;
-    private ImageView plusImageView, minusImageView;
+    private ImageView plusThreadImageView, minusThreadImageView;
+    private ImageView plusImageImageView, minusImageImageView;
     private TextView threadsTextView;
-
 
     private boolean useXnnpack = false;
     private Device device = Device.CPU;
     private int numThreads = -1;
-    private ModelOptions modelOptions = new ModelOptions(device, numThreads, useXnnpack);
+    private int batchImageCount = -1;
+    private ModelOptions modelOptions = new ModelOptions(
+            device,
+            numThreads,
+            useXnnpack,
+            batchImageCount
+    );
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -115,8 +122,13 @@ public abstract class CameraActivity extends AppCompatActivity
         }
 
         threadsTextView = findViewById(R.id.threads);
-        plusImageView = findViewById(R.id.plus);
-        minusImageView = findViewById(R.id.minus);
+        plusThreadImageView = findViewById(R.id.plusThread);
+        minusThreadImageView = findViewById(R.id.minusThread);
+
+        batchImgCountTextView = findViewById(R.id.batchImageCount);
+        plusImageImageView = findViewById(R.id.plusImage);
+        minusImageImageView = findViewById(R.id.minusImage);
+
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
@@ -135,11 +147,15 @@ public abstract class CameraActivity extends AppCompatActivity
 
         inference_info_more = findViewById(R.id.inference_info_more);
 
-        plusImageView.setOnClickListener(this);
-        minusImageView.setOnClickListener(this);
+        plusThreadImageView.setOnClickListener(this);
+        minusThreadImageView.setOnClickListener(this);
+
+        plusImageImageView.setOnClickListener(this);
+        minusImageImageView.setOnClickListener(this);
 
         deviceSpinner = findViewById(R.id.device_spinner);
         deviceSpinner.setOnItemSelectedListener(this);
+
 
         xnnpackSwitch = findViewById(R.id.xnnpack_enabled);
         xnnpackSwitch.setOnCheckedChangeListener(this);
@@ -147,6 +163,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
         device = Device.valueOf(deviceSpinner.getSelectedItem().toString());
         numThreads = Integer.parseInt(threadsTextView.getText().toString().trim());
+        batchImageCount = Integer.parseInt(batchImgCountTextView.getText().toString().trim());
 
         SharedViewModel model = new ViewModelProvider(this).get(SharedViewModel.class);
 
@@ -218,8 +235,8 @@ public abstract class CameraActivity extends AppCompatActivity
             Timber.d("Updating  device: " + device);
             this.device = device;
             final boolean threadsEnabled = device == Device.CPU;
-            plusImageView.setEnabled(threadsEnabled);
-            minusImageView.setEnabled(threadsEnabled);
+            plusThreadImageView.setEnabled(threadsEnabled);
+            minusThreadImageView.setEnabled(threadsEnabled);
             threadsTextView.setText(threadsEnabled ? String.valueOf(numThreads) : "N/A");
             onInferenceConfigurationChanged();
         }
@@ -541,27 +558,49 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.plus) {
+        if (v.getId() == R.id.plusThread) {
             String threads = threadsTextView.getText().toString().trim();
             int numThreads = Integer.parseInt(threads);
-            if (numThreads >= 9) return;
-            setNumThreads(++numThreads);
-            threadsTextView.setText(String.valueOf(numThreads));
-        } else if (v.getId() == R.id.minus) {
-            String threads = threadsTextView.getText().toString().trim();
-            int numThreads = Integer.parseInt(threads);
-            if (numThreads == 1) {
-                return;
+            if (numThreads < 9) {
+                setNumThreads(++numThreads);
+                threadsTextView.setText(String.valueOf(numThreads));
             }
-            setNumThreads(--numThreads);
-            threadsTextView.setText(String.valueOf(numThreads));
+        } else if (v.getId() == R.id.minusThread) {
+            String threads = threadsTextView.getText().toString().trim();
+            int numThreads = Integer.parseInt(threads);
+            if (numThreads > 1) {
+                setNumThreads(--numThreads);
+                threadsTextView.setText(String.valueOf(numThreads));
+            }
+        } else if (v.getId() == R.id.minusImage) {
+            String batchImgCount = batchImgCountTextView.getText().toString().trim();
+            int imgCount = Integer.parseInt(batchImgCount);
+            if (imgCount > 1) {
+                setBatchImgCount(--imgCount);
+                batchImgCountTextView.setText(String.valueOf(imgCount));
+            }
+        } else if (v.getId() == R.id.plusImage) {
+            String batchImgCount = batchImgCountTextView.getText().toString().trim();
+            int imgCount = Integer.parseInt(batchImgCount);
+            if (imgCount < 30) {
+                setBatchImgCount(++imgCount);
+                batchImgCountTextView.setText(String.valueOf(imgCount));
+            }
         }
     }
 
     private void setNumThreads(int numThreads) {
         if (this.numThreads != numThreads) {
-            Timber.d("Updating  numThreads: " + numThreads);
+            Timber.d("Updating numThreads: " + numThreads);
             this.numThreads = numThreads;
+            onInferenceConfigurationChanged();
+        }
+    }
+
+    private void setBatchImgCount(int imgCount) {
+        if (this.batchImageCount != imgCount) {
+            Timber.d("Updating batchImgCount: " + imgCount);
+            this.batchImageCount = imgCount;
             onInferenceConfigurationChanged();
         }
     }

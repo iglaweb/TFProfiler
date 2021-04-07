@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import ru.igla.tfprofiler.core.ColorSpace;
-import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.ModelType;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.GrayOpNormalizer;
@@ -46,7 +45,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     // Pre-allocated buffers.
     protected List<String> labels = new ArrayList<>();
-    private int[] intValues;
+    private int[] tempIntValues;
 
     private ByteBuffer imgData;
 
@@ -55,22 +54,11 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
     private static final int COLOR_PIXEL_SIZE = 3;
     private static final int GRAY_PIXEL_SIZE = 1;
 
-    private static final int DIM_BATCH_SIZE = 1;
-
     private OpNormalizer opNormalizer;
 
-    public TFLiteObjectDetectionAPIModelBase() {
-    }
+    public ModelOptions modelOptions;
 
-    @Override
-    public void init(Context context, ModelEntity modelEntity, ModelOptions modelOptions) throws Exception {
-        create(
-                context,
-                modelEntity,
-                modelOptions.getDevice(),
-                modelOptions.getNumThreads(),
-                modelOptions.getUseXnnpack()
-        );
+    public TFLiteObjectDetectionAPIModelBase() {
     }
 
     /**
@@ -79,14 +67,8 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
      * @param context     The asset manager to be used to load assets.
      * @param modelEntity The filepath of the model GraphDef protocol buffer.
      */
-    public Classifier<T> create(
-            final Context context,
-            ModelEntity modelEntity,
-            Device device,
-            int numThreads,
-            boolean useXnnpack)
-            throws Exception {
-
+    @Override
+    public void init(@NotNull Context context, ModelEntity modelEntity, @NotNull ModelOptions modelOptions) throws Exception {
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
 
@@ -98,14 +80,17 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             this.labels = TensorFlowUtils.loadLabelList(context.getAssets(), actualFilename);
         }
 
+        this.modelOptions = modelOptions;
+
         tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
-        tfLiteExecutor.init(device, numThreads, useXnnpack);
+        tfLiteExecutor.init(modelEntity, modelOptions);
+
 
         boolean isModelQuantized;
         if (modelEntity.getModelType() == ModelType.CUSTOM) {
             TFInterpreterWrapper interpreter = tfLiteExecutor.getTfLite();
             if (interpreter == null) {
-                throw new FailedCreateTFDelegate(device, "Interpreter is not configured");
+                throw new FailedCreateTFDelegate(modelOptions.getDevice(), "Interpreter is not configured");
             }
             int probabilityTensorIndex = 0;
             // Creates the output tensor and its processor.
@@ -128,33 +113,42 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
         //https://www.tensorflow.org/hub/common_signatures/images#input
 
         final int pixelSize = modelEntity.getModelConfig().getColorSpace() == ColorSpace.GRAYSCALE ? GRAY_PIXEL_SIZE : COLOR_PIXEL_SIZE;
+        final int batchImageSize = modelOptions.getNumberOfInputImages();
+
         this.imgData = ByteBuffer.allocateDirect(
-                DIM_BATCH_SIZE *
+                batchImageSize *
                         this.inputWidth *
                         this.inputHeight *
                         pixelSize *
                         numBytesPerChannel
         );
         this.imgData.order(ByteOrder.nativeOrder());
-        this.intValues = new int[this.inputWidth * this.inputHeight];
-        return this;
+        this.tempIntValues = new int[batchImageSize * this.inputWidth * this.inputHeight];
     }
 
-    private void normalizeBitmap(final Bitmap bitmap) {
-        // Preprocess the image data from 0-255 int to normalized float based
-        // on the provided parameters.
-        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+    private void normalizeBitmap(final List<Bitmap> bitmaps) {
+        final int minItemsSize = bitmaps.size();
+        int imageEntireSize = this.inputWidth * this.inputHeight;
+        for (int i = 0; i < minItemsSize; i++) {
+            final Bitmap bitmap = bitmaps.get(i);
+            // Preprocess the image data from 0-255 int to normalized float based
+            // on the provided parameters.
+            bitmap.getPixels(tempIntValues, i * imageEntireSize, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        }
+
         imgData.rewind();
-        opNormalizer.convertBitmapToByteBuffer(imgData, intValues, inputWidth, inputHeight);
+        opNormalizer.convertBitmapToByteBuffer(minItemsSize, imgData, tempIntValues, inputWidth, inputHeight);
     }
 
     public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
-        return colorSpace == ColorSpace.COLOR ? new BaseOpNormalizer(isQuantized) : new GrayOpNormalizer(isQuantized);
+        return colorSpace == ColorSpace.COLOR ?
+                new BaseOpNormalizer(isQuantized) :
+                new GrayOpNormalizer(isQuantized);
     }
 
     @NotNull
     @Override
-    public List<T> recognizeImage(@NotNull final Bitmap bitmap) {
+    public List<T> recognizeImage(@NotNull final List<Bitmap> bitmap) {
         // Log this method so that it can be analyzed with systrace.
         Trace.beginSection("recognizeImage");
 

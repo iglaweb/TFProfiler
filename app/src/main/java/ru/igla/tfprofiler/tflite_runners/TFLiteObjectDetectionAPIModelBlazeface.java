@@ -4,15 +4,17 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Detection;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.SingleShotMultiBoxDetector;
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
-import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -23,7 +25,7 @@ import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
-public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
+public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     // Minimum detection confidence to track a detection.
     private static final float THRESHOLD_DETECT = 0.1f;
@@ -38,16 +40,16 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
 
     @Override
     public Map<Integer, Object> prepareOutputImage() {
-        this.boxesResult = new float[1][896][16];
-        this.scoresResult = new float[1][896][1];
         HashMap<Integer, Object> outputs = new HashMap<>();
+        int batchImageCount = modelOptions.getNumberOfInputImages();
+        this.boxesResult = new float[1][896 * batchImageCount][16];
+        this.scoresResult = new float[1][896 * batchImageCount][1];
         outputs.put(0, boxesResult);
         outputs.put(1, scoresResult);
         return outputs;
     }
 
-    @Override
-    public List<Recognition> getDetections() {
+    private List<Recognition> extractDetections(float[][][] boxesResult, float[][][] scoresResult) {
         // Calculate detections from model results
         List<Detection> detectionList = ssd.process(boxesResult, scoresResult);
         if (detectionList.isEmpty()) {
@@ -80,8 +82,8 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
                         new RectF(
                                 x,
                                 y,
-                                Math.min(x + width - 1, inputWidth - 1),
-                                Math.min(y + height - 1, inputHeight - 1)
+                                Math.min(x + width - 1f, inputWidth - 1f),
+                                Math.min(y + height - 1f, inputHeight - 1f)
                         ),
                         output
                 );
@@ -89,5 +91,33 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
             }
         }
         return detections;
+    }
+
+    @Override
+    public List<ImageBatchProcessing.ImageResult> getDetections() {
+        final int batchImageCount = modelOptions.getNumberOfInputImages();
+        if (batchImageCount == 1) {
+            List<Recognition> detections = extractDetections(boxesResult, scoresResult);
+            return List.of(new ImageBatchProcessing.ImageResult(detections));
+        }
+
+        float[][] arr = boxesResult[0];
+        final int batchCount = arr.length / batchImageCount;
+        int len = arr.length;
+        List<ImageBatchProcessing.ImageResult> imageResults = new ArrayList<>();
+        for (int i = 0; i < len - batchCount + 1; i += batchCount) {
+
+            float[][] boxArr = boxesResult[0];
+            float[][] box = Arrays.copyOfRange(boxArr, i, i + batchCount);
+            float[][][] scaledBoxes = {box};
+
+            float[][] scoreArr = scoresResult[0];
+            float[][] score = Arrays.copyOfRange(scoreArr, i, i + batchCount);
+            float[][][] scaledScores = {score};
+
+            List<Recognition> detections = extractDetections(scaledBoxes, scaledScores);
+            imageResults.add(new ImageBatchProcessing.ImageResult(detections));
+        }
+        return imageResults;
     }
 }

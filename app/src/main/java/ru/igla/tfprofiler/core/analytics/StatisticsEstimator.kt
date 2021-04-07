@@ -26,6 +26,8 @@ class StatisticsEstimator(context: Context) {
                 device = key.device,
                 threads = key.numThreads,
                 useXnnpack = key.useXnnpack,
+                batchImageCount = key.numberOfInputImages,
+
                 fps = value.fps,
 
                 memoryUsageMin = value.memoryUsageMin,

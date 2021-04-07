@@ -3,7 +3,8 @@ package ru.igla.tfprofiler.core.tflite
 import android.content.Context
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.ExceptionHandler
 import java.util.concurrent.Executors
 
@@ -21,16 +22,18 @@ class TFInterpeterThreadExecutor(val context: Context, private val modelPath: St
     var tfLite: TFInterpreterWrapper? = null
 
     @Throws(Exception::class)
-    fun init(device: Device, numThreads: Int, useXnnpack: Boolean) {
+    fun init(
+        modelEntity: ModelEntity,
+        modelOptions: ModelOptions
+    ) {
         this.close()
 
         runBlocking(exceptionHandler + dispatcherTfliteBg) {
             tfLite = TFInterpreterWrapper.createTfliteInterpreter(
                 context,
                 modelPath,
-                device,
-                numThreads,
-                useXnnpack
+                modelEntity.modelConfig,
+                modelOptions
             )
         }
     }

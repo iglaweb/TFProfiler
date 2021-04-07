@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -35,8 +36,10 @@ import ru.igla.tfprofiler.models_list.NeuralModelsListFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.Classifier;
 import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory;
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 import ru.igla.tfprofiler.tracking.MultiBoxTracker;
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 import ru.igla.tfprofiler.utils.DebugDrawer;
@@ -56,7 +59,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private OverlayView trackingOverlay;
 
     @Nullable
-    private Classifier<Classifier.Recognition> detector;
+    private Classifier<ImageBatchProcessing.ImageResult> detector;
 
     private Bitmap rgbFrameBitmap = null;
     private Bitmap croppedBitmap = null;
@@ -209,11 +212,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 () -> runRecognitionInterference(currTimestamp));
     }
 
-    private List<Classifier.Recognition> createMappedRecognitions(List<Classifier.Recognition> results) {
-        final List<Classifier.Recognition> mappedRecognitions =
+    private List<Recognition> createMappedRecognitions(List<Recognition> results) {
+        final List<Recognition> mappedRecognitions =
                 new LinkedList<>();
 
-        for (final Classifier.Recognition result : results) {
+        for (final Recognition result : results) {
             final RectF location = result.getLocation();
             if (location != null) {
                 debugDrawer.draw(location);
@@ -245,11 +248,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         Timber.i("Running detection on image " + currTimestamp);
         final long startTime = SystemClock.uptimeMillis();
-        final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+        final List<ImageBatchProcessing.ImageResult> ret = detector.recognizeImage(List.of(croppedBitmap));
+        final List<Recognition> recognitions = new ArrayList<>();
+        for (ImageBatchProcessing.ImageResult imageResult : ret) {
+            recognitions.addAll(imageResult.getResults());
+        }
         final long lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
         statisticsEstimator.incrementFrameNumber(getModelOptions());
-
         statisticsEstimator.setInterferenceTime(getModelOptions(), lastProcessingTimeMs);
         final double fps = statisticsEstimator.calcFps(getModelOptions());
 
@@ -261,7 +267,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         debugDrawer.prepareOutput(croppedBitmap);
 
-        final List<Classifier.Recognition> mappedRecognitions = createMappedRecognitions(results);
+        final List<Recognition> mappedRecognitions = createMappedRecognitions(recognitions);
         debugDrawer.writeOutput();
 
         tracker.trackResults(mappedRecognitions, currTimestamp);
@@ -325,11 +331,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private ModelOptions getCurrentModelOptions() {
         final Device device = getDevice();
         final int numThreads = getNumThreads();
-        return new ModelOptions.Builder()
-                .device(device)
-                .numThreads(numThreads)
-                .xnnpack(useXnnpack())
-                .build();
+        return new ModelOptions(
+                device,
+                numThreads,
+                useXnnpack(),
+                1
+        );
     }
 
     @Override

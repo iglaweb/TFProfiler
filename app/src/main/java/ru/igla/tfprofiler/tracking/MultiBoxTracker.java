@@ -35,7 +35,7 @@ import java.util.Locale;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.env.BorderedText;
 import ru.igla.tfprofiler.env.ImageUtils;
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**
  * A tracker that handles non-max suppression and matches existing objects to new detections.
@@ -109,7 +109,7 @@ public class MultiBoxTracker {
         }
     }
 
-    public synchronized void trackResults(final List<Classifier.Recognition> results, final long timestamp) {
+    public synchronized void trackResults(final List<Recognition> results, final long timestamp) {
         Timber.i("Processing %d results from %d", results.size(), timestamp);
         processResults(results);
     }
@@ -159,13 +159,14 @@ public class MultiBoxTracker {
         }
     }
 
-    private void processResults(final List<Classifier.Recognition> results) {
-        final List<Pair<Float, Classifier.Recognition>> rectsToTrack = new LinkedList<>();
+
+    private void processResults(final List<Recognition> results) {
+        final List<Pair<Float, Recognition>> rectsToTrack = new LinkedList<>();
 
         screenRects.clear();
         final Matrix rgbFrameToScreen = new Matrix(getFrameToCanvasMatrix());
 
-        for (final Classifier.Recognition result : results) {
+        for (final Recognition result : results) {
             if (result.getLocation() == null) {
                 continue;
             }
@@ -193,7 +194,7 @@ public class MultiBoxTracker {
             return;
         }
 
-        for (final Pair<Float, Classifier.Recognition> potential : rectsToTrack) {
+        for (final Pair<Float, Recognition> potential : rectsToTrack) {
             final TrackedRecognition trackedRecognition = new TrackedRecognition();
             trackedRecognition.detectionConfidence = potential.first;
             trackedRecognition.location = new RectF(potential.second.getLocation());

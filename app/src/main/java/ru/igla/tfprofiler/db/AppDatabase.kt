@@ -11,7 +11,7 @@ import androidx.room.TypeConverters
         DbReportDelegateItem::class,
         DbModelReportItem::class,
         DbModelItem::class
-    ], version = 1
+    ], version = 2
 )
 @TypeConverters(
     ColorSpaceTypeConverter::class,

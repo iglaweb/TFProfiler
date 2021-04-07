@@ -23,6 +23,7 @@ import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.tflite_runners.base.Classifier
 import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.*
 import ru.igla.tfprofiler.video.TakeVideoFrameListener
@@ -40,13 +41,15 @@ class RecognitionViewModel(
     }
 
     // create detector
-    private var selectedModelOptions: ModelOptions = ModelOptions.Builder()
-        .device(Device.CPU)
-        .numThreads(4)
-        .xnnpack(false)
-        .build()
+    private var selectedModelOptions: ModelOptions =
+        ModelOptions(
+            device = Device.CPU,
+            numThreads = 4,
+            useXnnpack = false,
+            numberOfInputImages = 1
+        )
 
-    private var detector: Classifier<Classifier.Recognition>? = null
+    private var detector: Classifier<ImageBatchProcessing.ImageResult>? = null
 
     val liveDataBitmapOutput = MutableLiveData<BitmapResult>()
 

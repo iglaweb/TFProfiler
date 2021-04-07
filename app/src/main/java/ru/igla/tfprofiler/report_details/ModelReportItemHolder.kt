@@ -13,6 +13,8 @@ class ModelReportItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
     val textViewDevice: TextView = itemView.findViewById(R.id.device)
     val textViewThreads: TextView = itemView.findViewById(R.id.threads)
     val textViewXnnpack: TextView = itemView.findViewById(R.id.xnnpack_enabled)
+    val textViewBatchCount: TextView = itemView.findViewById(R.id.batch_image_count);
+
     val textViewFps: TextView = itemView.findViewById(R.id.fps_info)
     val textViewInitTime: TextView = itemView.findViewById(R.id.tvInitTime)
     val textViewMeanTime: TextView = itemView.findViewById(R.id.tvMeanInterferenceTime)

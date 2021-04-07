@@ -39,6 +39,8 @@ class ReportsListUseCase(val application: Application) :
                             device = item.device,
                             threads = item.threads,
                             useXnnpack = item.xnnpack,
+                            batchImageCount = item.imageBatchCount,
+
                             fps = item.fps,
                             memoryUsageMin = item.memoryUsageMin,
                             memoryUsageMax = item.memoryUsageMax,

@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
 import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**
  * https://tfhub.dev/google/object_detection/mobile_object_localizer_v1/1
@@ -22,7 +23,7 @@ import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
  * This is a class-agnostic object detector. Object classification is not provided.
  * This model may not perform well on very small objects.
  */
-public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
+public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
@@ -62,7 +63,7 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectD
     }
 
     @Override
-    public List<Recognition> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections() {
         // Show the best detections.
         // after scaling them back to the input size.
 
@@ -93,6 +94,6 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectD
                                 detection));
             }
         }
-        return recognitions;
+        return List.of(new ImageBatchProcessing.ImageResult(recognitions));
     }
 }

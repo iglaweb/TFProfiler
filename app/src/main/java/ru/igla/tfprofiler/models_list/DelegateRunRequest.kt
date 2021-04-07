@@ -11,5 +11,6 @@ import ru.igla.tfprofiler.core.IntRangeParceler
 class DelegateRunRequest(
     var threadsRange: IntRange,
     val deviceList: List<Device>,
-    val xnnpack: Boolean
+    val xnnpack: Boolean,
+    val batchImageCount: Int
 ) : Parcelable

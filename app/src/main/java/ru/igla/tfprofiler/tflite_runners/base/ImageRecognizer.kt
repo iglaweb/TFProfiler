@@ -4,5 +4,5 @@ import android.graphics.Bitmap
 
 
 interface ImageRecognizer<T> {
-    fun recognizeImage(bitmap: Bitmap): List<T>
+    fun recognizeImage(bitmap: List<Bitmap>): List<T>
 }

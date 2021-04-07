@@ -104,7 +104,8 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
                 preferenceManager.threadRangeMax
             ),
             modelList,
-            preferenceManager.xnnpackEnabled
+            preferenceManager.xnnpackEnabled,
+            preferenceManager.batchImageCount
         )
     }
 

@@ -20,6 +20,8 @@ class AppConfigurePrefs(private val pref: PrefsBase) {
 
         private const val PREF_THREAD_RANGE_MIN = "thread_range_min"
         private const val PREF_THREAD_RANGE_MAX = "thread_range_max"
+
+        private const val PREF_BATCH_IMAGE_COUNT_MAX = "batch_image_count"
     }
 
     var maxImageSize: Int
@@ -29,7 +31,10 @@ class AppConfigurePrefs(private val pref: PrefsBase) {
     var warmupRuns: Int
         get() = pref.getIntValue(PREF_WARMUP_RUNS, 10)
         set(value) = pref.editIntValue(PREF_WARMUP_RUNS, value)
-
+    
+    var batchImageCount: Int
+        get() = pref.getIntValue(PREF_BATCH_IMAGE_COUNT_MAX, 1)
+        set(value) = pref.editIntValue(PREF_BATCH_IMAGE_COUNT_MAX, value)
 
     var threadRangeMin: Int
         get() = pref.getIntValue(PREF_THREAD_RANGE_MIN, 1)

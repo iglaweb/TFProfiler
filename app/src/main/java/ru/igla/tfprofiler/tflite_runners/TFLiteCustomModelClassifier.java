@@ -10,19 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper;
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
 import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
 
-/**
- * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
- * - https://github.com/tensorflow/models/tree/master/research/object_detection
- * where you can find the training code.
- * <p>
- * To use pretrained models in the API or convert to TF Lite models, please see docs for details:
- * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
- * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
- */
-public class TFLiteCustomModelClassifier extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
+
+public class TFLiteCustomModelClassifier extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     /**
      * Output probability TensorBuffer.
@@ -44,7 +36,7 @@ public class TFLiteCustomModelClassifier extends TFLiteObjectDetectionAPIModelBa
 
         if (outputProbabilityBuffer == null) {
             int[] probabilityShape =
-                    interpreter.getInterpreter().getOutputTensor(probabilityTensorIndex).shape(); // {1, NUM_CLASSES}
+                    interpreter.getInterpreter().getOutputTensor(probabilityTensorIndex).shape();
             // Creates the output tensor and its processor.
             outputProbabilityBuffer = TensorBuffer.createFixedSize(probabilityShape, probabilityDataType);
         }
@@ -55,7 +47,7 @@ public class TFLiteCustomModelClassifier extends TFLiteObjectDetectionAPIModelBa
     }
 
     @Override
-    public List<Recognition> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections() {
         return Collections.emptyList();
     }
 }

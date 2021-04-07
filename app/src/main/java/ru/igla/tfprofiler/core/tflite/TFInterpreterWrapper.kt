@@ -7,8 +7,11 @@ import org.tensorflow.lite.HexagonDelegate
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
+import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.video.FileUtils
 import java.nio.MappedByteBuffer
 
@@ -113,9 +116,8 @@ class TFInterpreterWrapper(
             return createTfliteInterpreter(
                 context,
                 modelPath,
-                Device.CPU,
-                1,
-                false
+                ModelConfig(-1, 1, 1, false, ColorSpace.GRAYSCALE),
+                ModelOptions(device = Device.CPU, numThreads = 1, useXnnpack = false)
             )
         }
 
@@ -127,11 +129,18 @@ class TFInterpreterWrapper(
         fun createTfliteInterpreter(
             context: Context,
             modelPath: String,
-            device: Device = Device.CPU,
+            modelConfig: ModelConfig,
+            modelOptions: ModelOptions,
+            /*device: Device = Device.CPU,
             threads: Int = DEFAULT_NUM_THREADS,
-            useXnnpack: Boolean = false //experimental support
+            useXnnpack: Boolean = false, //experimental support,
+            inputImgCount: Int = 1*/
         ): TFInterpreterWrapper {
             return try {
+                val device: Device = modelOptions.device
+                val useXnnpack: Boolean = modelOptions.useXnnpack
+                val inputImgCount = modelOptions.numberOfInputImages
+
                 val options: Interpreter.Options = Interpreter.Options()
                     .setCancellable(true)
                 val delegate = requestDelegate(context, device)
@@ -142,11 +151,25 @@ class TFInterpreterWrapper(
                 //Temporary not working. Seems it's fixed in https://github.com/tensorflow/tensorflow/issues/42056
                 //Internal error: Failed to apply XNNPACK delegate: ModifyGraphWithDelegate is disallowed when graph is immutable.
                 options.setUseXNNPACK(useXnnpack)
-                options.setNumThreads(threads)
+                options.setNumThreads(modelOptions.numThreads)
                 val interpreter = Interpreter(
                     loadByteBufferModel(context, modelPath),
                     options
                 )
+
+                val batchCount: Int = inputImgCount
+                if (batchCount > 1) {
+                    //resize if should inference more than one image
+                    val dims = intArrayOf(
+                        batchCount,
+                        modelConfig.inputWidth,
+                        modelConfig.inputHeight,
+                        modelConfig.colorSpace.channels
+                    )
+                    interpreter.resizeInput(0, dims)
+                    interpreter.allocateTensors()
+                }
+
                 TFInterpreterWrapper(interpreter, delegate)
             } catch (e: Exception) {
                 Timber.e(e)

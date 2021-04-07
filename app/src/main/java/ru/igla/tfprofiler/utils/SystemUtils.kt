@@ -12,6 +12,10 @@ import androidx.annotation.WorkerThread
 
 object SystemUtils {
 
+    fun rnd2Percent(num: Float): Int {
+        return (num * 100f).toInt()
+    }
+
     /***
      * https://android.googlesource.com/platform/cts/+/f1b6c7d504ae31f3500ce5c9b2e75dadb2799f4d/tests/tests/opengl/src/android/opengl/cts/OpenGlEsVersionTest.java
      */

@@ -24,14 +24,14 @@ import android.view.View;
 
 import java.util.List;
 
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 public class RecognitionScoreView extends View implements ResultsView {
     private static final float TEXT_SIZE_DIP = 14;
     private final float textSizePx;
     private final Paint fgPaint;
     private final Paint bgPaint;
-    private List<Classifier.Recognition> results;
+    private List<Recognition> results;
 
     public RecognitionScoreView(final Context context, final AttributeSet set) {
         super(context, set);
@@ -47,7 +47,7 @@ public class RecognitionScoreView extends View implements ResultsView {
     }
 
     @Override
-    public void setResults(final List<Classifier.Recognition> results) {
+    public void setResults(final List<Recognition> results) {
         this.results = results;
         postInvalidate();
     }
@@ -60,8 +60,8 @@ public class RecognitionScoreView extends View implements ResultsView {
         canvas.drawPaint(bgPaint);
 
         if (results != null) {
-            for (final Classifier.Recognition recog : results) {
-                canvas.drawText(recog.getTitle() + ": " + recog.getConfidence(), x, y, fgPaint);
+            for (final Recognition recognition : results) {
+                canvas.drawText(recognition.getTitle() + ": " + recognition.getConfidence(), x, y, fgPaint);
                 y += (int) (fgPaint.getTextSize() * 1.5f);
             }
         }

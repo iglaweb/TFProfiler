@@ -35,6 +35,9 @@ class DbReportDelegateItem(
         @ColumnInfo(name = "xnnpack")
         val xnnpack: Boolean,
 
+        @ColumnInfo(name = "imageBatchCount")
+        val imageBatchCount: Int,
+
         @ColumnInfo(name = "fps")
         val fps: Double,
 

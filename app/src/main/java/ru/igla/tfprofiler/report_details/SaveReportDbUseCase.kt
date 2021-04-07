@@ -40,6 +40,7 @@ class SaveReportDbUseCase(val application: Application) :
                 device = item.device,
                 threads = item.threads,
                 xnnpack = item.useXnnpack,
+                imageBatchCount = item.batchImageCount,
 
                 fps = item.fps,
                 memoryUsageMax = item.memoryUsageMax,

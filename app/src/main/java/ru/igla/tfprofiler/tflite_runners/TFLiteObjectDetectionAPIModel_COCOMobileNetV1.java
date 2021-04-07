@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.igla.tfprofiler.tflite_runners.base.Classifier;
+import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
 import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
+import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**
  * https://www.tensorflow.org/lite/guide/hosted_models
@@ -21,7 +22,7 @@ import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
-public class TFLiteObjectDetectionAPIModel_COCOMobileNetV1 extends TFLiteObjectDetectionAPIModelBase<Classifier.Recognition> {
+public class TFLiteObjectDetectionAPIModel_COCOMobileNetV1 extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
@@ -61,7 +62,7 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV1 extends TFLiteObjectD
     }
 
     @Override
-    public List<Recognition> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections() {
         // Show the best detections.
         // after scaling them back to the input size.
 
@@ -93,6 +94,6 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV1 extends TFLiteObjectD
                                 detection));
             }
         }
-        return recognitions;
+        return List.of(new ImageBatchProcessing.ImageResult(recognitions));
     }
 }

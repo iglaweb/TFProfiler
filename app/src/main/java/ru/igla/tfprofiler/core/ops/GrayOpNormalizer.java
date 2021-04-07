@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
-public class GrayOpNormalizer implements OpNormalizer {
+public final class GrayOpNormalizer implements OpNormalizer {
 
     /**
      * Float model requires additional normalization of the used input.
@@ -30,15 +30,17 @@ public class GrayOpNormalizer implements OpNormalizer {
     }
 
     @Override
-    public void convertBitmapToByteBuffer(@NotNull ByteBuffer imgData, @NotNull int[] intValues, int inputWidth, int inputHeight) {
-        for (int i = 0; i < inputWidth; ++i) {
-            for (int j = 0; j < inputHeight; ++j) {
-                int pixelValue = intValues[i * inputWidth + j];
-                if (isModelQuantized) {
-                    // Quantized model
-                    imgData.put((byte) ((pixelValue >> 16) & 0xFF));
-                } else { // Float model
-                    imgData.putFloat((((pixelValue >> 16) & 0xFF) - mean) / std);
+    public void convertBitmapToByteBuffer(int batchSize, @NotNull ByteBuffer imgData, @NotNull int[] intValues, int inputWidth, int inputHeight) {
+        for (int b = 0; b < batchSize; ++b) {
+            for (int i = 0; i < inputWidth; ++i) {
+                for (int j = 0; j < inputHeight; ++j) {
+                    int pixelValue = intValues[i * inputWidth + j];
+                    if (isModelQuantized) {
+                        // Quantized model
+                        imgData.put((byte) ((pixelValue >> 16) & 0xFF));
+                    } else { // Float model
+                        imgData.putFloat((((pixelValue >> 16) & 0xFF) - mean) / std);
+                    }
                 }
             }
         }

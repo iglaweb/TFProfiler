@@ -76,6 +76,15 @@
                     android:textColor="@color/blue_grey_900"
                     android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/batch_image_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Image count"
+                    android:textColor="@color/blue_grey_900"
+                    android:textSize="16sp" />
+
             </LinearLayout>
 
         </RelativeLayout>

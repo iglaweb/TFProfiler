@@ -98,15 +98,23 @@ class ReportsListRecyclerViewAdapter(
 
         strDetails.append("Threads ")
         if (maxThreads - minThreads > 1) {
-            strDetails.append(minThreads)
-            strDetails.append("-")
-            strDetails.append(maxThreads)
+            strDetails.apply {
+                append(minThreads)
+                append("-")
+                append(maxThreads)
+            }
         } else {
             strDetails.append(maxThreads)
         }
 
         if (useXnnpack) {
             strDetails.append(", XNNPACK")
+        }
+
+        val imageCount = reportItems.firstOrNull()?.batchImageCount ?: 1
+        strDetails.apply {
+            append(", Batch count ")
+            append(imageCount)
         }
         return strDetails.toString()
     }

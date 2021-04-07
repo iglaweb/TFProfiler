@@ -13,8 +13,9 @@ class ReportDelegateItem(
     val device: Device,
     val threads: Int,
     val useXnnpack: Boolean,
-    val fps: Double,
+    val batchImageCount: Int,
 
+    val fps: Double,
     val memoryUsageMin: Long,
     val memoryUsageMax: Long,
 
