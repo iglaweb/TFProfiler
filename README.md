@@ -6,9 +6,15 @@
 
 # Overview
 
-TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model and measure its performance using FPS, model initialization time, model inference time, memory consumption, etc. You can tweak model runs with different delegates (CPU, GPU, NNAPI, HEXAGON), XNNPACK option, number of threads.
+TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model. 
 
-- **API SDK 21+**
+Measure model performance with FPS, model initialization time,  inference time, memory consumption, etc. 
+
+Tweak model runs with different delegates (CPU, GPU, NNAPI, HEXAGON), XNNPACK option, and number of threads. 
+
+Apply a batch processing, adjusting the number of input images. Support is [partially provided](https://github.com/tensorflow/tensorflow/issues/37706) by TensorFlow.
+
+- **Android API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
 
 
