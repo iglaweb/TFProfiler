@@ -17,7 +17,10 @@ object ClassifierFactory {
     ): Classifier<ImageBatchProcessing.ImageResult> {
         val classifier: Classifier<ImageBatchProcessing.ImageResult> =
             when (modelEntity.modelType) {
-                ModelType.CUSTOM -> {
+                ModelType.CUSTOM_OPENCV -> {
+                    OpenCVObjectDetectionAPIModelBase()
+                }
+                ModelType.CUSTOM_TFLITE -> {
                     TFLiteCustomModelClassifier()
                 }
                 ModelType.MOBILENET_V1_OBJECT_DETECT -> {

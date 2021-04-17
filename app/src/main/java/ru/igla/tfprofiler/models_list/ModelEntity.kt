@@ -5,6 +5,8 @@ import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import org.tensorflow.lite.support.metadata.MetadataExtractor
 import ru.igla.tfprofiler.core.ColorSpace
+import ru.igla.tfprofiler.core.InputShapeType
+import ru.igla.tfprofiler.core.ModelFormat
 import ru.igla.tfprofiler.core.ModelType
 
 @Parcelize
@@ -12,10 +14,11 @@ data class ModelConfig(
     val tableId: Long,
     val inputWidth: Int,
     val inputHeight: Int,
-    val quantized: Boolean,
+    val modelFormat: ModelFormat,
     val colorSpace: ColorSpace,
+    val inputShapeType: InputShapeType
 ) : Parcelable {
-    fun quantizedStr() = if (quantized) "Quantized" else "Floating"
+    fun quantizedStr() = modelFormat.strVal
 }
 
 @Parcelize

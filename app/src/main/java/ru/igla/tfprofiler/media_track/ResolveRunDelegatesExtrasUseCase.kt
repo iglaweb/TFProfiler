@@ -2,8 +2,10 @@ package ru.igla.tfprofiler.media_track
 
 import android.app.Application
 import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
+import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import java.util.*
@@ -13,13 +15,17 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
             ResolveRunDelegatesExtrasUseCase.ResponseValue>() {
 
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-        val data = resolveRunDelegatesExtra(requestValues.delegateRunRequest)
+        val data =
+            resolveRunDelegatesExtra(requestValues.delegateRunRequest, requestValues.modelEntity)
 
         val responseValue = ResponseValue(data)
         return Resource.success(responseValue)
     }
 
-    private fun resolveRunDelegatesExtra(delegateRunRequest: DelegateRunRequest?): Queue<ModelOptions> {
+    private fun resolveRunDelegatesExtra(
+        delegateRunRequest: DelegateRunRequest?,
+        modelEntity: ModelEntity
+    ): Queue<ModelOptions> {
         return if (delegateRunRequest == null || delegateRunRequest.deviceList.isEmpty()) {
             ArrayDeque(
                 listOf(
@@ -28,6 +34,18 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                         numThreads = 4,
                         useXnnpack = false,
                         numberOfInputImages = 1
+                    )
+                )
+            )
+        } else if (modelEntity.modelType == ModelType.CUSTOM_OPENCV) {
+            //we can run opencv only on cpu and with batch image count
+            ArrayDeque(
+                listOf(
+                    ModelOptions(
+                        device = Device.CPU,
+                        numThreads = 1,
+                        useXnnpack = false,
+                        numberOfInputImages = delegateRunRequest.batchImageCount
                     )
                 )
             )
@@ -59,6 +77,8 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
         }
     }
 
-    class RequestValues(val delegateRunRequest: DelegateRunRequest?) : UseCase.RequestValues
+    class RequestValues(val delegateRunRequest: DelegateRunRequest?, val modelEntity: ModelEntity) :
+        UseCase.RequestValues
+
     class ResponseValue(val queue: Queue<ModelOptions>) : UseCase.ResponseValue
 }

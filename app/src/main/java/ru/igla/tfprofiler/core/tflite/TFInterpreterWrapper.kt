@@ -7,9 +7,7 @@ import org.tensorflow.lite.HexagonDelegate
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.Device
-import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.models_list.ModelConfig
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.video.FileUtils
@@ -116,7 +114,7 @@ class TFInterpreterWrapper(
             return createTfliteInterpreter(
                 context,
                 modelPath,
-                ModelConfig(-1, 1, 1, false, ColorSpace.GRAYSCALE),
+                ModelConfig(-1, 1, 1, ModelFormat.FLOATING, ColorSpace.GRAYSCALE, InputShapeType.NHWC),
                 ModelOptions(device = Device.CPU, numThreads = 1, useXnnpack = false)
             )
         }
@@ -130,11 +128,7 @@ class TFInterpreterWrapper(
             context: Context,
             modelPath: String,
             modelConfig: ModelConfig,
-            modelOptions: ModelOptions,
-            /*device: Device = Device.CPU,
-            threads: Int = DEFAULT_NUM_THREADS,
-            useXnnpack: Boolean = false, //experimental support,
-            inputImgCount: Int = 1*/
+            modelOptions: ModelOptions
         ): TFInterpreterWrapper {
             return try {
                 val device: Device = modelOptions.device

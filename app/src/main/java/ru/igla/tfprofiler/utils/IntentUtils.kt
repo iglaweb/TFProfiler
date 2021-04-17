@@ -84,7 +84,7 @@ object IntentUtils {
         return openGooglePlayProductDetails(context, applicationId)
     }
 
-    fun openWebBrowser(context: Context, url: String?): Boolean {
+    private fun openWebBrowser(context: Context, url: String?): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP

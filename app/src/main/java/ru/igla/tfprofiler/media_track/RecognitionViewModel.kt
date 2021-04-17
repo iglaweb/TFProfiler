@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.WorkerThread
 import androidx.arch.core.util.Function
 import androidx.lifecycle.*
+import kotlinx.android.synthetic.main.inference_info.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -239,11 +240,12 @@ class RecognitionViewModel(
         detector = null
     }
 
-    fun resolveRunDelegatesExtra(delegateRunRequest: DelegateRunRequest?): Queue<ModelOptions> {
+    fun resolveRunDelegatesExtra(delegateRunRequest: DelegateRunRequest?, modelEntity: ModelEntity): Queue<ModelOptions> {
         val useCaseResponse: UseCase.Resource<ResolveRunDelegatesExtrasUseCase.ResponseValue> =
             resolveRunDelegatesExtrasUseCase.executeUseCase(
                 ResolveRunDelegatesExtrasUseCase.RequestValues(
-                    delegateRunRequest
+                    delegateRunRequest,
+                    modelEntity
                 )
             )
         if (useCaseResponse.isSuccess()) {
@@ -271,5 +273,26 @@ class RecognitionViewModel(
         override fun <T : ViewModel?> create(@NonNull modelClass: Class<T>): T {
             return RecognitionViewModel(mApplication, entity) as T
         }
+    }
+
+    fun getDelegateDetails(modelOptions: ModelOptions): String {
+        val strDetails = StringBuilder(modelOptions.device.name).apply {
+            val threads = modelOptions.numThreads
+            val useXnnpack = modelOptions.useXnnpack
+
+            if (isNotEmpty()) {
+                append(", ")
+            }
+            append(threads)
+            if (threads == 1) {
+                append(" Thread")
+            } else {
+                append(" Threads")
+            }
+            if (useXnnpack) {
+                append(", XNNPACK")
+            }
+        }
+        return strDetails.toString()
     }
 }

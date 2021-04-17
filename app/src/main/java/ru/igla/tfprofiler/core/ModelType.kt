@@ -6,5 +6,10 @@ enum class ModelType(val title: String, val id: String) {
     MOBILENET_V2_OBJECT_DETECT("MobileNetV2 ObjectDetect", "mobilenetv2"),
     LANDMARKS468_MEDIAPIPE("FaceMesh MediaPipe", "landmarks468"),
     YOLOV4("YOLOv4", "yolov4"),
-    CUSTOM("Custom Model", "custom")
+    CUSTOM_TFLITE("Custom TFLite", "custom_tflite"),
+    CUSTOM_OPENCV("Custom OpenCV", "custom_opencv");
+
+    fun isCustomModel(): Boolean {
+        return this == CUSTOM_OPENCV || this == CUSTOM_TFLITE
+    }
 }

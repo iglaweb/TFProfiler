@@ -17,7 +17,7 @@ import java.io.InputStream;
 /***
  * Do not move as it contains native code.
  */
-public class Utils {
+public final class Utils {
 
     public static String exportResource(Context context, int resourceId) {
         return exportResource(context, resourceId, "OpenCV_data");

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/delegateDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="18sp"
+        tools:text="Adapter from Single Shot Multibox Detector (SSD)" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Input image size"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etWidth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_enter_value"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:textColor="@color/black_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="18sp"
+            tools:text="x" />
+
+        <EditText
+            android:id="@+id/etHeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_enter_value"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:textColor="@color/black_color" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Number of channels"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupChannels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_color_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="1 (BW)"
+            android:textColor="@color/black_color"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radio_color_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="3 (RGB)"
+            android:textColor="@color/black_color"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Input format"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="14sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupInputShape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_nhwc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="NHWC"
+            android:textColor="@color/black_color"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radio_nchw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="NCHW"
+            android:textColor="@color/black_color"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/scModelTypeFloating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Floating model"
+        android:textColor="@color/black_color"
+        android:textOff="Quantized"
+        android:textOn="Floating" />
+
+</LinearLayout>

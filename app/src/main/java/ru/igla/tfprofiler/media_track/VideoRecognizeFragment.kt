@@ -68,24 +68,7 @@ class VideoRecognizeFragment :
         }
 
     private fun renderModelDelegateDetails(modelOptions: ModelOptions) {
-        val strDetails = StringBuilder(modelOptions.device.name).apply {
-            val threads = modelOptions.numThreads
-            val useXnnpack = modelOptions.useXnnpack
-
-            if (isNotEmpty()) {
-                append(", ")
-            }
-            append(threads)
-            if (threads == 1) {
-                append(" Thread")
-            } else {
-                append(" Threads")
-            }
-            if (useXnnpack) {
-                append(", XNNPACK")
-            }
-        }
-        delegate_details.text = strDetails.toString()
+        delegate_details.text = recognitionViewModel.getDelegateDetails(modelOptions)
     }
 
     private fun showFrameInfo(frameInfo: String) {
@@ -129,9 +112,16 @@ class VideoRecognizeFragment :
 
     private fun openReport() {
         val intent = Intent(context, ModelReportActivity::class.java).apply {
-            putExtra(ModelReportFragment.EXTRA_KEY_REPORT_DATA, recognitionViewModel.getReportData())
+            putExtra(
+                ModelReportFragment.EXTRA_KEY_REPORT_DATA,
+                recognitionViewModel.getReportData()
+            )
         }
-        IntentUtils.startFragmentForResultSafely(this, ModelReportFragment.REPORT_REQUEST_CODE, intent)
+        IntentUtils.startFragmentForResultSafely(
+            this,
+            ModelReportFragment.REPORT_REQUEST_CODE,
+            intent
+        )
     }
 
     @SuppressLint("SetTextI18n")
@@ -171,7 +161,8 @@ class VideoRecognizeFragment :
 
             val delegateRunRequest: DelegateRunRequest? =
                 arguments?.getParcelable(NeuralModelsListFragment.MODEL_OPTIONS)
-            val queue: Queue<ModelOptions> = resolveRunDelegatesExtra(delegateRunRequest)
+            val queue: Queue<ModelOptions> =
+                resolveRunDelegatesExtra(delegateRunRequest, mediaRequest.modelEntity)
 
             previewImageLiveData.observe(viewLifecycleOwner) {
                 ivLastImagePreview.clearAndSetBitmapNoRefresh(it)

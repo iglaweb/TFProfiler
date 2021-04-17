@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.utils.StringUtils
 
@@ -60,7 +59,7 @@ class ModelsListRecyclerViewAdapter(
             listener.onClickItem(modelEntity)
         }
 
-        if (modelEntity.modelType == ModelType.CUSTOM) {
+        if (modelEntity.modelType.isCustomModel()) {
             holder.ivDelete.visibility = View.VISIBLE
             holder.ivDelete.setOnClickListener {
                 remove(position)

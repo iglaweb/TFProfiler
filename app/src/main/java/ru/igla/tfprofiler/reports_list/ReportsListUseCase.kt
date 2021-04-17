@@ -68,8 +68,9 @@ class ReportsListUseCase(val application: Application) :
                                 tableId = modelEntity.idModel,
                                 inputWidth = modelEntity.inputWidth,
                                 inputHeight = modelEntity.inputHeight,
-                                quantized = modelEntity.quantized,
-                                colorSpace = modelEntity.colorSpace
+                                modelFormat = modelEntity.modelFormat,
+                                colorSpace = modelEntity.colorSpace,
+                                inputShapeType = modelEntity.inputShapeType
                             )
                         )
                     )

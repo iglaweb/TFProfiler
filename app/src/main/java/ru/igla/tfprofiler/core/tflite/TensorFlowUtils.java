@@ -6,8 +6,8 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import org.tensorflow.lite.TensorFlowLite;
 import org.tensorflow.lite.support.metadata.MetadataExtractor;
 
 import java.io.BufferedReader;
@@ -121,6 +121,7 @@ public final class TensorFlowUtils {
         }
     }
 
+    @Nullable
     public static MetadataExtractor getMetaData(Context context, String modelFilename) {
         try {
             MappedByteBuffer m = loadModelFileFromAssets(context, modelFilename);
@@ -137,7 +138,7 @@ public final class TensorFlowUtils {
     }
 
     public static long getModelFileSize(Context context, ModelEntity modelEntity) {
-        if (modelEntity.getModelType() == ModelType.CUSTOM) {
+        if (modelEntity.getModelType().isCustomModel()) {
             return new File(modelEntity.getModelFile()).length();
         }
         try {

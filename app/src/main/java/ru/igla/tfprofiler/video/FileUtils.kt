@@ -35,8 +35,8 @@ object FileUtils {
         val path = PathUtil.getPath(context, selectedImageUri)
         if (path.isNullOrEmpty()) {
             //copy file to output directory on sdcard
-            return FileUtils.tryGetRealPathFromURI(context, selectedImageUri)
-                ?: return FileUtils.copyFileByUri(context, selectedImageUri)
+            return tryGetRealPathFromURI(context, selectedImageUri)
+                ?: return copyFileByUri(context, selectedImageUri)
         }
         return path
     }
@@ -67,10 +67,10 @@ object FileUtils {
 
     @JvmStatic
     fun getCustomModelsPath(context: Context): String {
-        return getPath(context, "/custom_models")
+        return getPath(context, "/models")
     }
 
-    fun tryGetRealPathFromURI(context: Context?, contentURI: Uri): String? {
+    private fun tryGetRealPathFromURI(context: Context?, contentURI: Uri): String? {
         val cursor = context?.contentResolver?.query(contentURI, null, null, null, null)
         return if (cursor == null) { // Source is Dropbox or other similar local file path
             contentURI.path
@@ -85,7 +85,7 @@ object FileUtils {
         }
     }
 
-    fun copyFileByUri(context: Context, uri: Uri, filename: String = "temp_video.mp4"): String {
+    private fun copyFileByUri(context: Context, uri: Uri, filename: String = "temp_video.mp4"): String {
         val sourceFilename: String = RealPathUtil.getRealPath(context, uri)
         val destinationFilename = getMediaPath(context) + "/" + filename
         return copyFile(sourceFilename, destinationFilename)

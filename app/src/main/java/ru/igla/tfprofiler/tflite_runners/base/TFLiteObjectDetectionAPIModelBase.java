@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.igla.tfprofiler.core.ColorSpace;
+import ru.igla.tfprofiler.core.ModelFormat;
 import ru.igla.tfprofiler.core.ModelType;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.GrayOpNormalizer;
@@ -51,9 +52,6 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     protected TFInterpeterThreadExecutor tfLiteExecutor;
 
-    private static final int COLOR_PIXEL_SIZE = 3;
-    private static final int GRAY_PIXEL_SIZE = 1;
-
     private OpNormalizer opNormalizer;
 
     public ModelOptions modelOptions;
@@ -87,7 +85,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
 
         boolean isModelQuantized;
-        if (modelEntity.getModelType() == ModelType.CUSTOM) {
+        if (modelEntity.getModelType() == ModelType.CUSTOM_TFLITE) {
             TFInterpreterWrapper interpreter = tfLiteExecutor.getTfLite();
             if (interpreter == null) {
                 throw new FailedCreateTFDelegate(modelOptions.getDevice(), "Interpreter is not configured");
@@ -97,7 +95,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             DataType probabilityDataType = interpreter.getInterpreter().getOutputTensor(probabilityTensorIndex).dataType();
             isModelQuantized = probabilityDataType == DataType.UINT8;
         } else {
-            isModelQuantized = modelEntity.getModelConfig().getQuantized();
+            isModelQuantized = modelEntity.getModelConfig().getModelFormat() == ModelFormat.QUANTIZED;
         }
 
         this.opNormalizer = getNormalizer(isModelQuantized, modelEntity.getModelConfig().getColorSpace());
@@ -112,7 +110,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
         //https://www.tensorflow.org/hub/common_signatures/images#input
 
-        final int pixelSize = modelEntity.getModelConfig().getColorSpace() == ColorSpace.GRAYSCALE ? GRAY_PIXEL_SIZE : COLOR_PIXEL_SIZE;
+        final int pixelSize = modelEntity.getModelConfig().getColorSpace().getChannels();
         final int batchImageSize = modelOptions.getNumberOfInputImages();
 
         this.imgData = ByteBuffer.allocateDirect(
@@ -148,12 +146,12 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     @NotNull
     @Override
-    public List<T> recognizeImage(@NotNull final List<Bitmap> bitmap) {
+    public List<T> recognizeImage(@NotNull final List<Bitmap> bitmaps) {
         // Log this method so that it can be analyzed with systrace.
         Trace.beginSection("recognizeImage");
 
         Trace.beginSection("preprocessBitmap");
-        normalizeBitmap(bitmap);
+        normalizeBitmap(bitmaps);
         Trace.endSection(); // preprocessBitmap
 
         // Copy the input data into TensorFlow.

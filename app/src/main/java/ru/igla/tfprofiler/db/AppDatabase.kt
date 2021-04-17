@@ -11,12 +11,14 @@ import androidx.room.TypeConverters
         DbReportDelegateItem::class,
         DbModelReportItem::class,
         DbModelItem::class
-    ], version = 2
+    ], version = 3
 )
 @TypeConverters(
     ColorSpaceTypeConverter::class,
     ModelTypeConverter::class,
-    DeviceConverter::class
+    DeviceConverter::class,
+    ModelFormatConverter::class,
+    InputShapeTypeConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 

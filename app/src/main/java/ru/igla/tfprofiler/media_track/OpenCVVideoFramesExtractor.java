@@ -12,18 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import ru.igla.tfprofiler.core.FileNameLibraryLoader;
-import ru.igla.tfprofiler.core.LibraryLoader;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.TakeVideoFrameListener;
 import ru.igla.tfprofiler.video.UpdateProgressListener;
 
 public class OpenCVVideoFramesExtractor implements ReadVideoFileInterface {
-
-    static {
-        LibraryLoader fileNameLibraryLoader = new FileNameLibraryLoader();
-        fileNameLibraryLoader.loadLibraryFile("opencv_java4");
-    }
 
     @Override
     public boolean readVideoFile(@NotNull String mediaFile,

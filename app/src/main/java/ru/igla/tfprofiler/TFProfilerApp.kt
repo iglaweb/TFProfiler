@@ -6,6 +6,8 @@ import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import com.facebook.stetho.Stetho
 import ru.igla.tfprofiler.analytics.InitAnalyticsImpl
+import ru.igla.tfprofiler.core.FileNameLibraryLoader
+import ru.igla.tfprofiler.core.LibraryLoader
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.DevelopReportingTree
 
@@ -14,6 +16,7 @@ import ru.igla.tfprofiler.utils.DevelopReportingTree
  * Copyright (c) 2020 igla. All rights reserved.
  */
 class TFProfilerApp : Application() {
+
     override fun onCreate() {
         super.onCreate()
         sInstance = this
@@ -56,5 +59,11 @@ class TFProfilerApp : Application() {
         @get:Synchronized
         val instance: TFProfilerApp
             get() = sInstance
+
+        init {
+            val fileNameLibraryLoader: LibraryLoader = FileNameLibraryLoader()
+            fileNameLibraryLoader.loadLibraryFile("opencv_java4")
+            fileNameLibraryLoader.loadLibraryFile("dnn_cv_lib")
+        }
     }
 }

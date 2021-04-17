@@ -16,11 +16,11 @@ class ModelDeleteUseCase(val application: Application) :
     }
 
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-        roomReportDbController.deleteModel(requestValues.data)
+        roomReportDbController.deleteModel(requestValues.modelId)
         val responseValue = ResponseValue()
         return Resource.success(responseValue)
     }
 
-    class RequestValues(val data: Long) : UseCase.RequestValues
+    class RequestValues(val modelId: Long) : UseCase.RequestValues
     class ResponseValue : UseCase.ResponseValue
 }

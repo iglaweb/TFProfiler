@@ -31,18 +31,27 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         ModelDeleteUseCase(application)
     }
 
+    private val modelConfigUpdateUseCase by lazy {
+        ModelConfigUpdateUseCase(application)
+    }
+
+
     private val preferenceManager by lazy { AndroidPreferenceManager(TFProfilerApp.instance).defaultPrefs }
 
     private val modelsListUseCase by lazy {
         ResolveModelsListUseCase(application)
     }
 
-    private val addCustomModelUseCase by lazy {
-        AddCustomModelUseCase(application)
+    private val addTfliteModelUseCase by lazy {
+        AddTfliteModelUseCase(application)
+    }
+
+    private val addOpenCVModelUseCase by lazy {
+        AddCustomOpenCVModelUseCase(application)
     }
 
     val liveDataAddNewModel =
-        MutableLiveData<UseCase.Resource<AddCustomModelUseCase.ResponseValue>>()
+        MutableLiveData<UseCase.Resource<AddModelUseCase.ResponseValue>>()
 
     private val exceptionHandler = ExceptionHandler { _, _ -> }
 
@@ -53,6 +62,12 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
     fun deleteCustomModel(item: ModelEntity) {
         modelDeleteUseCase.executeUseCase(
             ModelDeleteUseCase.RequestValues(item.modelConfig.tableId)
+        )
+    }
+
+    fun updateCustomModel(item: ModelEntity) {
+        modelConfigUpdateUseCase.executeUseCase(
+            ModelConfigUpdateUseCase.RequestValues(item.modelConfig.tableId, item.modelConfig)
         )
     }
 
@@ -109,16 +124,36 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         )
     }
 
-    fun addCustomTfliteModel(path: String) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+    private suspend fun copyModelFileToDestination(path: String): String {
+        return withContext(Dispatchers.IO + exceptionHandler) {
             val file = File(path)
             val filename = file.name
-            val destinationFilename =
-                FileUtils.getCustomModelsPath(getApplication()) + "/" + filename
-            val destFile = FileUtils.copyFile(path, destinationFilename)
+            val customModelPath = FileUtils.getRootPath(getApplication())
+            val destinationFilename = File(customModelPath, filename).absolutePath
+            FileUtils.copyFile(path, destinationFilename)
+            destinationFilename
+        }
+    }
+
+    fun addCustomOpenCVModel(path: String) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val destFile = copyModelFileToDestination(path)
 
             val response =
-                addCustomModelUseCase.executeUseCase(AddCustomModelUseCase.RequestValues(destFile))
+                addOpenCVModelUseCase.executeUseCase(AddModelUseCase.RequestValues(path))
+            if (response.isSuccess()) {
+                modelsListLiveData.refresh()
+            }
+            liveDataAddNewModel.postValue(response)
+        }
+    }
+
+    fun addCustomTfliteModel(path: String) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val destFile = copyModelFileToDestination(path)
+
+            val response =
+                addTfliteModelUseCase.executeUseCase(AddModelUseCase.RequestValues(destFile))
             if (response.isSuccess()) {
                 modelsListLiveData.refresh()
             }

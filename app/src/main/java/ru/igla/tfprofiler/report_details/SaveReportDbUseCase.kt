@@ -1,7 +1,6 @@
 package ru.igla.tfprofiler.report_details
 
 import android.app.Application
-import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.*
@@ -62,7 +61,7 @@ class SaveReportDbUseCase(val application: Application) :
 
         val modelEntity = DbModelItem(
             idModel = 0,
-            modelType = ModelType.CUSTOM,
+            modelType = ModelType.CUSTOM_TFLITE,
             title = "filename",
             inputWidth = 1,
             inputHeight = 1,
@@ -70,8 +69,9 @@ class SaveReportDbUseCase(val application: Application) :
             labelPath = "", //default
             source = "",
             details = "",
-            quantized = true,
-            colorSpace = ColorSpace.COLOR
+            modelFormat = data.modelConfig.modelFormat,
+            colorSpace = data.modelConfig.colorSpace,
+            inputShapeType = data.modelConfig.inputShapeType
         )
 
         val modelReportWithDelegates =

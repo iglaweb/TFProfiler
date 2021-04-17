@@ -6,6 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import ru.igla.tfprofiler.core.ColorSpace
+import ru.igla.tfprofiler.core.InputShapeType
+import ru.igla.tfprofiler.core.ModelFormat
 import ru.igla.tfprofiler.core.ModelType
 
 const val MODEL_TABLE = "models"
@@ -34,7 +36,6 @@ class DbModelItem(
     @ColumnInfo(name = "details")
     val details: String,
 
-
     @ColumnInfo(name = "model_type")
     val modelType: ModelType,
 
@@ -43,10 +44,12 @@ class DbModelItem(
     @ColumnInfo(name = "input_height")
     val inputHeight: Int,
 
-    @ColumnInfo(name = "quantized")
-    val quantized: Boolean,
+    @ColumnInfo(name = "model_format")
+    val modelFormat: ModelFormat,
 
     @ColumnInfo(name = "color_space")
-    val colorSpace: ColorSpace
+    val colorSpace: ColorSpace,
 
+    @ColumnInfo(name = "input_shape_type")
+    val inputShapeType: InputShapeType
 ) : Parcelable

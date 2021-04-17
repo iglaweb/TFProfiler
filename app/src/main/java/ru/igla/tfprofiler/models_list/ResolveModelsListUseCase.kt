@@ -1,7 +1,6 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
-import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
@@ -22,8 +21,7 @@ class ResolveModelsListUseCase(val application: Application) :
         )
     }
 
-    override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
-
+    private fun resolveBuiltInModels() {
         val dbModels = roomModelsDbController.getModels()
         if (dbModels.isEmpty()) { //first start
             val items = NeuralModelsProvider.resolveBuiltInModels(application)
@@ -42,27 +40,33 @@ class ResolveModelsListUseCase(val application: Application) :
                         labelPath = it.model.labelFile,
                         source = it.model.source,
                         details = it.model.details,
-                        quantized = it.model.quantized,
-                        colorSpace = it.model.colorSpace
+                        modelFormat = it.model.modelFormat,
+                        colorSpace = it.model.colorSpace,
+                        inputShapeType = it.model.inputShapeType
                     )
                     roomModelsDbController.insertModel(item)
                 }
             }
         }
+    }
+
+    override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
+        resolveBuiltInModels()
 
         var id = 1L
         val list = roomModelsDbController.getModels().filter {
-            it.modelType != ModelType.CUSTOM || File(it.modelPath).exists() //filter out non existing custom models
+            !it.modelType.isCustomModel() || File(it.modelPath).exists() //filter out non existing custom models
         }
             .map { item ->
                 val modelConfig = ModelConfig(
                     item.idModel,
                     item.inputWidth,
                     item.inputHeight,
-                    item.quantized,
-                    item.colorSpace
+                    item.modelFormat,
+                    item.colorSpace,
+                    item.inputShapeType
                 )
-                if (item.modelType == ModelType.CUSTOM) {
+                if (item.modelType.isCustomModel()) {
                     ModelEntity(
                         id = id++,
                         modelType = item.modelType,

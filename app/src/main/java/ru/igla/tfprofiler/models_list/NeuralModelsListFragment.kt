@@ -24,23 +24,28 @@ import com.afollestad.materialdialogs.ModalDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import kotlinx.android.synthetic.main.bottom_sheet_model_custom_input.*
+import kotlinx.android.synthetic.main.bottom_sheet_model_custom_input.view.*
 import kotlinx.android.synthetic.main.bottom_sheet_model_short_info.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_model_short_info.view.delegateDetails
 import kotlinx.android.synthetic.main.fragment_main_models_list.*
 import kotlinx.coroutines.*
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
-import ru.igla.tfprofiler.core.ErrorDialog
-import ru.igla.tfprofiler.core.RequestMode
-import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
 import ru.igla.tfprofiler.ui.BaseFragment
+import ru.igla.tfprofiler.ui.pick_inference_type.InferenceLaunchListener
+import ru.igla.tfprofiler.ui.pick_inference_type.InferenceTypeLauncher
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.StringUtils
 import ru.igla.tfprofiler.utils.ViewUtils
+import ru.igla.tfprofiler.utils.extension
 import ru.igla.tfprofiler.video.FileUtils
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 
@@ -78,30 +83,112 @@ class NeuralModelsListFragment :
         )
     }
 
+    private fun MaterialDialog.interceptCustomDialogClick(
+        item: ModelEntity,
+        click: (item: ModelEntity) -> Unit
+    ) {
+        if (item.modelType == ModelType.CUSTOM_OPENCV) {
+            val customView = getCustomView()
+            val modelWidth = customView.etWidth.text.toString().toInt()
+            val modelHeight = customView.etHeight.text.toString().toInt()
+            val floatingType = customView.scModelTypeFloating.isChecked
+            val grayColor =
+                customView.radioGroupChannels.checkedRadioButtonId == R.id.radio_color_1
+            val nhwcFormat = customView.radioGroupInputShape.checkedRadioButtonId == R.id.radio_nhwc
+            launch(Dispatchers.IO) {
+                val newConfig = item.modelConfig.copy(
+                    inputWidth = modelWidth,
+                    inputHeight = modelHeight,
+                    modelFormat = if (floatingType) ModelFormat.FLOATING else ModelFormat.QUANTIZED,
+                    colorSpace = if (grayColor) ColorSpace.GRAYSCALE else ColorSpace.COLOR,
+                    inputShapeType = if (nhwcFormat) InputShapeType.NHWC else InputShapeType.NCHW
+                )
+                val newModel = item.copy(modelConfig = newConfig)
+                listNeuralModelsViewModel.updateCustomModel(newModel)
+                withContext(Dispatchers.Main) {
+                    click(item)
+                }
+            }
+        } else {
+            click(item)
+        }
+    }
+
+    private fun createCustomDialog(
+        res: Int, dialogBehavior: DialogBehavior = ModalDialog,
+        item: ModelEntity
+    ): MaterialDialog {
+        val context = requireContext()
+        return MaterialDialog(context, dialogBehavior).show {
+            title(text = item.name)
+            customView(
+                res,
+                scrollable = true,
+                horizontalPadding = true
+            )
+            positiveButton(text = "Camera") {
+                interceptCustomDialogClick(item) {
+                    openModel(RequestMode.CAMERA, item)
+                }
+            }
+            neutralButton(text = "Dataset") {
+                interceptCustomDialogClick(item) {
+                    openModel(RequestMode.DATASET, item)
+                }
+            }
+            negativeButton(text = "Video") {
+                interceptCustomDialogClick(item) {
+                    openModel(RequestMode.VIDEO, item)
+                }
+            }
+            debugMode(false)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showCustomInputViewDialog(
+        dialogBehavior: DialogBehavior = ModalDialog,
+        item: ModelEntity
+    ) {
+        val dialog =
+            createCustomDialog(R.layout.bottom_sheet_model_custom_input, dialogBehavior, item)
+        // Setup custom view content
+        dialog.getCustomView().let { customView ->
+            val tvModelDetails: TextView = customView.delegateDetails
+            tvModelDetails.text = item.details
+
+            val modelConfig = item.modelConfig
+            customView.etWidth.setText(modelConfig.inputWidth.toString())
+            customView.etHeight.setText(modelConfig.inputHeight.toString())
+
+            if (modelConfig.colorSpace == ColorSpace.GRAYSCALE) {
+                customView.radioGroupChannels.check(R.id.radio_color_1)
+            } else {
+                customView.radioGroupChannels.check(R.id.radio_color_3)
+            }
+
+            if (modelConfig.inputShapeType == InputShapeType.NHWC) {
+                customView.radioGroupInputShape.check(R.id.radio_nhwc)
+            } else {
+                customView.radioGroupInputShape.check(R.id.radio_nchw)
+            }
+
+            customView.scModelTypeFloating.isChecked =
+                modelConfig.modelFormat == ModelFormat.FLOATING
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun showCustomViewDialog(
         dialogBehavior: DialogBehavior = ModalDialog,
         item: ModelEntity
     ) {
-        val context = requireContext()
-        val dialog = MaterialDialog(context, dialogBehavior).show {
-            title(text = item.name)
-            customView(
+        val dialog =
+            createCustomDialog(
                 R.layout.bottom_sheet_model_short_info,
-                scrollable = true,
-                horizontalPadding = true
+                dialogBehavior,
+                item
             )
-            positiveButton(text = "Camera") {
-                openModel(RequestMode.CAMERA, item)
-            }
-            neutralButton(text = "Dataset") {
-                openModel(RequestMode.DATASET, item)
-            }
-            negativeButton(text = "Video") {
-                openModel(RequestMode.VIDEO, item)
-            }
-            debugMode(false)
-        }
         // Setup custom view content
         dialog.getCustomView().let { customView ->
             val tvModelDetails: TextView = customView.delegateDetails
@@ -149,7 +236,7 @@ class NeuralModelsListFragment :
         super.onViewCreated(view, savedInstanceState)
         fab.apply {
             setOnClickListener {
-                pickTfliteModel()
+                pickInferenceType()
             }
         }
         initAdapter(requireContext())
@@ -172,24 +259,28 @@ class NeuralModelsListFragment :
         val dialog = AlertDialog.Builder(requireContext())
             .setMessage("Select TFLite model from your phone. Model interference will be measured.")
             .setPositiveButton("Pick") { _, _ ->
-                runWithPermissions(Permission.WRITE_EXTERNAL_STORAGE) {// to copy model
-                    val intent = Intent().apply {
-                        type = "file/*"
-                        action = Intent.ACTION_GET_CONTENT
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
-                    IntentUtils.startFragmentForResultSafely(
-                        this,
-                        REQUEST_PICK_MODEL,
-                        Intent.createChooser(intent, "Select model")
-                    )
-                }
+                requestIntentChooseModelFile()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
         dialog.show()
+    }
+
+    private fun requestIntentChooseModelFile() {
+        runWithPermissions(Permission.WRITE_EXTERNAL_STORAGE) {// to copy model
+            val intent = Intent().apply {
+                type = "file/*"
+                action = Intent.ACTION_GET_CONTENT
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            IntentUtils.startFragmentForResultSafely(
+                this,
+                REQUEST_PICK_MODEL,
+                Intent.createChooser(intent, "Select model")
+            )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -216,6 +307,23 @@ class NeuralModelsListFragment :
         }
     }
 
+    private fun pickInferenceType() {
+        InferenceTypeLauncher.showInferenceTypeDialog(
+            requireContext(), object : InferenceLaunchListener {
+                override fun onSelectedOption(selectedOption: InferenceTypeLauncher.InferenceType) {
+                    when (selectedOption) {
+                        InferenceTypeLauncher.InferenceType.TFLITE -> {
+                            pickTfliteModel()
+                        }
+                        InferenceTypeLauncher.InferenceType.OPENCV -> {
+                            requestIntentChooseModelFile()
+                        }
+                    }
+                }
+            }
+        )
+    }
+
     private fun onSelectTfliteModel(uri: Uri) {
         launch(Dispatchers.IO) {
             val filePath =
@@ -227,12 +335,25 @@ class NeuralModelsListFragment :
                 }
                 listNeuralModelsViewModel.addCustomTfliteModel(filePath)
             } else {
-                withContext(Dispatchers.Main) {
-                    mToaster.showToast("Selected file is not .tflite model: $filePath")
+                /***
+                 * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
+                 */
+                val opencvSupported = supportedModels.contains(File(filePath).extension)
+                if (opencvSupported) {
+                    withContext(Dispatchers.Main) {
+                        mToaster.showToast("OpenCV model path: $filePath")
+                    }
+                    listNeuralModelsViewModel.addCustomOpenCVModel(filePath)
+                } else {
+                    withContext(Dispatchers.Main) {
+                        mToaster.showToast("Selected file not supported by opencv: $filePath")
+                    }
                 }
             }
         }
     }
+
+    private val supportedModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
 
     private fun openVideo(selectedImageUri: Uri) {
         launch(Dispatchers.IO) {
@@ -268,7 +389,11 @@ class NeuralModelsListFragment :
                 object :
                     ModelsListRecyclerViewAdapter.ClickModelItemListener {
                     override fun onClickItem(item: ModelEntity) {
-                        showCustomViewDialog(BottomSheet(LayoutMode.MATCH_PARENT), item)
+                        if (item.modelType == ModelType.CUSTOM_OPENCV) {
+                            showCustomInputViewDialog(BottomSheet(LayoutMode.MATCH_PARENT), item)
+                        } else {
+                            showCustomViewDialog(BottomSheet(LayoutMode.MATCH_PARENT), item)
+                        }
                     }
 
                     override fun onDeleteItem(item: ModelEntity) {

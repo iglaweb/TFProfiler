@@ -2,19 +2,16 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.Application
 import org.tensorflow.lite.DataType
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.ModelType
-import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.RoomModelsDbController
 import java.io.File
 
-class AddCustomModelUseCase(val application: Application) :
-    UseCase<AddCustomModelUseCase.RequestValues,
-            AddCustomModelUseCase.ResponseValue>() {
+class AddTfliteModelUseCase(val application: Application) :
+    UseCase<AddModelUseCase.RequestValues,
+            AddModelUseCase.ResponseValue>() {
 
     private val roomModelsDbController by lazy {
         RoomModelsDbController(
@@ -22,7 +19,7 @@ class AddCustomModelUseCase(val application: Application) :
         )
     }
 
-    override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
+    override fun executeUseCase(requestValues: AddModelUseCase.RequestValues): Resource<AddModelUseCase.ResponseValue> {
         val modelPath = requestValues.modelPath
         try {
             TFInterpreterWrapper.createTestInterpeter(
@@ -39,7 +36,8 @@ class AddCustomModelUseCase(val application: Application) :
                 val probabilityTensorIndex = 0
                 val probabilityDataType: DataType =
                     it.interpreter.getOutputTensor(probabilityTensorIndex).dataType()
-                val isModelQuantized = probabilityDataType == DataType.UINT8
+                val modelFormat =
+                    if (probabilityDataType == DataType.UINT8) ModelFormat.QUANTIZED else ModelFormat.FLOATING
 
                 val file = File(modelPath)
                 val modelId =
@@ -48,11 +46,12 @@ class AddCustomModelUseCase(val application: Application) :
                         modelPath,
                         imageSizeX,
                         imageSizeY,
-                        isModelQuantized,
-                        colorSpace
+                        modelFormat,
+                        colorSpace,
+                        InputShapeType.NHWC
                     )
                 if (modelId != -1L) {
-                    val responseValue = ResponseValue()
+                    val responseValue = AddModelUseCase.ResponseValue()
                     return Resource.success(responseValue)
                 }
             }
@@ -68,12 +67,13 @@ class AddCustomModelUseCase(val application: Application) :
         modelPath: String,
         inputWidth: Int,
         inputHeight: Int,
-        quantized: Boolean,
-        colorSpace: ColorSpace
+        modelFormat: ModelFormat,
+        colorSpace: ColorSpace,
+        inputShapeType: InputShapeType
     ): Long {
         val item = DbModelItem(
             idModel = 0,
-            modelType = ModelType.CUSTOM,
+            modelType = ModelType.CUSTOM_TFLITE,
             title = filename,
             inputWidth = inputWidth,
             inputHeight = inputHeight,
@@ -81,12 +81,10 @@ class AddCustomModelUseCase(val application: Application) :
             labelPath = "", //default
             source = "",
             details = "",
-            quantized = quantized,
-            colorSpace = colorSpace
+            modelFormat = modelFormat,
+            colorSpace = colorSpace,
+            inputShapeType = inputShapeType
         )
         return roomModelsDbController.insertModel(item)
     }
-
-    class RequestValues(val modelPath: String) : UseCase.RequestValues
-    class ResponseValue : UseCase.ResponseValue
 }

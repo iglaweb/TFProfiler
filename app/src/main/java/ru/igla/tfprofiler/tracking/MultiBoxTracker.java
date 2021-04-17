@@ -70,7 +70,12 @@ public class MultiBoxTracker {
     private int frameHeight;
     private int sensorOrientation;
 
+    Paint paint = new Paint();
+
     public MultiBoxTracker(final Context context) {
+        paint.setColor(Color.RED); // Text Color
+        paint.setTextSize(14); // Text Size
+
         boxPaint.setColor(Color.RED);
         boxPaint.setStyle(Style.STROKE);
         boxPaint.setStrokeWidth(10.0f);
@@ -156,6 +161,14 @@ public class MultiBoxTracker {
 
             getFrameToCanvasMatrix().mapPoints(points);
             canvas.drawPoints(points, boxPaint);
+
+            int counter = 0;
+            for (int i = 0; i < points.length; i = i + 4) {
+                float x = points[i];
+                float y = points[i + 1];
+                canvas.drawText("" + counter, x, y, paint);
+                counter++;
+            }
         }
     }
 

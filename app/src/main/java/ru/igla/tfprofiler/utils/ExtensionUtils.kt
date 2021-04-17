@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.Timber
+import java.io.File
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -21,8 +22,9 @@ fun Int.toSp(displayMetrics: DisplayMetrics): Float = this.toFloat() / displayMe
 fun Float.spToPx(displayMetrics: DisplayMetrics): Int =
     (this * displayMetrics.scaledDensity).round()
 
-fun Float.dpToPx(displayMetrics: DisplayMetrics): Int =
-    (this * displayMetrics.density).round()
+
+fun Context.dpToPx(dp: Float): Int = Math.round(dpF(dp))
+fun Context.dpF(dp: Float): Float = dp * resources.displayMetrics.density
 
 @UiThread
 fun ImageView.clearAndSetBitmapNoRefresh(bitmap: Bitmap?) {
@@ -32,6 +34,9 @@ fun ImageView.clearAndSetBitmapNoRefresh(bitmap: Bitmap?) {
     }
     setImageBitmap(bitmap)
 }
+
+public val File.extension: String
+    get() = name.substringAfterLast('.', "")
 
 private fun Float.round(): Int = (if (this < 0) ceil(this + 0.5f) else floor(this + 0.5f)).toInt()
 
@@ -72,7 +77,6 @@ inline fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T
     return if (p1 != null && p2 != null) block(p1, p2) else null
 }
 
-fun Context.dpF(dp: Float): Float = dp * resources.displayMetrics.density
 
 fun <T> lazyNonSafe(initializer: () -> T): Lazy<T> = lazy(LazyThreadSafetyMode.NONE, initializer)
 

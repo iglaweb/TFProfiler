@@ -5,12 +5,8 @@ import ru.igla.tfprofiler.core.ColorSpace
 
 class ColorSpaceTypeConverter {
     @TypeConverter
-    fun toModelType(value: Int): ColorSpace {
-        return ColorSpace.values()[value]
-    }
+    fun toModelType(value: Int): ColorSpace = ColorSpace.values()[value]
 
     @TypeConverter
-    fun fromModelType(colorSpace: ColorSpace): Int {
-        return colorSpace.ordinal
-    }
+    fun fromModelType(colorSpace: ColorSpace): Int = colorSpace.ordinal
 }
