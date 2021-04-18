@@ -1,4 +1,4 @@
-# TFProfiler (work-in-progress 👷🔧️)
+# TFProfiler – ready to use 🚀 
 
 [![Build Status][build-status-svg]][build-status-link]
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -6,13 +6,15 @@
 
 # Overview
 
-TFProfiler is an app that aims to profile [TensorFlow Lite](https://www.tensorflow.org/lite) model. 
+TFProfiler is an app that aims to profile your [TensorFlow Lite](https://www.tensorflow.org/lite) model. 
 
 Measure model performance with FPS, model initialization time,  inference time, memory consumption, etc. 
 
 Tweak model runs with different delegates (CPU, GPU, NNAPI, HEXAGON), XNNPACK option, and number of threads. 
 
-Apply a batch processing, adjusting the number of input images. Support is [partially provided](https://github.com/tensorflow/tensorflow/issues/37706) by TensorFlow.
+Apply a batch processing, adjusting the number of input images. TFLite batch inference is [partially supported](https://github.com/tensorflow/tensorflow/issues/37706) by TensorFlow.
+
+Run various (*.caffemodel, *.onnx, *.pb, etc) neural models supported by [OpenCV DNN module](https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html). OpenCV **4.5.2** is integrated inside the app.
 
 - **Android API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
