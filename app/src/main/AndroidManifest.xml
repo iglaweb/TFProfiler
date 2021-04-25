@@ -3,6 +3,13 @@
     package="ru.igla.tfprofiler"
     android:installLocation="auto">
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="file/*"/>
+        </intent>
+    </queries>
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

@@ -1,6 +1,5 @@
 package ru.igla.tfprofiler.video;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,11 +8,21 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import androidx.annotation.Nullable;
+
+import ru.igla.tfprofiler.core.Timber;
+import ru.igla.tfprofiler.utils.IOUtils;
+
 /***
  * Taken from https://gist.github.com/tatocaster/32aad15f6e0c50311626
  */
-public class RealPathUtil {
+public final class RealPathUtil {
 
+    private RealPathUtil() {
+        //ignore
+    }
+
+    @Nullable
     public static String getRealPath(Context context, Uri fileUri) {
         return RealPathUtil.getRealPathFromURI_API19(context, fileUri);
     }
@@ -27,7 +36,7 @@ public class RealPathUtil {
      * @param uri     The Uri to query.
      * @author paulburke
      */
-    @SuppressLint("NewApi")
+    @Nullable
     public static String getRealPathFromURI_API19(final Context context, final Uri uri) {
 
         // DocumentProvider
@@ -105,23 +114,77 @@ public class RealPathUtil {
      */
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
+        return getImagePathMediaStore(context, uri, selection, selectionArgs);
+    }
 
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
+    /*
+     * Gets the file path of the given Uri.
+     */
+    @Nullable
+    public static String getPath(Context context, Uri uri) {
+        String selection = null;
+        String[] selectionArgs = null;
+        // Uri is different in versions after KITKAT (Android 4.4), we need to
+        // deal with different Uris.
+        if (DocumentsContract.isDocumentUri(context.getApplicationContext(), uri)) {
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                return Environment.getExternalStorageDirectory() + "/" + split[1];
+            } else if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                try {
+                    uri = ContentUris.withAppendedId(
+                            Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
+                } catch (NumberFormatException e) {
+                    //In Android 8 and Android P the id is not a number
+                    return uri.getPath()
+                            .replaceFirst("^/document/raw:", "").replaceFirst("^raw:", "");
+                }
 
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
+            } else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+                if ("image".equals(type)) {
+                    uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                selection = "_id=?";
+                selectionArgs = new String[]{split[1]};
             }
+        }
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String str = getImagePathMediaStore(context, uri, selection, selectionArgs);
+            if (str != null) {
+                return str;
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    public static String getImagePathMediaStore(Context context, Uri uri, String selection, String[] selectionArgs) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor == null) return null;
+            if (cursor.moveToFirst()) {
+                final int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                if (columnIndex == -1) {
+                    return null;
+                }
+                return cursor.getString(columnIndex);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
         } finally {
-            if (cursor != null)
-                cursor.close();
+            IOUtils.closeQuietly(cursor);
         }
         return null;
     }

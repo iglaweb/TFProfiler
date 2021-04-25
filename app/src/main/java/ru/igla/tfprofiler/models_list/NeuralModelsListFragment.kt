@@ -40,10 +40,7 @@ import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceLaunchListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceTypeLauncher
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
-import ru.igla.tfprofiler.utils.IntentUtils
-import ru.igla.tfprofiler.utils.StringUtils
-import ru.igla.tfprofiler.utils.ViewUtils
-import ru.igla.tfprofiler.utils.extension
+import ru.igla.tfprofiler.utils.*
 import ru.igla.tfprofiler.video.FileUtils
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -271,15 +268,18 @@ class NeuralModelsListFragment :
     private fun requestIntentChooseModelFile() {
         runWithPermissions(Permission.WRITE_EXTERNAL_STORAGE) {// to copy model
             val intent = Intent().apply {
-                type = "file/*"
+                type = "*/*"
                 action = Intent.ACTION_GET_CONTENT
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            IntentUtils.startFragmentForResultSafely(
+            val isCompleted = IntentUtils.startFragmentForResultSafely(
                 this,
                 REQUEST_PICK_MODEL,
                 Intent.createChooser(intent, "Select model")
             )
+            if (!isCompleted) {
+                mToaster.showToast("Failed to pick the model")
+            }
         }
     }
 

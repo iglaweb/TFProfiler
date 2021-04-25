@@ -8,13 +8,12 @@ import androidx.annotation.WorkerThread
 import ru.igla.tfprofiler.TFProfilerApp.Companion.instance
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.IOUtils
-import ru.igla.tfprofiler.utils.PathUtil
 import java.io.*
 import java.util.*
 
 object FileUtils {
 
-    private val okFileExtensions = arrayOf(
+    private val imageFileExtensions = arrayOf(
         "jpg",
         "png",
         "gif",
@@ -22,8 +21,9 @@ object FileUtils {
     )
 
     fun isImage(path: String): Boolean {
-        for (extension in okFileExtensions) {
-            if (path.toLowerCase(Locale.US).endsWith(extension)) {
+        val lowerPath = path.toLowerCase(Locale.US)
+        for (extension in imageFileExtensions) {
+            if (lowerPath.endsWith(extension)) {
                 return true
             }
         }
@@ -32,7 +32,7 @@ object FileUtils {
 
     @WorkerThread
     fun getRealFilePath(context: Context, selectedImageUri: Uri): String {
-        val path = PathUtil.getPath(context, selectedImageUri)
+        val path = RealPathUtil.getPath(context, selectedImageUri)
         if (path.isNullOrEmpty()) {
             //copy file to output directory on sdcard
             return tryGetRealPathFromURI(context, selectedImageUri)
@@ -65,11 +65,6 @@ object FileUtils {
         return getPath(context, "/media")
     }
 
-    @JvmStatic
-    fun getCustomModelsPath(context: Context): String {
-        return getPath(context, "/models")
-    }
-
     private fun tryGetRealPathFromURI(context: Context?, contentURI: Uri): String? {
         val cursor = context?.contentResolver?.query(contentURI, null, null, null, null)
         return if (cursor == null) { // Source is Dropbox or other similar local file path
@@ -85,10 +80,45 @@ object FileUtils {
         }
     }
 
-    private fun copyFileByUri(context: Context, uri: Uri, filename: String = "temp_video.mp4"): String {
-        val sourceFilename: String = RealPathUtil.getRealPath(context, uri)
-        val destinationFilename = getMediaPath(context) + "/" + filename
-        return copyFile(sourceFilename, destinationFilename)
+    private fun copyFileByUri(
+        context: Context,
+        uri: Uri
+    ): String {
+        val sourceFilename: String? = RealPathUtil.getRealPath(context, uri)
+        val filename = uri.lastPathSegment ?: return ""
+        val destinationFile = File(getMediaPath(context), filename)
+        val destinationFilename = destinationFile.absolutePath
+
+        return if (sourceFilename == null) {
+            copy(context, uri, destinationFile)
+            return destinationFilename
+        } else {
+            copyFile(sourceFilename, destinationFilename)
+        }
+    }
+
+    fun copy(context: Context, srcUri: Uri, dstFile: File) {
+        try {
+            val inputStream = context.contentResolver.openInputStream(srcUri) ?: return
+            val outputStream: OutputStream = FileOutputStream(dstFile)
+            try {
+                copyStream(inputStream, outputStream)
+            } finally {
+                IOUtils.closeQuietly(inputStream)
+                IOUtils.closeQuietly(outputStream)
+            }
+        } catch (e: IOException) {
+            Timber.e(e)
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun copyStream(inputStream: InputStream, outputStream: OutputStream) {
+        val buf = ByteArray(1024)
+        inputStream.read(buf)
+        do {
+            outputStream.write(buf)
+        } while (inputStream.read(buf) != -1)
     }
 
     fun copyFile(
@@ -106,11 +136,7 @@ object FileUtils {
         try {
             bis = BufferedInputStream(FileInputStream(sourceFilename))
             bos = BufferedOutputStream(FileOutputStream(destinationFilename, false))
-            val buf = ByteArray(1024)
-            bis.read(buf)
-            do {
-                bos.write(buf)
-            } while (bis.read(buf) != -1)
+            copyStream(bis, bos)
         } catch (e: IOException) {
             Timber.e(e)
         } finally {
