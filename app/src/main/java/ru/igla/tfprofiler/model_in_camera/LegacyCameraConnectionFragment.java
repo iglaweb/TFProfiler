@@ -40,13 +40,13 @@ public class LegacyCameraConnectionFragment extends Fragment {
     }
 
     private Camera camera;
-    private Camera.PreviewCallback imageListener;
-    private Size desiredSize;
-    private CameraType cameraType;
+    private final Camera.PreviewCallback imageListener;
+    private final Size desiredSize;
+    private final CameraType cameraType;
     /**
      * The layout identifier to inflate for this Fragment.
      */
-    private int layout;
+    private final int layout;
     /**
      * An {@link AutoFitTextureView} for camera preview.
      */
@@ -154,7 +154,10 @@ public class LegacyCameraConnectionFragment extends Fragment {
         // the SurfaceTextureListener).
 
         if (textureView.isAvailable()) {
-            camera.startPreview();
+            // https://github.com/tensorflow/examples/pull/61
+            if (camera != null) {
+                camera.startPreview();
+            }
         } else {
             textureView.setSurfaceTextureListener(surfaceTextureListener);
         }
@@ -179,12 +182,14 @@ public class LegacyCameraConnectionFragment extends Fragment {
      * Stops the background thread and its {@link Handler}.
      */
     private void stopBackgroundThread() {
-        backgroundThread.quitSafely();
-        try {
-            backgroundThread.join();
-            backgroundThread = null;
-        } catch (final InterruptedException e) {
-            Timber.e(e);
+        if (backgroundThread != null) {
+            backgroundThread.quitSafely();
+            try {
+                backgroundThread.join();
+                backgroundThread = null;
+            } catch (final InterruptedException e) {
+                Timber.e(e);
+            }
         }
     }
 
