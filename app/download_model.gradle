@@ -4,7 +4,7 @@ def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapip
 //or switch back to back camera specific model
 //def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
 def yolov4DownloadUrl = 'https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite'
-def faceLandmarkUrl = "https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_landmark.tflite"
+def faceLandmarkUrl = "https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/modules/face_landmark/face_landmark.tflite"
 
 
 project.ext.faceLandmarkLocalFile = "face_landmark.tflite"
