@@ -1,6 +1,6 @@
 def mobileNetV1DownloadUrl = 'http://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip'
 def mobileNetV2DownloadUrl = 'https://storage.googleapis.com/tfhub-lite-models/google/lite-model/object_detection/mobile_object_localizer_v1/1/default/1.tflite'
-def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_front.tflite'
+def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/modules/face_detection/face_detection_front.tflite'
 //or switch back to back camera specific model
 //def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
 def yolov4DownloadUrl = 'https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite'
