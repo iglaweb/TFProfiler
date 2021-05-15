@@ -35,7 +35,7 @@ fun ImageView.clearAndSetBitmapNoRefresh(bitmap: Bitmap?) {
     setImageBitmap(bitmap)
 }
 
-public val File.extension: String
+val File.extension: String
     get() = name.substringAfterLast('.', "")
 
 private fun Float.round(): Int = (if (this < 0) ceil(this + 0.5f) else floor(this + 0.5f)).toInt()
@@ -64,15 +64,6 @@ inline fun <E> List<E>.forEachNoIterator(block: (E) -> Unit) {
     }
 }
 
-inline fun <E> List<E>.forEachNoIteratorIdx(block: (Int, E) -> Unit) {
-    var index = 0
-    val size = size
-    while (index < size) {
-        block(index, get(index))
-        index++
-    }
-}
-
 inline fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2) -> R?): R? {
     return if (p1 != null && p2 != null) block(p1, p2) else null
 }
@@ -96,4 +87,10 @@ fun Double.round(decimals: Int): Double {
     var multiplier = 1.0
     repeat(decimals) { multiplier *= 10 }
     return kotlin.math.round(this * multiplier) / multiplier
+}
+
+inline fun startClickSafely(action: () -> Unit) {
+    if (ClickTimeoutLock.canProceedClick()) {
+        action()
+    }
 }

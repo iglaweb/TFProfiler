@@ -218,14 +218,16 @@ class NeuralModelsListFragment :
     private fun showFileChooserButtons(modelEntity: ModelEntity) =
         runWithPermissions(Permission.READ_EXTERNAL_STORAGE) {
             selectedModelOptionsVideo = modelEntity
-            Intent().apply {
-                type = "file/*"
-                action = Intent.ACTION_GET_CONTENT
-                IntentUtils.startFragmentForResultSafely(
-                    this@NeuralModelsListFragment,
-                    REQUEST_SELECT_VIDEO,
-                    Intent.createChooser(this, "Select video")
-                )
+            startClickSafely {
+                Intent().apply {
+                    type = "file/*"
+                    action = Intent.ACTION_GET_CONTENT
+                    IntentUtils.startFragmentForResultSafely(
+                        this@NeuralModelsListFragment,
+                        REQUEST_SELECT_VIDEO,
+                        Intent.createChooser(this, "Select video")
+                    )
+                }
             }
         }
 
@@ -368,11 +370,13 @@ class NeuralModelsListFragment :
                     throw Exception("None of the delegates selected")
                 }
 
-                val intent = Intent(context, VideoRecognizeActivity::class.java).apply {
-                    putExtra(MEDIA_ITEM, mediaRequest)
-                    putExtra(MODEL_OPTIONS, delegateRunRequest)
+                startClickSafely {
+                    val intent = Intent(context, VideoRecognizeActivity::class.java).apply {
+                        putExtra(MEDIA_ITEM, mediaRequest)
+                        putExtra(MODEL_OPTIONS, delegateRunRequest)
+                    }
+                    IntentUtils.startActivitySafely(requireContext(), intent)
                 }
-                IntentUtils.startActivitySafely(requireContext(), intent)
             } catch (e: Exception) {
                 Timber.d(e)
                 withContext(Dispatchers.Main) {
@@ -462,11 +466,13 @@ class NeuralModelsListFragment :
         cameraType: CameraType
     ) {
         val mediaRequest = MediaRequest(requestMode, "", modelEntity)
-        val intent = Intent(context, DetectorActivity::class.java).apply {
-            putExtra(EXTRA_CAMERA_TYPE, cameraType.name)
-            putExtra(MEDIA_ITEM, mediaRequest)
+        startClickSafely {
+            val intent = Intent(context, DetectorActivity::class.java).apply {
+                putExtra(EXTRA_CAMERA_TYPE, cameraType.name)
+                putExtra(MEDIA_ITEM, mediaRequest)
+            }
+            IntentUtils.startActivitySafely(requireContext(), intent)
         }
-        IntentUtils.startActivitySafely(requireContext(), intent)
     }
 
     override fun onStop() {
@@ -482,16 +488,19 @@ class NeuralModelsListFragment :
         }
 
         val mediaRequest = MediaRequest(
-            requestMode, BuildConfig.ASSET_IMG_DATASET,
+            requestMode,
+            BuildConfig.ASSET_IMG_DATASET,
             modelEntity
         )
-        val intent = Intent(context, VideoRecognizeActivity::class.java).apply {
-            putExtra(MEDIA_ITEM, mediaRequest)
-            putExtra(MODEL_OPTIONS, delegateRunRequest)
+        startClickSafely {
+            val intent = Intent(context, VideoRecognizeActivity::class.java).apply {
+                putExtra(MEDIA_ITEM, mediaRequest)
+                putExtra(MODEL_OPTIONS, delegateRunRequest)
+            }
+            IntentUtils.startActivitySafely(
+                requireContext(),
+                intent
+            )
         }
-        IntentUtils.startActivitySafely(
-            requireContext(),
-            intent
-        )
     }
 }

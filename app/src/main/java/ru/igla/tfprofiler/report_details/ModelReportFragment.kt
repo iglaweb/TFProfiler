@@ -36,6 +36,7 @@ import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.forEachNoIterator
+import ru.igla.tfprofiler.utils.startClickSafely
 import ru.igla.tfprofiler.video.FileUtils
 import kotlin.coroutines.CoroutineContext
 
@@ -215,14 +216,16 @@ class ModelReportFragment :
     }
 
     private fun openCsvWith(fileUriString: String) {
-        Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, Uri.parse(fileUriString))
-            type = "text/csv"
-            IntentUtils.startActivitySafely(
-                requireContext(),
-                Intent.createChooser(this, "Open file with")
-            )
+        startClickSafely {
+            Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, Uri.parse(fileUriString))
+                type = "text/csv"
+                IntentUtils.startActivitySafely(
+                    requireContext(),
+                    Intent.createChooser(this, "Open file with")
+                )
+            }
         }
     }
 
