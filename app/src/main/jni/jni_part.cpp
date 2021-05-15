@@ -49,7 +49,6 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
   if(!je) je = env->FindClass("java/lang/Exception");
   env->ThrowNew(je, what.c_str());
 
-  //LOGE("%s caught %s", method, what.c_str());
   (void)method;        // avoid "unused" warning
 }
 
@@ -95,7 +94,14 @@ jint JNIEXPORT JNICALL DLIB_JNI_DNNMODEL_METHOD(jniInitModel)(JNIEnv* env, jobje
   if (!gDnnModelPtr) {
     const char* model_configuration_path = env->GetStringUTFChars(m_modelPath, 0);
     LOG(T_INFO) << "Initializing new DnnModel, configuration path "<< model_configuration_path;
-    gDnnModelPtr = std::make_shared<dnnmodel::DnnModel>(model_configuration_path, nhwc, cuda, channels, inputWidth, inputHeight);
+    try {
+        gDnnModelPtr = std::make_shared<dnnmodel::DnnModel>(model_configuration_path, nhwc, cuda, channels, inputWidth, inputHeight);
+    } catch(const std::exception &e) {
+      static const char method_name[] = "jniInitModel";
+      throwJavaException(env, &e, method_name);
+    } catch(...) {
+      rethrow_cpp_exception_as_java_exception(env);
+    }
     env->ReleaseStringUTFChars(m_modelPath, model_configuration_path);
   }
   LOG(T_INFO) << "Classes and method references init DnnModel OK";

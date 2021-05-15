@@ -28,7 +28,6 @@ class OpenCVInterpeterThreadExecutor(val context: Context, private val modelPath
         modelOptions: ModelOptions
     ) {
         this.close()
-
         runBlocking(exceptionHandler + dispatcherBg) {
             openCVInterpreterWrapper = OpenCVInterpreterWrapper.createInterpreter(
                 modelPath,

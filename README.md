@@ -18,6 +18,8 @@ Run various (*.caffemodel, *.onnx, *.pb, etc) neural models supported by [OpenCV
 
 - **Android API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
+- **TFLite 2.5.0 inside**
+
 
 
 # Features
@@ -80,6 +82,7 @@ We can boost model performance and energy efficiency using various optimization 
 
 Model optimization aims to create smaller models that are generally faster and more energy efficient, so that they can be deployed on mobile devices. 
 
+1. Check ops compatibility for each delegate, [CPU](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/tools/versioning/runtime_version.cc), [GPU](https://www.tensorflow.org/lite/performance/gpu_advanced#supported_ops), [XNNPACK](https://developer.android.com/ndk/guides/neuralnetworks#operands).
 1. Use [XNNPACK](https://blog.tensorflow.org/2020/07/accelerating-tensorflow-lite-xnnpack-integration.html) to boost float-point inference.
 
 2. Use [GPU](https://www.tensorflow.org/lite/performance/gpu) delegate to compare with CPU and other options. If some of the ops are not supported by the GPU delegate, the TF Lite will only run a part of the graph on the GPU and the remaining part on the CPU.
