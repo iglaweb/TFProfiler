@@ -1,3 +1,9 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
 # IntelliJ
 *.iml
 .idea
@@ -39,6 +45,8 @@ bin/
 gen/
 out/
 
+main/obj/
+
 # Android room library
 schemas/
 
@@ -65,3 +73,6 @@ proguard/
 *.pepk
 release_tfprofiler.properties
 app/src/main/assets/*/*.tflite
+
+app/src/main/jni/*
+app/src/main/assets/*

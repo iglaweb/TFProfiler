@@ -25,6 +25,13 @@ class RoomModelsDbController(private val appDatabase: AppDatabase) : DbModelsCon
         colorSpace: ColorSpace,
         inputShapeType: InputShapeType
     ) {
-        return appDatabase.modelsDao.updateModel(modelId, inputWidth, inputHeight, modelFormat, colorSpace, inputShapeType)
+        return appDatabase.modelsDao.updateModel(
+            modelId,
+            inputWidth,
+            inputHeight,
+            modelFormat,
+            colorSpace,
+            inputShapeType
+        )
     }
 }

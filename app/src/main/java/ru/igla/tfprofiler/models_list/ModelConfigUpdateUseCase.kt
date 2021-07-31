@@ -18,8 +18,8 @@ class ModelConfigUpdateUseCase(val application: Application) :
     override fun executeUseCase(requestValues: RequestValues): Resource<ResponseValue> {
         roomReportDbController.updateModel(
             requestValues.modelId,
-            requestValues.modelConfig.inputWidth,
-            requestValues.modelConfig.inputHeight,
+            requestValues.modelConfig.inputSize.width,
+            requestValues.modelConfig.inputSize.height,
             requestValues.modelConfig.modelFormat,
             requestValues.modelConfig.colorSpace,
             requestValues.modelConfig.inputShapeType

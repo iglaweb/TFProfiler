@@ -3,17 +3,14 @@ package ru.igla.tfprofiler.models_list
 import android.os.Parcelable
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 import org.tensorflow.lite.support.metadata.MetadataExtractor
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
-import ru.igla.tfprofiler.core.ModelType
+import ru.igla.tfprofiler.core.*
 
 @Parcelize
 data class ModelConfig(
     val tableId: Long,
-    val inputWidth: Int,
-    val inputHeight: Int,
+    val inputSize: @RawValue Size,
     val modelFormat: ModelFormat,
     val colorSpace: ColorSpace,
     val inputShapeType: InputShapeType

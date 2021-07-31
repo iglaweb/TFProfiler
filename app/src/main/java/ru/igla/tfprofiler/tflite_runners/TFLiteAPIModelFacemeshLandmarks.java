@@ -3,6 +3,7 @@ package ru.igla.tfprofiler.tflite_runners;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,8 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
                     new RectF(
                             0f,
                             0f,
-                            inputWidth - 1f,
-                            inputHeight - 1f
+                            mInputSize.getWidth() - 1f,
+                            mInputSize.getHeight() - 1f
                     ),
                     output
             );
@@ -87,7 +88,7 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(result[0], landmarkPoints[0]);
-            return List.of(new ImageBatchProcessing.ImageResult(detections));
+            return Collections.singletonList(new ImageBatchProcessing.ImageResult(detections));
         }
 
         List<ImageBatchProcessing.ImageResult> imageResults = new ArrayList<>();

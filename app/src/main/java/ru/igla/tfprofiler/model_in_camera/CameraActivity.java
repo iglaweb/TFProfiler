@@ -14,7 +14,6 @@ import android.os.HandlerThread;
 import android.os.Trace;
 import android.util.Pair;
 import android.util.Size;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -24,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +48,7 @@ import ru.igla.tfprofiler.report_details.ModelReportActivity;
 import ru.igla.tfprofiler.report_details.ModelReportFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
+import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 import ru.igla.tfprofiler.utils.IntentUtils;
 import ru.igla.tfprofiler.utils.PermissionUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
@@ -71,30 +70,29 @@ public abstract class CameraActivity extends AppCompatActivity
     private HandlerThread handlerThread;
     private boolean useCamera2API;
     private boolean isProcessingFrame = false;
-    private byte[][] yuvBytes = new byte[3][];
+    private final byte[][] yuvBytes = new byte[3][];
     private int[] rgbBytes = null;
     private int yRowStride;
     private Runnable postInferenceCallback;
     private Runnable imageConverter;
 
-    private LinearLayout bottomSheetLayout;
     private LinearLayout gestureLayout;
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
-    protected TextView
-            frameValueTextView,
-            cropValueTextView,
-            inferenceTimeTextView,
-            inference_info_more,
-            fpsTextView;
-    protected TextView inferenceTimeMin, inferenceTimeMax, inferenceMemory;
+    protected TextView frameValueTextView;
+    protected TextView cropValueTextView;
+    protected TextView inferenceTimeTextView;
+    protected TextView inferenceInfoMore;
+    protected TextView fpsTextView;
+    protected TextView inferenceTimeMin;
+    protected TextView inferenceTimeMax;
+    protected TextView inferenceMemory;
 
     private TextView batchImgCountTextView;
-    private SwitchCompat xnnpackSwitch;
     private Spinner deviceSpinner;
     protected ImageView bottomSheetArrowImageView;
-    private ImageView plusThreadImageView, minusThreadImageView;
-    private ImageView plusImageImageView, minusImageImageView;
+    private ImageView plusThreadImageView;
+    private ImageView minusThreadImageView;
     private TextView threadsTextView;
 
     private boolean useXnnpack = false;
@@ -107,6 +105,15 @@ public abstract class CameraActivity extends AppCompatActivity
             useXnnpack,
             batchImageCount
     );
+
+    @Nullable
+    private Toaster mToaster;
+
+    public void showToast(@NonNull String text) {
+        Toaster toast = mToaster == null ? new Toaster(getApplicationContext()) : mToaster;
+        mToaster = toast;
+        toast.showToast(text);
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -126,10 +133,10 @@ public abstract class CameraActivity extends AppCompatActivity
         minusThreadImageView = findViewById(R.id.minusThread);
 
         batchImgCountTextView = findViewById(R.id.batchImageCount);
-        plusImageImageView = findViewById(R.id.plusImage);
-        minusImageImageView = findViewById(R.id.minusImage);
+        ImageView plusImageImageView = findViewById(R.id.plusImage);
+        ImageView minusImageImageView = findViewById(R.id.minusImage);
 
-        bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
@@ -145,7 +152,7 @@ public abstract class CameraActivity extends AppCompatActivity
         inferenceTimeMax = findViewById(R.id.inference_info_time_max);
         inferenceMemory = findViewById(R.id.inference_info_memory);
 
-        inference_info_more = findViewById(R.id.inference_info_more);
+        inferenceInfoMore = findViewById(R.id.inference_info_more);
 
         plusThreadImageView.setOnClickListener(this);
         minusThreadImageView.setOnClickListener(this);
@@ -157,7 +164,7 @@ public abstract class CameraActivity extends AppCompatActivity
         deviceSpinner.setOnItemSelectedListener(this);
 
 
-        xnnpackSwitch = findViewById(R.id.xnnpack_enabled);
+        SwitchCompat xnnpackSwitch = findViewById(R.id.xnnpack_enabled);
         xnnpackSwitch.setOnCheckedChangeListener(this);
         useXnnpack = xnnpackSwitch.isChecked();
 
@@ -394,12 +401,6 @@ public abstract class CameraActivity extends AppCompatActivity
     }
 
     @Override
-    public synchronized void onStart() {
-        Timber.d("onStart " + this);
-        super.onStart();
-    }
-
-    @Override
     public synchronized void onResume() {
         Timber.d("onResume " + this);
         super.onResume();
@@ -418,23 +419,10 @@ public abstract class CameraActivity extends AppCompatActivity
             handlerThread.join();
             handlerThread = null;
             handler = null;
-        } catch (final InterruptedException e) {
+        } catch (InterruptedException e) {
             Timber.e(e, "Exception!");
         }
-
         super.onPause();
-    }
-
-    @Override
-    public synchronized void onStop() {
-        Timber.d("onStop " + this);
-        super.onStop();
-    }
-
-    @Override
-    public synchronized void onDestroy() {
-        Timber.d("onDestroy " + this);
-        super.onDestroy();
     }
 
     protected void runInBackground(final Runnable r) {
@@ -459,11 +447,7 @@ public abstract class CameraActivity extends AppCompatActivity
     private void requestCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PermissionUtils.PERMISSION_CAMERA)) {
-                Toast.makeText(
-                        CameraActivity.this,
-                        "Camera permission is required for this demo",
-                        Toast.LENGTH_LONG)
-                        .show();
+                showToast("Camera permission is required for this demo");
             }
             requestPermissions(new String[]{PermissionUtils.PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
         }
@@ -471,14 +455,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Nullable
     private CameraType cameraType = null;
-
-    /*private CameraType getCameraType() {
-        Pair<String, Boolean> pair = CameraUtils.chooseCamera(cameraType, getApplicationContext());
-        if (pair != null) {
-            useCamera2API = pair.second;
-        }
-        return pair == null ? null : pair.first;
-    }*/
 
     protected void setFragment(CameraType cameraType) {
         Pair<String, Boolean> pair = CameraUtils.chooseCamera(cameraType, getApplicationContext());
@@ -491,13 +467,10 @@ public abstract class CameraActivity extends AppCompatActivity
         if (useCamera2API) {
             CameraConnectionFragment camera2Fragment =
                     CameraConnectionFragment.newInstance(
-                            new CameraConnectionFragment.ConnectionCallback() {
-                                @Override
-                                public void onPreviewSizeChosen(final Size size, final int rotation) {
-                                    previewHeight = size.getHeight();
-                                    previewWidth = size.getWidth();
-                                    CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                                }
+                            (size, rotation) -> {
+                                previewHeight = size.getHeight();
+                                previewWidth = size.getWidth();
+                                CameraActivity.this.onPreviewSizeChosen(size, rotation);
                             },
                             this,
                             getLayoutId(),
@@ -543,34 +516,21 @@ public abstract class CameraActivity extends AppCompatActivity
         }
     }
 
-    protected int getScreenOrientation() {
-        switch (getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_270:
-                return 270;
-            case Surface.ROTATION_180:
-                return 180;
-            case Surface.ROTATION_90:
-                return 90;
-            default:
-                return 0;
-        }
-    }
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.plusThread) {
             String threads = threadsTextView.getText().toString().trim();
-            int numThreads = Integer.parseInt(threads);
-            if (numThreads < 9) {
-                setNumThreads(++numThreads);
-                threadsTextView.setText(String.valueOf(numThreads));
+            int threadsCount = Integer.parseInt(threads);
+            if (threadsCount < 9) {
+                setNumThreads(++threadsCount);
+                threadsTextView.setText(String.valueOf(threadsCount));
             }
         } else if (v.getId() == R.id.minusThread) {
             String threads = threadsTextView.getText().toString().trim();
-            int numThreads = Integer.parseInt(threads);
-            if (numThreads > 1) {
-                setNumThreads(--numThreads);
-                threadsTextView.setText(String.valueOf(numThreads));
+            int threadsCount = Integer.parseInt(threads);
+            if (threadsCount > 1) {
+                setNumThreads(--threadsCount);
+                threadsTextView.setText(String.valueOf(threadsCount));
             }
         } else if (v.getId() == R.id.minusImage) {
             String batchImgCount = batchImgCountTextView.getText().toString().trim();
@@ -633,7 +593,7 @@ public abstract class CameraActivity extends AppCompatActivity
     }
 
     protected void showInferenceMore(String inference) {
-        inference_info_more.setText(inference);
+        inferenceInfoMore.setText(inference);
     }
 
     @SuppressLint("SetTextI18n")

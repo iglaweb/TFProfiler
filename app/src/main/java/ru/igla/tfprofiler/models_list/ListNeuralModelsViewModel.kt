@@ -16,12 +16,16 @@ import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.RefreshLiveData
 import ru.igla.tfprofiler.reports_list.RefreshLiveData.RefreshAction
 import ru.igla.tfprofiler.utils.ExceptionHandler
+import ru.igla.tfprofiler.utils.extension
 import ru.igla.tfprofiler.utils.logI
 import ru.igla.tfprofiler.video.FileUtils
 import java.io.File
 
 
-class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(application) {
+class ListNeuralModelsViewModel(application: Application) :
+    AndroidViewModel(application) {
+
+    private val supportedModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
 
     companion object {
         private val VIDEO_EXT = listOf("mp4", "avi", "mov", "mpeg", "flv", "wmv")
@@ -34,7 +38,6 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
     private val modelConfigUpdateUseCase by lazy {
         ModelConfigUpdateUseCase(application)
     }
-
 
     private val preferenceManager by lazy { AndroidPreferenceManager(TFProfilerApp.instance).defaultPrefs }
 
@@ -135,10 +138,8 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun addCustomOpenCVModel(path: String) {
+    private fun addCustomOpenCVModel(path: String) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            val destFile = copyModelFileToDestination(path)
-
             val response =
                 addOpenCVModelUseCase.executeUseCase(AddModelUseCase.RequestValues(path))
             if (response.isSuccess()) {
@@ -148,10 +149,9 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun addCustomTfliteModel(path: String) {
+    private fun addCustomTfliteModel(path: String) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val destFile = copyModelFileToDestination(path)
-
             val response =
                 addTfliteModelUseCase.executeUseCase(AddModelUseCase.RequestValues(destFile))
             if (response.isSuccess()) {
@@ -175,6 +175,42 @@ class ListNeuralModelsViewModel(application: Application) : AndroidViewModel(app
         return RefreshLiveData { callback: RefreshAction.Callback<List<ModelEntity>> ->
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 callback.onDataLoaded(resolveNeuralModels())
+            }
+        }
+    }
+
+    enum class ModelFormat {
+        TFLITE,
+        OPENCV
+    }
+
+    class SelectModelStatus(
+        val success: Boolean,
+        val modelType: ModelFormat,
+        val modelPath: String
+    )
+
+    suspend fun onSelectNeuralModelFile(
+        uri: Uri
+    ): SelectModelStatus = withContext(Dispatchers.IO) {
+        val filePath =
+            FileUtils.getRealFilePath(getApplication(), uri).trim()
+        return@withContext if (filePath.endsWith(".tflite")) {
+            addCustomTfliteModel(filePath)
+            SelectModelStatus(true, ModelFormat.TFLITE, filePath)
+        } else {
+            /***
+             * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
+             */
+            /***
+             * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
+             */
+            val opencvSupported = supportedModels.contains(File(filePath).extension)
+            if (opencvSupported) {
+                addCustomOpenCVModel(filePath)
+                SelectModelStatus(true, ModelFormat.OPENCV, filePath)
+            } else {
+                SelectModelStatus(false, ModelFormat.OPENCV, filePath)
             }
         }
     }

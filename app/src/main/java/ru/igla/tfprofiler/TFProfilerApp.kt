@@ -7,7 +7,6 @@ import android.os.StrictMode.VmPolicy
 import com.facebook.stetho.Stetho
 import ru.igla.tfprofiler.analytics.InitAnalyticsImpl
 import ru.igla.tfprofiler.core.FileNameLibraryLoader
-import ru.igla.tfprofiler.core.LibraryLoader
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.DevelopReportingTree
 
@@ -61,9 +60,8 @@ class TFProfilerApp : Application() {
             get() = sInstance
 
         init {
-            val fileNameLibraryLoader: LibraryLoader = FileNameLibraryLoader()
+            val fileNameLibraryLoader = FileNameLibraryLoader()
             fileNameLibraryLoader.loadLibraryFile("opencv_java4")
-            fileNameLibraryLoader.loadLibraryFile("dnn_cv_lib")
         }
     }
 }

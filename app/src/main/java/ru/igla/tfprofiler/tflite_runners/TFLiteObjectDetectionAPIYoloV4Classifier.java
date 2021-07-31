@@ -5,6 +5,7 @@ import android.graphics.RectF;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
-public class TFLiteObjectDetectionAPIYoloV4Classifier extends
+public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
         TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     private static final float THRESHOLD_DETECT = 0.1f;
@@ -184,8 +185,8 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(inputWidth - 1, xPos + w / 2),
-                        Math.min(inputHeight - 1, yPos + h / 2));
+                        Math.min(mInputSize.getWidth() - 1, xPos + w / 2),
+                        Math.min(mInputSize.getHeight() - 1, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
                 detections.add(new Recognition("" + i, label, score, rectF));
             }
@@ -220,8 +221,8 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(inputWidth - 1f, xPos + w / 2),
-                        Math.min(inputHeight - 1f, yPos + h / 2));
+                        Math.min(mInputSize.getWidth() - 1f, xPos + w / 2),
+                        Math.min(mInputSize.getHeight() - 1f, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
                 detections.add(new Recognition("" + i, label, score, rectF));
             }
@@ -245,7 +246,7 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(bboxes, outScore);
-            return List.of(new ImageBatchProcessing.ImageResult(detections));
+            return Collections.singletonList(new ImageBatchProcessing.ImageResult(detections));
         }
 
         float[][] arr = bboxes[0];
@@ -253,7 +254,6 @@ public class TFLiteObjectDetectionAPIYoloV4Classifier extends
         int len = arr.length;
         List<ImageBatchProcessing.ImageResult> imageResults = new ArrayList<>();
         for (int i = 0; i < len - batchCount + 1; i += batchCount) {
-
             float[][] boxArr = bboxes[0];
             float[][] box = Arrays.copyOfRange(boxArr, i, i + batchCount);
             float[][][] scaledBoxes = {box};

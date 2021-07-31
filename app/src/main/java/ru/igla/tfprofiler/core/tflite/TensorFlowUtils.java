@@ -21,7 +21,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.igla.tfprofiler.core.ModelType;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.utils.IOUtils;

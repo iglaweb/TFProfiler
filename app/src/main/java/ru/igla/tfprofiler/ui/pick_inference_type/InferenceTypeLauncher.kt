@@ -13,9 +13,9 @@ import ru.igla.tfprofiler.R
 
 object InferenceTypeLauncher {
 
-    enum class InferenceType(type: Int, val humanName: String) {
-        TFLITE(0, "TFLite"),
-        OPENCV(1, "OpenCV")
+    enum class InferenceType(val humanName: String) {
+        TFLITE("TFLite"),
+        OPENCV("OpenCV")
     }
 
     @Suppress("DEPRECATION")
@@ -42,7 +42,6 @@ object InferenceTypeLauncher {
         listener: DialogInterface.OnClickListener
     ) {
         Handler(Looper.getMainLooper()).post {
-
             val adapter = InferenceListArrayAdapter(
                 context,
                 R.layout.select_dialog_item,

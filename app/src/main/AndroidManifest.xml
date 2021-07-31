@@ -6,7 +6,8 @@
     <queries>
         <intent>
             <action android:name="android.intent.action.GET_CONTENT" />
-            <data android:mimeType="file/*"/>
+
+            <data android:mimeType="file/*" />
         </intent>
     </queries>
 
@@ -29,37 +30,31 @@
         android:xlargeScreens="true" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".TFProfilerApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
         <activity android:name=".models_list.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".report_details.ModelReportActivity"
             android:label="Model report"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".model_in_camera.DetectorActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".media_track.VideoRecognizeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppMediaFitScreen" />
-
     </application>
 
 </manifest>

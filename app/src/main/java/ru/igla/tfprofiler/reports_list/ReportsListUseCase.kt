@@ -3,6 +3,7 @@ package ru.igla.tfprofiler.reports_list
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import ru.igla.tfprofiler.core.Size
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelReportsDbController
@@ -66,8 +67,7 @@ class ReportsListUseCase(val application: Application) :
 
                             modelConfig = ModelConfig(
                                 tableId = modelEntity.idModel,
-                                inputWidth = modelEntity.inputWidth,
-                                inputHeight = modelEntity.inputHeight,
+                                inputSize = Size(modelEntity.inputWidth, modelEntity.inputHeight),
                                 modelFormat = modelEntity.modelFormat,
                                 colorSpace = modelEntity.colorSpace,
                                 inputShapeType = modelEntity.inputShapeType

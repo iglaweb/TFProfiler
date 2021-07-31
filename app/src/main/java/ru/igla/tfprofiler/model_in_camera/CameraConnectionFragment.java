@@ -13,6 +13,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
@@ -31,9 +32,9 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,9 +52,11 @@ import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
 import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.ui.BaseFragment;
+import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 
 @SuppressLint("ValidFragment")
-public class CameraConnectionFragment extends Fragment {
+public class CameraConnectionFragment extends BaseFragment {
 
     /**
      * The camera preview size will be chosen to be the smallest frame by pixel size capable of
@@ -241,8 +244,8 @@ public class CameraConnectionFragment extends Fragment {
 
         // Collect the supported resolutions that are at least as big as the preview Surface
         boolean exactSizeFound = false;
-        final List<Size> bigEnough = new ArrayList<Size>();
-        final List<Size> tooSmall = new ArrayList<Size>();
+        final List<Size> bigEnough = new ArrayList<>();
+        final List<Size> tooSmall = new ArrayList<>();
         for (final Size option : choices) {
             if (option.equals(desiredSize)) {
                 // Set the size but don't return yet so that remaining sizes will still be logged.
@@ -266,7 +269,7 @@ public class CameraConnectionFragment extends Fragment {
         }
 
         // Pick the smallest of those, assuming we found any
-        if (bigEnough.size() > 0) {
+        if (!bigEnough.isEmpty()) {
             final Size chosenSize = Collections.min(bigEnough, new CompareSizesByArea());
             Timber.i("Chosen size: " + chosenSize.getWidth() + "x" + chosenSize.getHeight());
             return chosenSize;
@@ -284,22 +287,13 @@ public class CameraConnectionFragment extends Fragment {
         return new CameraConnectionFragment(callback, imageListener, layout, inputSize);
     }
 
-    /**
-     * Shows a {@link Toast} on the UI thread.
-     *
-     * @param text The message to show
-     */
-    private void showToast(final String text) {
-        final Activity activity = getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
+    @Nullable
+    private Toaster mToaster;
+
+    public void showToast(@NonNull String text) {
+        Toaster toast = mToaster == null ? new Toaster(requireContext().getApplicationContext()) : mToaster;
+        mToaster = toast;
+        toast.showToast(text);
     }
 
     @Override
@@ -310,12 +304,9 @@ public class CameraConnectionFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-    }
+        textureView = view.findViewById(R.id.texture);
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+
     }
 
     @Override
@@ -352,8 +343,7 @@ public class CameraConnectionFragment extends Fragment {
             requestedCamera = CameraType.FRONT;
         }
 
-        setCamera(requestedCamera, getContext());
-
+        setCamera(requestedCamera, requireContext());
         stopCamera();
         startCamera();
     }
@@ -427,7 +417,7 @@ public class CameraConnectionFragment extends Fragment {
         final Activity activity = getActivity();
         final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
-            if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+            if (!cameraOpenCloseLock.tryAcquire(2500L, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             manager.openCamera(cameraId, stateCallback, backgroundHandler);
@@ -532,10 +522,10 @@ public class CameraConnectionFragment extends Fragment {
                                 // Auto focus should be continuous for camera preview.
                                 previewRequestBuilder.set(
                                         CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                                        CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                                 // Flash is automatically enabled when necessary.
                                 previewRequestBuilder.set(
-                                        CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                                        CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_ON_AUTO_FLASH);
 
                                 // Finally, we start displaying the camera preview.
                                 previewRequest = previewRequestBuilder.build();
@@ -548,7 +538,7 @@ public class CameraConnectionFragment extends Fragment {
 
                         @Override
                         public void onConfigureFailed(@NotNull final CameraCaptureSession cameraCaptureSession) {
-                            showToast("Failed");
+                            runOnUiThreadIfFragmentAlive(() -> showToast("Failed"));
                         }
                     },
                     null);
@@ -602,7 +592,7 @@ public class CameraConnectionFragment extends Fragment {
     /**
      * Compares two {@code Size}s based on their areas.
      */
-    static class CompareSizesByArea implements Comparator<Size> {
+    private static class CompareSizesByArea implements Comparator<Size> {
         @Override
         public int compare(final Size lhs, final Size rhs) {
             // We cast here to ensure the multiplications won't overflow

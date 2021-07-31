@@ -3,6 +3,7 @@ package ru.igla.tfprofiler.ui.widgets.toast;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -77,14 +78,14 @@ public final class Toaster {
      * Show Toast with "long" duration.
      */
     public void showToast(String text) {
-        showToast(text, ToastCompat.LENGTH_LONG);
+        showToast(text, Toast.LENGTH_LONG);
     }
 
     /**
      * Show Toast with "short" duration.
      */
     public void showShortToast(String text) {
-        showToast(text, ToastCompat.LENGTH_SHORT);
+        showToast(text, Toast.LENGTH_SHORT);
     }
 
     public void cancel() {

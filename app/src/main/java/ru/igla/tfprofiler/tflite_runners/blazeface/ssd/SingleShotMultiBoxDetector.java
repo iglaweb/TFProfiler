@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ru.igla.tfprofiler.utils.Log;
+import ru.igla.tfprofiler.core.Timber;
 
 
 /**
@@ -45,7 +45,7 @@ public class SingleShotMultiBoxDetector {
         List<Anchor> anchors = new ArrayList<>();
 
         if (anchorOptions.strides.length != anchorOptions.numLayers) {
-            Log.e("Stride count and numLayers must be equal!");
+            Timber.e("Stride count and numLayers must be equal!");
             return anchors;
         }
 
@@ -108,16 +108,15 @@ public class SingleShotMultiBoxDetector {
                         final float yCenter = (y + anchorOptions.anchorOffsetY) * 1.0f / featureMapHeight;
 
                         Anchor anchor = new Anchor();
-
-                        anchor.xCenter = xCenter;
-                        anchor.yCenter = yCenter;
+                        anchor.setXCenter(xCenter);
+                        anchor.setYCenter(yCenter);
 
                         if (anchorOptions.fixedAnchorSize) {
-                            anchor.width = 1.0f;
-                            anchor.height = 1.0f;
+                            anchor.setWidth(1.0f);
+                            anchor.setHeight(1.0f);
                         } else {
-                            anchor.width = anchorWidth.get(anchorId);
-                            anchor.height = anchorHeight.get(anchorId);
+                            anchor.setWidth(anchorWidth.get(anchorId));
+                            anchor.setHeight(anchorHeight.get(anchorId));
                         }
 
                         anchors.add(anchor);
@@ -212,7 +211,7 @@ public class SingleShotMultiBoxDetector {
 
     private Detection decodeBox(int id, Anchor anchor, final float[] rawBoxValues, float score, int classId) {
         if (rawBoxValues.length != calculatorOptions.numCoords) {
-            Log.e("rawBoxValues.length != calculatorOptions.numCoords");
+            Timber.e("rawBoxValues.length != calculatorOptions.numCoords");
         }
 
         final int boxOffset = calculatorOptions.boxCoordOffset;
@@ -229,15 +228,15 @@ public class SingleShotMultiBoxDetector {
             height = rawBoxValues[boxOffset + 3];
         }
 
-        xCenter = xCenter / calculatorOptions.xScale * anchor.width + anchor.xCenter;
-        yCenter = yCenter / calculatorOptions.yScale * anchor.height + anchor.yCenter;
+        xCenter = xCenter / calculatorOptions.xScale * anchor.getWidth() + anchor.getXCenter();
+        yCenter = yCenter / calculatorOptions.yScale * anchor.getHeight() + anchor.getYCenter();
 
         if (calculatorOptions.applyExponentialOnBoxSize) {
-            height = (float) (Math.exp(height / calculatorOptions.hScale) * anchor.height);
-            width = (float) (Math.exp(width / calculatorOptions.wScale) * anchor.width);
+            height = (float) (Math.exp(height / calculatorOptions.hScale) * anchor.getHeight());
+            width = (float) (Math.exp(width / calculatorOptions.wScale) * anchor.getWidth());
         } else {
-            height = height / calculatorOptions.hScale * anchor.height;
-            width = width / calculatorOptions.wScale * anchor.width;
+            height = height / calculatorOptions.hScale * anchor.getHeight();
+            width = width / calculatorOptions.wScale * anchor.getWidth();
         }
 
         final float yMin = yCenter - (height / 2.0f);
@@ -268,8 +267,8 @@ public class SingleShotMultiBoxDetector {
                     keypointY = rawBoxValues[keypointOffset + 1];
                 }
 
-                keypointX = keypointX / calculatorOptions.xScale * anchor.width + anchor.xCenter;
-                keypointY = keypointY / calculatorOptions.yScale * anchor.height + anchor.yCenter;
+                keypointX = keypointX / calculatorOptions.xScale * anchor.getWidth() + anchor.getXCenter();
+                keypointY = keypointY / calculatorOptions.yScale * anchor.getHeight() + anchor.getYCenter();
 
                 float x = keypointX;
                 float y = calculatorOptions.flipVertically ? 1.0f - keypointY : keypointY;

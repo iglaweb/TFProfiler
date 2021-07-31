@@ -39,10 +39,10 @@ object IntentUtils {
             activity.startActivityForResult(intent, requestCode)
             true
         } catch (e: ActivityNotFoundException) {
-            Log.e(e)
+            Timber.e(e)
             false
         } catch (e: SecurityException) {
-            Log.e(e)
+            Timber.e(e)
             false
         }
     }

@@ -319,7 +319,7 @@ class VideoRecognizeFragment :
     }
 
     private fun recognizeVideo(context: Context, selectedImageUri: Uri) {
-        Timber.i("Read image frames...")
+        logI { "Read image frames..." }
         val filePath = FileUtils.getRealFilePath(context, selectedImageUri).trim()
         recognitionViewModel.recognizeVideo(filePath)
     }

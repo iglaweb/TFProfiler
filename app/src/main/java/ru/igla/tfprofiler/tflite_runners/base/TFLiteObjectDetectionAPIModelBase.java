@@ -16,6 +16,7 @@ import java.util.Map;
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.ModelFormat;
 import ru.igla.tfprofiler.core.ModelType;
+import ru.igla.tfprofiler.core.Size;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.GrayOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
@@ -37,12 +38,11 @@ import ru.igla.tfprofiler.utils.StringUtils;
  */
 public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier<T> {
 
+    protected ModelOptions modelOptions;
+
     public abstract Map<Integer, Object> prepareOutputImage();
 
     public abstract List<T> getDetections();
-
-    protected int inputWidth;
-    protected int inputHeight;
 
     // Pre-allocated buffers.
     protected List<String> labels = new ArrayList<>();
@@ -50,11 +50,11 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     private ByteBuffer imgData;
 
+    protected Size mInputSize;
+
     protected TFInterpeterThreadExecutor tfLiteExecutor;
 
     private OpNormalizer opNormalizer;
-
-    public ModelOptions modelOptions;
 
     public TFLiteObjectDetectionAPIModelBase() {
     }
@@ -69,20 +69,15 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
     public void init(@NotNull Context context, ModelEntity modelEntity, @NotNull ModelOptions modelOptions) throws Exception {
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
-
-        this.inputWidth = modelEntity.getModelConfig().getInputWidth();
-        this.inputHeight = modelEntity.getModelConfig().getInputHeight();
-
         if (!StringUtils.isNullOrEmpty(labelFilename)) {
             String actualFilename = labelFilename.split("file:///android_asset/")[1];
             this.labels = TensorFlowUtils.loadLabelList(context.getAssets(), actualFilename);
         }
 
         this.modelOptions = modelOptions;
-
-        tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
-        tfLiteExecutor.init(modelEntity, modelOptions);
-
+        this.mInputSize = modelEntity.getModelConfig().getInputSize();
+        this.tfLiteExecutor = new TFInterpeterThreadExecutor(context, modelFilename);
+        this.tfLiteExecutor.init(modelEntity, modelOptions);
 
         boolean isModelQuantized;
         if (modelEntity.getModelType() == ModelType.CUSTOM_TFLITE) {
@@ -98,7 +93,10 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             isModelQuantized = modelEntity.getModelConfig().getModelFormat() == ModelFormat.QUANTIZED;
         }
 
-        this.opNormalizer = getNormalizer(isModelQuantized, modelEntity.getModelConfig().getColorSpace());
+        this.opNormalizer = getNormalizer(
+                isModelQuantized,
+                modelEntity.getModelConfig().getColorSpace()
+        );
 
         // Pre-allocate buffers.
         final int numBytesPerChannel;
@@ -115,27 +113,33 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
         this.imgData = ByteBuffer.allocateDirect(
                 batchImageSize *
-                        this.inputWidth *
-                        this.inputHeight *
+                        mInputSize.getWidth() *
+                        mInputSize.getHeight() *
                         pixelSize *
                         numBytesPerChannel
-        );
+        ); // 1 x 256x256 x 3 x 4
         this.imgData.order(ByteOrder.nativeOrder());
-        this.tempIntValues = new int[batchImageSize * this.inputWidth * this.inputHeight];
+        this.tempIntValues = new int[this.mInputSize.getWidth() * this.mInputSize.getHeight()];
     }
 
-    private void normalizeBitmap(final List<Bitmap> bitmaps) {
-        final int minItemsSize = bitmaps.size();
-        int imageEntireSize = this.inputWidth * this.inputHeight;
-        for (int i = 0; i < minItemsSize; i++) {
-            final Bitmap bitmap = bitmaps.get(i);
+    /***
+     * Bitmaps of equal size and the size matches the neural network input
+     * @param bitmaps
+     */
+    private void normalizeBitmaps(final List<Bitmap> bitmaps) {
+        imgData.rewind();
+        for (Bitmap bitmap : bitmaps) {
             // Preprocess the image data from 0-255 int to normalized float based
             // on the provided parameters.
-            bitmap.getPixels(tempIntValues, i * imageEntireSize, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            int imageOffset = 0;
+            bitmap.getPixels(
+                    tempIntValues, imageOffset, bitmap.getWidth(),
+                    0, 0,
+                    bitmap.getWidth(),
+                    bitmap.getHeight()
+            );
+            opNormalizer.convertBitmapToByteBuffer(imgData, tempIntValues, mInputSize);
         }
-
-        imgData.rewind();
-        opNormalizer.convertBitmapToByteBuffer(minItemsSize, imgData, tempIntValues, inputWidth, inputHeight);
     }
 
     public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
@@ -151,7 +155,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
         Trace.beginSection("recognizeImage");
 
         Trace.beginSection("preprocessBitmap");
-        normalizeBitmap(bitmaps);
+        normalizeBitmaps(bitmaps);
         Trace.endSection(); // preprocessBitmap
 
         // Copy the input data into TensorFlow.

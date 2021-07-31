@@ -45,7 +45,7 @@ class ReportsListRecyclerViewAdapter(
         val modelHolder = modelHolderList[position]
 
         val modelConfig = modelHolder.modelConfig
-        val sizes = "" + modelConfig.inputWidth + "x" + modelConfig.inputHeight
+        val sizes = modelConfig.inputSize.toString()
         val floating = modelConfig.quantizedStr()
         val title = String.format("%s (%s, %s)", modelHolder.modelName, floating, sizes)
 

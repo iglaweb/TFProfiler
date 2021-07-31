@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
-public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
+public final class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     // Minimum detection confidence to track a detection.
     private static final float THRESHOLD_DETECT = 0.1f;
@@ -61,17 +62,17 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
         final List<Recognition> detections = new ArrayList<>();
         for (Detection detection : detectionList) {
             if (detection.score > THRESHOLD_DETECT) {
-                float x = detection.xMin * inputWidth;
-                float y = detection.yMin * inputHeight;
-                float width = detection.width * inputWidth;
-                float height = detection.height * inputHeight;
+                float x = detection.xMin * mInputSize.getWidth();
+                float y = detection.yMin * mInputSize.getHeight();
+                float width = detection.width * mInputSize.getWidth();
+                float height = detection.height * mInputSize.getHeight();
 
                 List<Keypoint> keypoints = detection.keypoints;
                 List<Keypoint> output = new ArrayList<>();
                 for (Keypoint keypoint : keypoints) {
                     output.add(new Keypoint(
-                            keypoint.x * inputWidth,
-                            keypoint.y * inputHeight
+                            keypoint.getX() * mInputSize.getWidth(),
+                            keypoint.getY() * mInputSize.getHeight()
                     ));
                 }
 
@@ -82,8 +83,8 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
                         new RectF(
                                 x,
                                 y,
-                                Math.min(x + width - 1f, inputWidth - 1f),
-                                Math.min(y + height - 1f, inputHeight - 1f)
+                                Math.min(x + width - 1f, mInputSize.getWidth() - 1f),
+                                Math.min(y + height - 1f, mInputSize.getHeight() - 1f)
                         ),
                         output
                 );
@@ -98,7 +99,7 @@ public class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDetectio
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(boxesResult, scoresResult);
-            return List.of(new ImageBatchProcessing.ImageResult(detections));
+            return Collections.singletonList(new ImageBatchProcessing.ImageResult(detections));
         }
 
         float[][] arr = boxesResult[0];

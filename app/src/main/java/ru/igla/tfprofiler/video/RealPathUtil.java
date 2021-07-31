@@ -38,7 +38,6 @@ public final class RealPathUtil {
      */
     @Nullable
     public static String getRealPathFromURI_API19(final Context context, final Uri uri) {
-
         // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
@@ -169,13 +168,13 @@ public final class RealPathUtil {
     }
 
     public static String getImagePathMediaStore(Context context, Uri uri, String selection, String[] selectionArgs) {
-        String[] projection = {MediaStore.Images.Media.DATA};
+        String[] projection = {MediaStore.MediaColumns.DATA};
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
             if (cursor == null) return null;
             if (cursor.moveToFirst()) {
-                final int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                final int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
                 if (columnIndex == -1) {
                     return null;
                 }

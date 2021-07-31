@@ -3,15 +3,19 @@ package ru.igla.tfprofiler.core.tflite
 import android.graphics.Bitmap
 import org.opencv.android.Utils
 import org.opencv.core.Mat
+import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgproc.Imgproc
 import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.InputShapeType
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.jni.DnnModelExecutor
+import ru.igla.tfprofiler.core.jni.JavaOpenCVDnnModelExecutor
 import ru.igla.tfprofiler.models_list.ModelConfig
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
+import ru.igla.tfprofiler.utils.logI
+import java.io.File
 
 
 class OpenCVInterpreterWrapper(
@@ -24,7 +28,7 @@ class OpenCVInterpreterWrapper(
         Utils.bitmapToMat(bitmap, frame)
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGBA2RGB)
 
-        dnnModelExecutor.executeModel(longArrayOf(frame.nativeObjAddr))
+        dnnModelExecutor.executeModel(listOf(frame))
         frame.free()
     }
 
@@ -33,10 +37,9 @@ class OpenCVInterpreterWrapper(
     }
 
     companion object {
-        private fun getOutputNames(net: Net): List<String> {
-            val names: MutableList<String> = ArrayList()
+        private fun getOutputLayerIdxs(net: Net): List<String> {
+            val names: MutableList<String> = mutableListOf()
             val outLayers = net.unconnectedOutLayers.toList()
-
             val layersNames = net.layerNames
             outLayers.forEachNoIterator {
                 names.add(
@@ -57,36 +60,64 @@ class OpenCVInterpreterWrapper(
             modelOptions: ModelOptions
         ): OpenCVInterpreterWrapper {
             return try {
-                val dnnModelExecutor = DnnModelExecutor()
                 val isNHWC = modelConfig.inputShapeType == InputShapeType.NHWC
                 val cuda = modelOptions.device == Device.GPU
                 val channels = modelConfig.colorSpace.channels
-                dnnModelExecutor.init(
+
+                val opencvDnn = JavaOpenCVDnnModelExecutor(
                     modelPath,
-                    isNHWC,
                     cuda,
+                    isNHWC,
                     channels,
-                    modelConfig.inputWidth,
-                    modelConfig.inputHeight
+                    modelConfig.inputSize.width,
+                    modelConfig.inputSize.height
                 )
-                OpenCVInterpreterWrapper(dnnModelExecutor)
+                opencvDnn.init()
+                OpenCVInterpreterWrapper(opencvDnn)
             } catch (e: Exception) {
                 Timber.e(e)
                 throw e
             }
         }
 
-        fun createTestInterpeter(
-            modelPath: String
-        ): OpenCVInterpreterWrapper {
-            try {
-                return OpenCVInterpreterWrapper(
-                    DnnModelExecutor()
-                )
-            } catch (e: Exception) {
-                Timber.e(e)
-                throw e
+        /***
+         * Load model with implicit opencv calls, as it loads correctly
+         * otherwise error thrown Cannot determine an origin framework of files
+         */
+        private fun loadDnnNetCorrectly(modelPath: String): Net {
+            return when (File(modelPath).extension) {
+                "onnx" -> Dnn.readNetFromONNX(modelPath)
+                "t7", "net" -> Dnn.readNetFromTorch(modelPath)
+                "pb" -> Dnn.readNetFromTensorflow(modelPath)
+                "caffemodel" -> Dnn.readNetFromCaffe(modelPath)
+                else -> Dnn.readNet(modelPath)
             }
+        }
+
+        @Throws(Exception::class)
+        fun createDnnModel(
+            modelPath: String
+        ): Net {
+            // can throw exception if it was not loaded
+            val dnnNet = loadDnnNetCorrectly(modelPath)
+            logI { "DNN from ONNX was successfully loaded!" }
+            logI { "OpenCV model was successfully read. Layer IDs: \n ${dnnNet.layerNames}" }
+            logI {
+                val layerNames = dnnNet.unconnectedOutLayersNames
+                val outputLayerIdx = getOutputLayerIdxs(dnnNet)
+                "Layer names: $layerNames, outputLayersIdx: $outputLayerIdx"
+            }
+            logI { "Net dump: " + dnnNet.dump() }
+            return dnnNet
+        }
+
+        @Throws(Exception::class)
+        fun testCreateDnnModel(
+            modelPath: String
+        ): Boolean {
+            // can throw exception if it was not loaded
+            val dnnNet = createDnnModel(modelPath)
+            return !dnnNet.empty()
         }
     }
 }

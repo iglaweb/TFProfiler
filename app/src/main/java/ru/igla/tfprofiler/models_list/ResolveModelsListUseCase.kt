@@ -1,6 +1,7 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
+import ru.igla.tfprofiler.core.Size
 import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
@@ -60,8 +61,7 @@ class ResolveModelsListUseCase(val application: Application) :
             .map { item ->
                 val modelConfig = ModelConfig(
                     item.idModel,
-                    item.inputWidth,
-                    item.inputHeight,
+                    Size(item.inputWidth, item.inputHeight),
                     item.modelFormat,
                     item.colorSpace,
                     item.inputShapeType

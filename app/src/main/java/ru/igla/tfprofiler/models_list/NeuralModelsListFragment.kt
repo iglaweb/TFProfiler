@@ -41,8 +41,6 @@ import ru.igla.tfprofiler.ui.pick_inference_type.InferenceLaunchListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceTypeLauncher
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.*
-import ru.igla.tfprofiler.video.FileUtils
-import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 
@@ -94,8 +92,7 @@ class NeuralModelsListFragment :
             val nhwcFormat = customView.radioGroupInputShape.checkedRadioButtonId == R.id.radio_nhwc
             launch(Dispatchers.IO) {
                 val newConfig = item.modelConfig.copy(
-                    inputWidth = modelWidth,
-                    inputHeight = modelHeight,
+                    inputSize = Size(modelWidth, modelHeight),
                     modelFormat = if (floatingType) ModelFormat.FLOATING else ModelFormat.QUANTIZED,
                     colorSpace = if (grayColor) ColorSpace.GRAYSCALE else ColorSpace.COLOR,
                     inputShapeType = if (nhwcFormat) InputShapeType.NHWC else InputShapeType.NCHW
@@ -155,8 +152,8 @@ class NeuralModelsListFragment :
             tvModelDetails.text = item.details
 
             val modelConfig = item.modelConfig
-            customView.etWidth.setText(modelConfig.inputWidth.toString())
-            customView.etHeight.setText(modelConfig.inputHeight.toString())
+            customView.etWidth.setText(modelConfig.inputSize.width.toString())
+            customView.etHeight.setText(modelConfig.inputSize.height.toString())
 
             if (modelConfig.colorSpace == ColorSpace.GRAYSCALE) {
                 customView.radioGroupChannels.check(R.id.radio_color_1)
@@ -193,7 +190,7 @@ class NeuralModelsListFragment :
 
             val modelConfig = item.modelConfig
             val tvModelSize: TextView = customView.modelSize
-            tvModelSize.text = "${modelConfig.inputWidth}x${modelConfig.inputHeight}"
+            tvModelSize.text = "${modelConfig.inputSize.width}x${modelConfig.inputSize.height}"
 
             val tvModelType: TextView = customView.tvModelTypeFloating
             tvModelType.text = modelConfig.quantizedStr()
@@ -292,8 +289,25 @@ class NeuralModelsListFragment :
                 REQUEST_PICK_MODEL -> {
                     data?.apply {
                         val uri = data.data
-                        uri?.apply {
-                            onSelectTfliteModel(uri)
+                        uri?.let {
+                            launch(Dispatchers.IO) {
+                                val selectModelStatus =
+                                    listNeuralModelsViewModel.onSelectNeuralModelFile(
+                                        it
+                                    )
+                                val filePath = selectModelStatus.modelPath
+                                withContext(Dispatchers.Main) {
+                                    if (selectModelStatus.success) {
+                                        if (selectModelStatus.modelType == ListNeuralModelsViewModel.ModelFormat.TFLITE) {
+                                            mToaster.showToast("TFLite path: $filePath")
+                                        } else {
+                                            mToaster.showToast("OpenCV path: $filePath")
+                                        }
+                                    } else {
+                                        mToaster.showToast("Selected file not supported by opencv: $filePath")
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -325,37 +339,6 @@ class NeuralModelsListFragment :
             }
         )
     }
-
-    private fun onSelectTfliteModel(uri: Uri) {
-        launch(Dispatchers.IO) {
-            val filePath =
-                FileUtils.getRealFilePath(requireContext(), uri).trim()
-
-            if (filePath.endsWith(".tflite")) {
-                withContext(Dispatchers.Main) {
-                    mToaster.showToast("TFlite path: $filePath")
-                }
-                listNeuralModelsViewModel.addCustomTfliteModel(filePath)
-            } else {
-                /***
-                 * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
-                 */
-                val opencvSupported = supportedModels.contains(File(filePath).extension)
-                if (opencvSupported) {
-                    withContext(Dispatchers.Main) {
-                        mToaster.showToast("OpenCV model path: $filePath")
-                    }
-                    listNeuralModelsViewModel.addCustomOpenCVModel(filePath)
-                } else {
-                    withContext(Dispatchers.Main) {
-                        mToaster.showToast("Selected file not supported by opencv: $filePath")
-                    }
-                }
-            }
-        }
-    }
-
-    private val supportedModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
 
     private fun openVideo(selectedImageUri: Uri) {
         launch(Dispatchers.IO) {

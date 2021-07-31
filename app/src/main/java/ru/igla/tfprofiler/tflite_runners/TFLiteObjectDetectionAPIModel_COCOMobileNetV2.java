@@ -3,6 +3,7 @@ package ru.igla.tfprofiler.tflite_runners;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
  * This is a class-agnostic object detector. Object classification is not provided.
  * This model may not perform well on very small objects.
  */
-public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
+public final class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
 
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
@@ -79,10 +80,10 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectD
             if (confidence > MINIMUM_CONFIDENCE_TF_OD_API) {
                 final RectF detection =
                         new RectF(
-                                outputLocations[0][i][1] * inputWidth,
-                                outputLocations[0][i][0] * inputHeight,
-                                outputLocations[0][i][3] * inputWidth,
-                                outputLocations[0][i][2] * inputHeight);
+                                outputLocations[0][i][1] * mInputSize.getWidth(),
+                                outputLocations[0][i][0] * mInputSize.getHeight(),
+                                outputLocations[0][i][3] * mInputSize.getWidth(),
+                                outputLocations[0][i][2] * mInputSize.getHeight());
                 // SSD Mobilenet V1 Model assumes class 0 is background class
                 // in label file and class labels start from 1 to number_of_classes+1,
                 // while outputClasses correspond to class index from 0 to number_of_classes
@@ -94,6 +95,6 @@ public class TFLiteObjectDetectionAPIModel_COCOMobileNetV2 extends TFLiteObjectD
                                 detection));
             }
         }
-        return List.of(new ImageBatchProcessing.ImageResult(recognitions));
+        return Collections.singletonList(new ImageBatchProcessing.ImageResult(recognitions));
     }
 }

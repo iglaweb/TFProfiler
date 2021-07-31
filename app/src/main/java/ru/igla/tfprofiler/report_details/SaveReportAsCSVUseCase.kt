@@ -43,7 +43,7 @@ class SaveReportAsCSVUseCase(val context: Context) :
             for (item in data.reportDelegateItems) {
                 csvAppender.appendLine(
                     data.modelType.id,
-                    "" + modelConfig.inputWidth + "x" + modelConfig.inputHeight,
+                    modelConfig.inputSize.toString(),
                     modelConfig.quantizedStr(),
 
                     item.device.name,

@@ -21,7 +21,7 @@ object FileUtils {
     )
 
     fun isImage(path: String): Boolean {
-        val lowerPath = path.toLowerCase(Locale.US)
+        val lowerPath = path.lowercase(Locale.US)
         for (extension in imageFileExtensions) {
             if (lowerPath.endsWith(extension)) {
                 return true

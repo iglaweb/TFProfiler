@@ -9,7 +9,6 @@ import androidx.annotation.NonNull
 import androidx.annotation.WorkerThread
 import androidx.arch.core.util.Function
 import androidx.lifecycle.*
-import kotlinx.android.synthetic.main.inference_info.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -193,10 +192,7 @@ class RecognitionViewModel(
             val timeWatchClockOS = TimeWatchClockOS()
             timeWatchClockOS.start()
             try {
-                Timber.d(
-                    "Creating classifier %s",
-                    modelOptions.toString()
-                )
+                logD { "Creating classifier $modelOptions" }
                 emit(Resource.loading(modelOptions))
                 detector = ClassifierFactory.create(getApplication(), modelEntity, modelOptions)
                 emit(Resource.success(modelOptions))
@@ -240,7 +236,10 @@ class RecognitionViewModel(
         detector = null
     }
 
-    fun resolveRunDelegatesExtra(delegateRunRequest: DelegateRunRequest?, modelEntity: ModelEntity): Queue<ModelOptions> {
+    fun resolveRunDelegatesExtra(
+        delegateRunRequest: DelegateRunRequest?,
+        modelEntity: ModelEntity
+    ): Queue<ModelOptions> {
         val useCaseResponse: UseCase.Resource<ResolveRunDelegatesExtrasUseCase.ResponseValue> =
             resolveRunDelegatesExtrasUseCase.executeUseCase(
                 ResolveRunDelegatesExtrasUseCase.RequestValues(

@@ -21,10 +21,9 @@ class AddCustomOpenCVModelUseCase(val application: Application) :
     override fun executeUseCase(requestValues: AddModelUseCase.RequestValues): Resource<AddModelUseCase.ResponseValue> {
         val modelPath = requestValues.modelPath
         try {
-            OpenCVInterpreterWrapper.createTestInterpeter(
+            OpenCVInterpreterWrapper.testCreateDnnModel(
                 modelPath
-            ).use {
-
+            ).let {
                 val imageSizeX = 100
                 val imageSizeY = 100
                 val file = File(modelPath)

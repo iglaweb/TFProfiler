@@ -3,7 +3,6 @@ package ru.igla.tfprofiler.model_in_camera;
 
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -25,6 +24,7 @@ import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.utils.CameraUtils;
 
 public class LegacyCameraConnectionFragment extends Fragment {
     /**
@@ -61,9 +61,8 @@ public class LegacyCameraConnectionFragment extends Fragment {
                 public void onSurfaceTextureAvailable(
                         final SurfaceTexture texture, final int width, final int height) {
 
-                    int index = getCameraId();
+                    int index = CameraUtils.getCameraId(cameraType);
                     camera = Camera.open(index);
-
                     try {
                         Camera.Parameters parameters = camera.getParameters();
                         List<String> focusModes = parameters.getSupportedFocusModes();
@@ -93,13 +92,13 @@ public class LegacyCameraConnectionFragment extends Fragment {
                     camera.addCallbackBuffer(new byte[ImageUtils.getYUVByteSize(s.height, s.width)]);
 
                     textureView.setAspectRatio(s.height, s.width);
-
                     camera.startPreview();
                 }
 
                 @Override
                 public void onSurfaceTextureSizeChanged(
                         final SurfaceTexture texture, final int width, final int height) {
+                    //ignore
                 }
 
                 @Override
@@ -109,6 +108,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
 
                 @Override
                 public void onSurfaceTextureUpdated(final SurfaceTexture texture) {
+                    //ignore
                 }
             };
     /**
@@ -137,11 +137,6 @@ public class LegacyCameraConnectionFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         textureView = view.findViewById(R.id.texture);
-    }
-
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -200,17 +195,5 @@ public class LegacyCameraConnectionFragment extends Fragment {
             camera.release();
             camera = null;
         }
-    }
-
-    private int getCameraId() {
-        CameraInfo ci = new CameraInfo();
-        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
-            Camera.getCameraInfo(i, ci);
-            if (cameraType == CameraType.REAR && ci.facing == CameraInfo.CAMERA_FACING_BACK)
-                return i;
-            if (cameraType == CameraType.FRONT && ci.facing == CameraInfo.CAMERA_FACING_FRONT)
-                return i;
-        }
-        return -1; // No camera found
     }
 }

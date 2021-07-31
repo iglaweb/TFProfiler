@@ -34,9 +34,6 @@ class TFInterpreterWrapper(
     }
 
     companion object {
-
-        private const val DEFAULT_NUM_THREADS = 4
-
         //maybe device doesn't support Hexagon DSP execution, throw exception
         @Throws(UnsupportedOperationException::class, FailedCreateTFDelegate::class)
         private fun requestDelegate(
@@ -114,7 +111,13 @@ class TFInterpreterWrapper(
             return createTfliteInterpreter(
                 context,
                 modelPath,
-                ModelConfig(-1, 1, 1, ModelFormat.FLOATING, ColorSpace.GRAYSCALE, InputShapeType.NHWC),
+                ModelConfig(
+                    -1,
+                    Size(1, 1),
+                    ModelFormat.FLOATING,
+                    ColorSpace.GRAYSCALE,
+                    InputShapeType.NHWC
+                ),
                 ModelOptions(device = Device.CPU, numThreads = 1, useXnnpack = false)
             )
         }
@@ -156,8 +159,8 @@ class TFInterpreterWrapper(
                     //resize if should inference more than one image
                     val dims = intArrayOf(
                         batchCount,
-                        modelConfig.inputWidth,
-                        modelConfig.inputHeight,
+                        modelConfig.inputSize.width,
+                        modelConfig.inputSize.height,
                         modelConfig.colorSpace.channels
                     )
                     interpreter.resizeInput(0, dims)

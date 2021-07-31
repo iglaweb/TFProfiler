@@ -25,7 +25,7 @@ import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.TakeVideoFrameListener;
 import ru.igla.tfprofiler.video.UpdateProgressListener;
 
-public class JCodecExtractor implements ReadVideoFileInterface {
+public final class JCodecExtractor implements ReadVideoFileInterface {
 
     @Override
     public boolean readVideoFile(@NotNull String filePath,

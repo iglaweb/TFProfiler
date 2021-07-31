@@ -3,6 +3,7 @@ package ru.igla.tfprofiler.utils
 import android.content.DialogInterface
 import android.os.Handler
 import android.os.Looper
+import ru.igla.tfprofiler.core.Timber
 
 
 /**
@@ -46,7 +47,7 @@ object ViewUtils {
                 try {
                     it.dismiss()
                 } catch (e: Exception) {
-                    Log.e(e)
+                    Timber.e(e)
                 }
             }
         }

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.util.Pair;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
@@ -15,6 +18,19 @@ import ru.igla.tfprofiler.models_list.CameraType;
 public final class CameraUtils {
 
     private CameraUtils() {
+    }
+
+    public static int getScreenOrientation(WindowManager windowManager) {
+        switch (windowManager.getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_270:
+                return 270;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_90:
+                return 90;
+            default:
+                return 0;
+        }
     }
 
     @Nullable
@@ -29,19 +45,20 @@ public final class CameraUtils {
                 final Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facing != null) {
                     // exclude other cameras
-                    if (facing == CameraCharacteristics.LENS_FACING_FRONT &&
+                    if (facing == CameraMetadata.LENS_FACING_FRONT &&
                             cameraType == CameraType.REAR) {
                         continue;
                     }
-                    if (facing == CameraCharacteristics.LENS_FACING_BACK &&
+                    if (facing == CameraMetadata.LENS_FACING_BACK &&
                             cameraType == CameraType.FRONT) {
                         continue;
                     }
+                } else {
+                    continue;
                 }
 
                 final StreamConfigurationMap map =
                         characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
                 if (map == null) {
                     continue;
                 }
@@ -50,14 +67,14 @@ public final class CameraUtils {
                 // This should help with legacy situations where using the camera2 API causes
                 // distorted or otherwise broken previews.
                 boolean useCamera2API =
-                        (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
+                        (facing == CameraMetadata.LENS_FACING_EXTERNAL)
                                 || isHardwareLevelSupported(
-                                characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+                                characteristics, CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
                 Timber.i("Camera API lv2?: %s", useCamera2API);
                 return Pair.create(cameraId, useCamera2API);
             }
         } catch (CameraAccessException e) {
-            //LOGGER.e(e, "Not allowed to access camera");
+            Timber.e(e, "Not allowed to access camera");
         }
         return null;
     }
@@ -66,7 +83,7 @@ public final class CameraUtils {
     private static boolean isHardwareLevelSupported(
             CameraCharacteristics characteristics, int requiredLevel) {
         int deviceLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-        if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
+        if (deviceLevel == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
             return requiredLevel == deviceLevel;
         }
         // deviceLevel is not LEGACY, can use numerical sort
@@ -82,7 +99,7 @@ public final class CameraUtils {
             for (final String cameraId : manager.getCameraIdList()) {
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
                 int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) return cameraId;
+                if (cOrientation == CameraMetadata.LENS_FACING_FRONT) return cameraId;
             }
         } catch (CameraAccessException e) {
             Timber.e(e);

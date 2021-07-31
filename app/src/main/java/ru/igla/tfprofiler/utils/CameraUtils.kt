@@ -4,9 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.hardware.Camera
+import android.hardware.Camera.CameraInfo
 import android.net.Uri
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
+import ru.igla.tfprofiler.models_list.CameraType
 import java.io.IOException
 
 
@@ -81,11 +84,22 @@ object CameraUtils {
         }
     }
 
-    private fun rotateImage(img: Bitmap, degree: Float): Bitmap {
+    private fun rotateImage(bmp: Bitmap, degree: Float): Bitmap {
         val matrix = Matrix()
         matrix.postRotate(degree)
-        val rotatedImg = Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
-        img.recycle()
+        val rotatedImg = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
+        bmp.recycle()
         return rotatedImg
+    }
+
+    @JvmStatic
+    fun getCameraId(cameraType: CameraType): Int {
+        val ci = CameraInfo()
+        for (i in 0 until Camera.getNumberOfCameras()) {
+            Camera.getCameraInfo(i, ci)
+            if (cameraType === CameraType.REAR && ci.facing == CameraInfo.CAMERA_FACING_BACK) return i
+            if (cameraType === CameraType.FRONT && ci.facing == CameraInfo.CAMERA_FACING_FRONT) return i
+        }
+        return -1 // No camera found
     }
 }

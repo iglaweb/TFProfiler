@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +29,7 @@ import ru.igla.tfprofiler.core.ModelFormat;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
 import ru.igla.tfprofiler.customview.OverlayView;
+import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.env.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.models_list.MediaRequest;
@@ -67,7 +68,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private boolean computingDetection = false;
 
-    private long timestamp = 0;
+    private long timestamp = 0L;
 
     private Matrix frameToCropTransform;
     private Matrix cropToFrameTransform;
@@ -116,10 +117,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        tracker = new MultiBoxTracker(this);
+        this.tracker = new MultiBoxTracker(this);
 
-        final int cropWidth = modelEntity.getModelConfig().getInputWidth();
-        final int cropHeight = modelEntity.getModelConfig().getInputHeight();
+        final int cropWidth = modelEntity.getModelConfig().getInputSize().getWidth();
+        final int cropHeight = modelEntity.getModelConfig().getInputSize().getHeight();
         try {
             ModelOptions modelOptions = getCurrentModelOptions();
             recreateClassifier(modelOptions);
@@ -135,9 +136,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 
-        int sensorOrientation = rotation - getScreenOrientation();
+        final int sensorOrientation = rotation - CameraUtils.getScreenOrientation(getWindowManager());
         Timber.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
-
         Timber.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(cropWidth, cropHeight, Config.ARGB_8888);
@@ -232,8 +232,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 if (points == null) {
                     points = new float[keypoints.size() * 2];
                     for (int k = 0; k < keypoints.size(); k++) {
-                        points[k * 2] = keypoints.get(k).x;
-                        points[k * 2 + 1] = keypoints.get(k).y;
+                        points[k * 2] = keypoints.get(k).getX();
+                        points[k * 2 + 1] = keypoints.get(k).getY();
                     }
                 }
                 cropToFrameTransform.mapPoints(points);
@@ -244,17 +244,20 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         return mappedRecognitions;
     }
 
+    private final TimeWatchClockOS timeWatchInference = new TimeWatchClockOS();
+
     private void runRecognitionInterference(long currTimestamp) {
-        if (detector == null) return;
+        if (detector == null || statisticsEstimator == null) return;
 
         Timber.i("Running detection on image " + currTimestamp);
-        final long startTime = SystemClock.uptimeMillis();
-        final List<ImageBatchProcessing.ImageResult> ret = detector.recognizeImage(List.of(croppedBitmap));
+        timeWatchInference.start();
+        final List<ImageBatchProcessing.ImageResult> ret = detector.recognizeImage(
+                Collections.singletonList(croppedBitmap));
         final List<Recognition> recognitions = new ArrayList<>();
         for (ImageBatchProcessing.ImageResult imageResult : ret) {
             recognitions.addAll(imageResult.getResults());
         }
-        final long lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+        final long lastProcessingTimeMs = timeWatchInference.stop();
 
         statisticsEstimator.incrementFrameNumber(getModelOptions());
         statisticsEstimator.setInterferenceTime(getModelOptions(), lastProcessingTimeMs);
@@ -352,7 +355,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         detector = null;
     }
 
-    private void recreateClassifier(ModelOptions modelOptions) {
+    private void recreateClassifier(@NonNull ModelOptions modelOptions) {
         closeClassifier();
 
         if (modelOptions.getDevice() == Device.GPU

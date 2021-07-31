@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Debug
 import android.os.Process
 import androidx.annotation.WorkerThread
+import ru.igla.tfprofiler.core.Timber
 
 
 object SystemUtils {
@@ -73,8 +74,7 @@ object SystemUtils {
             activityManager.getProcessMemoryInfo(intArrayOf(id))
         if (memoryInfo.isNotEmpty()) {
             val memInfo = memoryInfo[0]
-            Log.d(
-                "",
+            Timber.d(
                 "getProcessMemoryInfo: myMemoryInfo " + memInfo.dalvikPrivateDirty
             )
             var res = memInfo.totalPrivateDirty
