@@ -318,7 +318,7 @@ class VideoRecognizeFragment :
         return mimeType != null && mimeType.startsWith("video")
     }
 
-    private fun recognizeVideo(context: Context, selectedImageUri: Uri) {
+    private suspend fun recognizeVideo(context: Context, selectedImageUri: Uri) {
         logI { "Read image frames..." }
         val filePath = FileUtils.getRealFilePath(context, selectedImageUri).trim()
         recognitionViewModel.recognizeVideo(filePath)

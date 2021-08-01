@@ -11,11 +11,12 @@ import androidx.arch.core.util.Function
 import androidx.lifecycle.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
-import ru.igla.tfprofiler.core.Device
-import ru.igla.tfprofiler.core.Resource
-import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.ModelEntity
@@ -68,6 +69,26 @@ class RecognitionViewModel(
 
     val previewImageLiveData = MutableLiveData<Bitmap>()
 
+    private val progressProcessImageListener: UpdateProgressListener by lazy {
+        object : UpdateProgressListener {
+            @SuppressLint("SetTextI18n")
+            override fun onUpdate(information: FrameInformation) {
+                livedataProcessFrameInfo.sendValueIfNew(information)
+            }
+        }
+    }
+
+    private val takeVideoFramesListener by lazy {
+        object : TakeVideoFrameListener {
+            override fun onTakeFrame(bitmap: Bitmap) {
+                if (!viewModelScope.isActive) {
+                    throw CancellationException()
+                }
+                runImageInterference(bitmap)
+            }
+        }
+    }
+
     private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
         val recognizeAssetFolderCase = RecognizeAssetFolderCase(
             object : RecognizeAssetFolderCase.OnReadAssetImageCallback {
@@ -91,45 +112,38 @@ class RecognitionViewModel(
         iterateAssetsFiles(getApplication(), imagesFolder)
     }
 
-    private val progressProcessImageListener: UpdateProgressListener by lazy {
-        object : UpdateProgressListener {
-            @SuppressLint("SetTextI18n")
-            override fun onUpdate(information: FrameInformation) {
-                livedataProcessFrameInfo.sendValueIfNew(information)
-            }
-        }
-    }
-
-    private val takeVideoFramesListener by lazy {
-        object : TakeVideoFrameListener {
-            override fun onTakeFrame(bitmap: Bitmap) {
-                if (!viewModelScope.isActive) {
-                    throw CancellationException()
-                }
-                runImageInterference(bitmap)
-            }
-        }
-    }
-
-    fun recognizeVideo(filePath: String) {
+    suspend fun recognizeVideo(filePath: String) {
         val timeWatchClockOS = TimeWatchClockOS()
         timeWatchClockOS.start()
-        logI { "START recognize video $filePath" }
+        logI { "Start recognize video $filePath" }
         try {
-            if (filePath.endsWith(".avi")) { //we can use opencv
+            val framesExtractor: ReadVideoFileInterface =
+                if (filePath.endsWith(".avi")) //we can use opencv
                 // https://stackoverflow.com/questions/43382359/andriod-studio-opencv-3-2-cannot-open-video-file-or-android-camera-with-native
-                openCVVideoFramesExtractor.readVideoFile(
-                    filePath,
-                    progressProcessImageListener,
-                    takeVideoFramesListener
-                )
-            } else { //e.g. .mp4
-                jCodecExtractor.readVideoFile(
-                    filePath,
-                    progressProcessImageListener,
-                    takeVideoFramesListener
-                )
-            }
+                    openCVVideoFramesExtractor
+                else //e.g. .mp4
+                    jCodecExtractor
+            framesExtractor.readVideoFile(filePath)
+                .onEach { value ->
+                    value.data?.let { valueData ->
+                        if (value.status == Status.SUCCESS || value.status == Status.LOADING) {
+                            progressProcessImageListener.onUpdate(
+                                FrameInformation(valueData.totalFrames, valueData.frameNumber)
+                            )
+                        }
+                        if (value.status == Status.LOADING) {
+                            valueData.bitmap?.apply {
+                                takeVideoFramesListener.onTakeFrame(this)
+                            }
+                        }
+                    }
+                }
+                .catch { e ->
+                    Timber.e(e)
+                    liveDataShowRecognitionError.postValue(Exception(e))
+                }
+                .flowOn(Dispatchers.IO)
+                .collect()
         } catch (e: Exception) {
             Timber.e(e)
             liveDataShowRecognitionError.postValue(e)
