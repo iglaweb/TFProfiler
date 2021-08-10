@@ -11,7 +11,7 @@ import ru.igla.tfprofiler.core.*
 data class ModelConfig(
     val tableId: Long,
     val inputSize: @RawValue Size,
-    val modelFormat: ModelFormat,
+    val modelFormat: ModelOptimizedType,
     val colorSpace: ColorSpace,
     val inputShapeType: InputShapeType
 ) : Parcelable {

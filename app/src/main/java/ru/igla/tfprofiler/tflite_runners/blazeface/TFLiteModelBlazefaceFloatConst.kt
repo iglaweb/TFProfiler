@@ -4,7 +4,7 @@ import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 
 /***
@@ -16,7 +16,7 @@ object TFLiteModelBlazefaceFloatConst : BuiltModel {
     private const val TF_OD_API_INPUT_SIZE = 128
     const val TF_OD_API_MODEL_FLOATING_FILE_FRONT_CAMERA = BuildConfig.ASSET_BLAZEFACE_FILE
     const val TF_OD_API_MODEL_FLOATING_FILE_BACK_CAMERA = "face_detection_blazeface_back.tflite"
-    private val TF_OD_API_MODEL_FORMAT = ModelFormat.FLOATING
+    private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.FLOATING
     override val details: String
         get() = "Based on Single Shot Multibox Detector (SSD)"
 
@@ -24,7 +24,7 @@ object TFLiteModelBlazefaceFloatConst : BuiltModel {
         get() = TF_OD_API_INPUT_SIZE
     override val imageWidth: Int
         get() = TF_OD_API_INPUT_SIZE
-    override val modelFormat: ModelFormat
+    override val modelFormat: ModelOptimizedType
         get() = TF_OD_API_MODEL_FORMAT
     override val inputShapeType: InputShapeType
         get() = InputShapeType.NHWC

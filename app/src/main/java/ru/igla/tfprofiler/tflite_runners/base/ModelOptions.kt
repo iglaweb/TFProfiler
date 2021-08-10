@@ -14,4 +14,25 @@ data class ModelOptions constructor(
             device, numThreads, useXnnpack.toString(), numberOfInputImages
         )
     }
+
+    fun getReadableStr(): String {
+        val strDetails = StringBuilder(device.name).apply {
+            val threads = numThreads
+            val useXnnpack = useXnnpack
+
+            if (isNotEmpty()) {
+                append(", ")
+            }
+            append(threads)
+            if (threads == 1) {
+                append(" Thread")
+            } else {
+                append(" Threads")
+            }
+            if (useXnnpack) {
+                append(", XNNPACK")
+            }
+        }
+        return strDetails.toString()
+    }
 }

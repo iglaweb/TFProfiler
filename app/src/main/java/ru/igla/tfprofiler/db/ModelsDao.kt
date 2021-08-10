@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.db
 import androidx.room.*
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 @Dao
 interface ModelsDao {
@@ -26,7 +26,7 @@ interface ModelsDao {
         modelId: Long,
         modelWidth: Int,
         modelHeight: Int,
-        modelFormat: ModelFormat,
+        modelFormat: ModelOptimizedType,
         colorSpace: ColorSpace,
         inputShapeType: InputShapeType
     )

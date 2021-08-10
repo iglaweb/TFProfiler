@@ -72,9 +72,7 @@ class ResolveModelsListUseCase(val application: Application) :
                         modelType = item.modelType,
                         name = item.title,
                         details = "File: " + item.modelPath, //we do not have description
-
                         modelConfig = modelConfig,
-
                         modelFile = item.modelPath,
                         labelFile = ""
                     )
@@ -93,7 +91,6 @@ class ResolveModelsListUseCase(val application: Application) :
                     )
                 }
             }
-
 
         val responseValue = ResponseValue(list)
         return Resource.success(responseValue)

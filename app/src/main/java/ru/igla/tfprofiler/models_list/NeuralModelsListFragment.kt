@@ -93,7 +93,7 @@ class NeuralModelsListFragment :
             launch(Dispatchers.IO) {
                 val newConfig = item.modelConfig.copy(
                     inputSize = Size(modelWidth, modelHeight),
-                    modelFormat = if (floatingType) ModelFormat.FLOATING else ModelFormat.QUANTIZED,
+                    modelFormat = if (floatingType) ModelOptimizedType.FLOATING else ModelOptimizedType.QUANTIZED,
                     colorSpace = if (grayColor) ColorSpace.GRAYSCALE else ColorSpace.COLOR,
                     inputShapeType = if (nhwcFormat) InputShapeType.NHWC else InputShapeType.NCHW
                 )
@@ -168,7 +168,7 @@ class NeuralModelsListFragment :
             }
 
             customView.scModelTypeFloating.isChecked =
-                modelConfig.modelFormat == ModelFormat.FLOATING
+                modelConfig.modelFormat == ModelOptimizedType.FLOATING
         }
     }
 
@@ -282,34 +282,38 @@ class NeuralModelsListFragment :
         }
     }
 
+    private fun onPickModel(data: Intent?) {
+        data?.apply {
+            val uri = data.data
+            uri?.let {
+                launch(Dispatchers.IO) {
+                    val selectModelStatus =
+                        listNeuralModelsViewModel.onSelectNeuralModelFile(
+                            it
+                        )
+                    val filePath = selectModelStatus.modelPath
+                    withContext(Dispatchers.Main) {
+                        if (selectModelStatus.success) {
+                            if (selectModelStatus.modelType == ModelFormat.TFLITE) {
+                                mToaster.showToast("TFLite path: $filePath")
+                            } else {
+                                mToaster.showToast("OpenCV path: $filePath")
+                            }
+                        } else {
+                            mToaster.showToast("Selected file not supported by opencv: $filePath")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_PICK_MODEL -> {
-                    data?.apply {
-                        val uri = data.data
-                        uri?.let {
-                            launch(Dispatchers.IO) {
-                                val selectModelStatus =
-                                    listNeuralModelsViewModel.onSelectNeuralModelFile(
-                                        it
-                                    )
-                                val filePath = selectModelStatus.modelPath
-                                withContext(Dispatchers.Main) {
-                                    if (selectModelStatus.success) {
-                                        if (selectModelStatus.modelType == ListNeuralModelsViewModel.ModelFormat.TFLITE) {
-                                            mToaster.showToast("TFLite path: $filePath")
-                                        } else {
-                                            mToaster.showToast("OpenCV path: $filePath")
-                                        }
-                                    } else {
-                                        mToaster.showToast("Selected file not supported by opencv: $filePath")
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    onPickModel(data)
                 }
                 REQUEST_SELECT_VIDEO -> {
                     data?.apply {
@@ -361,7 +365,7 @@ class NeuralModelsListFragment :
                     IntentUtils.startActivitySafely(requireContext(), intent)
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
                 withContext(Dispatchers.Main) {
                     mToaster.showToast(e.message)
                 }

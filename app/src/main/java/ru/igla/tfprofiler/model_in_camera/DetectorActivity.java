@@ -25,7 +25,7 @@ import java.util.Objects;
 
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
-import ru.igla.tfprofiler.core.ModelFormat;
+import ru.igla.tfprofiler.core.ModelOptimizedType;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
 import ru.igla.tfprofiler.customview.OverlayView;
@@ -359,7 +359,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         closeClassifier();
 
         if (modelOptions.getDevice() == Device.GPU
-                && (modelEntity != null && modelEntity.getModelConfig().getModelFormat() == ModelFormat.QUANTIZED)) {
+                && (modelEntity != null && modelEntity.getModelConfig().getModelFormat() == ModelOptimizedType.QUANTIZED)) {
             Timber.d("Not creating classifier: GPU doesn't support quantized models.");
             runOnUiThread(
                     () -> showToast(getString(R.string.tfe_ic_gpu_quant_error)));

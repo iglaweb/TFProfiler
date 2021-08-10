@@ -114,7 +114,7 @@ class TFInterpreterWrapper(
                 ModelConfig(
                     -1,
                     Size(1, 1),
-                    ModelFormat.FLOATING,
+                    ModelOptimizedType.FLOATING,
                     ColorSpace.GRAYSCALE,
                     InputShapeType.NHWC
                 ),

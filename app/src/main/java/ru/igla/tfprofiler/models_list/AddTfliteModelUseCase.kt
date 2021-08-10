@@ -37,7 +37,7 @@ class AddTfliteModelUseCase(val application: Application) :
                 val probabilityDataType: DataType =
                     it.interpreter.getOutputTensor(probabilityTensorIndex).dataType()
                 val modelFormat =
-                    if (probabilityDataType == DataType.UINT8) ModelFormat.QUANTIZED else ModelFormat.FLOATING
+                    if (probabilityDataType == DataType.UINT8) ModelOptimizedType.QUANTIZED else ModelOptimizedType.FLOATING
 
                 val file = File(modelPath)
                 val modelId =
@@ -67,7 +67,7 @@ class AddTfliteModelUseCase(val application: Application) :
         modelPath: String,
         inputWidth: Int,
         inputHeight: Int,
-        modelFormat: ModelFormat,
+        modelFormat: ModelOptimizedType,
         colorSpace: ColorSpace,
         inputShapeType: InputShapeType
     ): Long {

@@ -18,7 +18,6 @@ import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Status
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.intents.IntentManager
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.MediaRequest
@@ -299,7 +298,7 @@ class VideoRecognizeFragment :
         onStartRecognition()
         launch(Dispatchers.Default) {
             val filePath = FileUtils.getRealFilePath(context, selectedImageUri)
-            Timber.i(filePath)
+            logI { filePath }
 
             val type = ImageIntentUtils.getMimeType(context, selectedImageUri)
             if (isVideoFile(type)) {

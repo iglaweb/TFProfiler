@@ -89,20 +89,57 @@ class RecognitionViewModel(
         }
     }
 
-    private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
-        val recognizeAssetFolderCase = RecognizeAssetFolderCase(
-            object : RecognizeAssetFolderCase.OnReadAssetImageCallback {
-                override fun onReadAssetImage(bitmap: Bitmap) {
-                    runImageInterference(bitmap)
+    private val runInterferenceCase by lazy {
+        RunInterferenceCase(
+            statisticsEstimator,
+            preferenceManager,
+            object : RecgonizeImageCallback {
+                override fun startRecognizeImage(timestampBitmap: BitmapResult) {
+                    liveDataBitmapOutput.sendValueIfNew(timestampBitmap)
                 }
 
-                override fun onProgress(progress: FrameInformation) {
-                    livedataProcessFrameInfo.sendValueIfNew(progress)
+                override fun onPreview(progress: Bitmap) {
+                    previewImageLiveData.sendValueIfNew(progress)
                 }
-            }
-        )
+            })
+    }
+
+    // create classifier
+    private val classifierFunc = Function<ModelOptions, LiveData<Resource<ModelOptions>>> { model ->
+        createLiveDataClassifier(model)
+    }
+
+    // observe model options
+    private val liveDataModelOptions: MutableLiveData<ModelOptions> = MutableLiveData()
+
+    // switcher from options to classifier maker
+    val liveDataCreateDelegate = Transformations.switchMap(
+        liveDataModelOptions,
+        classifierFunc
+    )
+
+    private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
+        val recognizeAssetFolderCase = RecognizeAssetFolderCase()
         try {
             recognizeAssetFolderCase.iterateAssetsFiles(context, imagesFolder)
+                .onEach { value ->
+                    value.data?.let { valueData ->
+                        if (value.status == Status.LOADING) {
+                            if (valueData.bitmap != null) {
+                                runImageInterference(valueData.bitmap)
+                            }
+                            livedataProcessFrameInfo.sendValueIfNew(
+                                FrameInformation(valueData.totalFrames, valueData.frameNumber)
+                            )
+                        }
+                    }
+                }
+                .catch { e ->
+                    Timber.e(e)
+                    liveDataShowRecognitionError.postValue(Exception(e))
+                }
+                .flowOn(Dispatchers.IO)
+                .collect()
         } catch (e: Exception) {
             liveDataShowRecognitionError.postValue(e)
         }
@@ -148,9 +185,7 @@ class RecognitionViewModel(
             Timber.e(e)
             liveDataShowRecognitionError.postValue(e)
         } finally {
-            logI {
-                "Finish recognize video. Time elapsed: " + timeWatchClockOS.stop() + " ms"
-            }
+            logI { "Finish recognize video. Time elapsed: " + timeWatchClockOS.stop() + " ms" }
         }
     }
 
@@ -171,21 +206,6 @@ class RecognitionViewModel(
         runImageInterference(bitmap)
         logI { "END recognize image" }
         return true
-    }
-
-    private val runInterferenceCase by lazy {
-        RunInterferenceCase(
-            statisticsEstimator,
-            preferenceManager,
-            object : RecgonizeImageCallback {
-                override fun startRecognizeImage(timestampBitmap: BitmapResult) {
-                    liveDataBitmapOutput.sendValueIfNew(timestampBitmap)
-                }
-
-                override fun onPreview(progress: Bitmap) {
-                    previewImageLiveData.sendValueIfNew(progress)
-                }
-            })
     }
 
     @WorkerThread
@@ -219,20 +239,6 @@ class RecognitionViewModel(
             }
         }
     }
-
-    // create classifier
-    private val classifierFunc = Function<ModelOptions, LiveData<Resource<ModelOptions>>> { model ->
-        createLiveDataClassifier(model)
-    }
-
-    // observe model options
-    private val liveDataModelOptions: MutableLiveData<ModelOptions> = MutableLiveData()
-
-    // switcher from options to classifier maker
-    val liveDataCreateDelegate = Transformations.switchMap(
-        liveDataModelOptions,
-        classifierFunc
-    )
 
     fun setModelOptions(modelOptions: ModelOptions) {
         this.selectedModelOptions = modelOptions
@@ -289,23 +295,6 @@ class RecognitionViewModel(
     }
 
     fun getDelegateDetails(modelOptions: ModelOptions): String {
-        val strDetails = StringBuilder(modelOptions.device.name).apply {
-            val threads = modelOptions.numThreads
-            val useXnnpack = modelOptions.useXnnpack
-
-            if (isNotEmpty()) {
-                append(", ")
-            }
-            append(threads)
-            if (threads == 1) {
-                append(" Thread")
-            } else {
-                append(" Threads")
-            }
-            if (useXnnpack) {
-                append(", XNNPACK")
-            }
-        }
-        return strDetails.toString()
+        return modelOptions.getReadableStr()
     }
 }

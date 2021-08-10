@@ -420,7 +420,7 @@ public abstract class CameraActivity extends AppCompatActivity
             handlerThread = null;
             handler = null;
         } catch (InterruptedException e) {
-            Timber.e(e, "Exception!");
+            Timber.e(e);
         }
         super.onPause();
     }

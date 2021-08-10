@@ -33,7 +33,7 @@ class AddCustomOpenCVModelUseCase(val application: Application) :
                         modelPath,
                         imageSizeX,
                         imageSizeY,
-                        ModelFormat.FLOATING,
+                        ModelOptimizedType.FLOATING,
                         ColorSpace.GRAYSCALE,
                         InputShapeType.NHWC
                     )
@@ -54,7 +54,7 @@ class AddCustomOpenCVModelUseCase(val application: Application) :
         modelPath: String,
         inputWidth: Int,
         inputHeight: Int,
-        modelFormat: ModelFormat,
+        modelFormat: ModelOptimizedType,
         colorSpace: ColorSpace,
         inputShapeType: InputShapeType
     ): Long {

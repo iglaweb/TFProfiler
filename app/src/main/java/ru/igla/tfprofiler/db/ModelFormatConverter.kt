@@ -1,12 +1,12 @@
 package ru.igla.tfprofiler.db
 
 import androidx.room.TypeConverter
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 class ModelFormatConverter {
     @TypeConverter
-    fun toModelFormat(value: Int): ModelFormat = ModelFormat.values()[value]
+    fun toModelFormat(value: Int): ModelOptimizedType = ModelOptimizedType.values()[value]
 
     @TypeConverter
-    fun fromModelFormat(colorSpace: ModelFormat): Int = colorSpace.ordinal
+    fun fromModelFormat(colorSpace: ModelOptimizedType): Int = colorSpace.ordinal
 }

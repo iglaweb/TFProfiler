@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.igla.tfprofiler.core.ColorSpace;
-import ru.igla.tfprofiler.core.ModelFormat;
+import ru.igla.tfprofiler.core.ModelOptimizedType;
 import ru.igla.tfprofiler.core.ModelType;
 import ru.igla.tfprofiler.core.Size;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
@@ -90,7 +90,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
             DataType probabilityDataType = interpreter.getInterpreter().getOutputTensor(probabilityTensorIndex).dataType();
             isModelQuantized = probabilityDataType == DataType.UINT8;
         } else {
-            isModelQuantized = modelEntity.getModelConfig().getModelFormat() == ModelFormat.QUANTIZED;
+            isModelQuantized = modelEntity.getModelConfig().getModelFormat() == ModelOptimizedType.QUANTIZED;
         }
 
         this.opNormalizer = getNormalizer(

@@ -5,7 +5,7 @@ interface BuiltModel {
     val details: String
     val imageHeight: Int
     val imageWidth: Int
-    val modelFormat: ModelFormat
+    val modelFormat: ModelOptimizedType
     val colorSpace: ColorSpace
     val inputShapeType: InputShapeType
     val modelFile: String

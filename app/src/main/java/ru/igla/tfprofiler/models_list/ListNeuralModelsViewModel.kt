@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.igla.tfprofiler.TFProfilerApp
-import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
@@ -25,10 +23,9 @@ import java.io.File
 class ListNeuralModelsViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private val supportedModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
-
     companion object {
         private val VIDEO_EXT = listOf("mp4", "avi", "mov", "mpeg", "flv", "wmv")
+        private val supportedNeuralModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
     }
 
     private val modelDeleteUseCase by lazy {
@@ -39,7 +36,11 @@ class ListNeuralModelsViewModel(application: Application) :
         ModelConfigUpdateUseCase(application)
     }
 
-    private val preferenceManager by lazy { AndroidPreferenceManager(TFProfilerApp.instance).defaultPrefs }
+    private val preferenceManager by lazy { AndroidPreferenceManager(application).defaultPrefs }
+
+    private val resolveAvailableDelegatesUseCase by lazy {
+        ResolveAvailableDelegatesUseCase(application)
+    }
 
     private val modelsListUseCase by lazy {
         ResolveModelsListUseCase(application)
@@ -96,35 +97,13 @@ class ListNeuralModelsViewModel(application: Application) :
 
         val modelEntity =
             selectedModelOptionsVideo ?: throw Exception("Passed model entity is null")
-
         return MediaRequest(RequestMode.VIDEO, selectedImagePath, modelEntity)
     }
 
     fun getDelegateRequest(): DelegateRunRequest {
-        val modelList = mutableListOf<Device>().apply {
-            if (preferenceManager.cpuDelegateEnabled) {
-                add(Device.CPU)
-            }
-            if (preferenceManager.gpuDelegateEnabled) {
-                add(Device.GPU)
-            }
-            if (preferenceManager.nnapiDelegateEnabled) {
-                add(Device.NNAPI)
-            }
-            if (preferenceManager.hexagonDelegateEnabled) {
-                add(Device.HEXAGON)
-            }
-        }
-
-        return DelegateRunRequest(
-            IntRange(
-                preferenceManager.threadRangeMin,
-                preferenceManager.threadRangeMax
-            ),
-            modelList,
-            preferenceManager.xnnpackEnabled,
-            preferenceManager.batchImageCount
-        )
+        val request = ResolveAvailableDelegatesUseCase.RequestValues()
+        val data = resolveAvailableDelegatesUseCase.executeUseCase(request).data
+        return requireNotNull(data).data
     }
 
     private suspend fun copyModelFileToDestination(path: String): String {
@@ -179,17 +158,6 @@ class ListNeuralModelsViewModel(application: Application) :
         }
     }
 
-    enum class ModelFormat {
-        TFLITE,
-        OPENCV
-    }
-
-    class SelectModelStatus(
-        val success: Boolean,
-        val modelType: ModelFormat,
-        val modelPath: String
-    )
-
     suspend fun onSelectNeuralModelFile(
         uri: Uri
     ): SelectModelStatus = withContext(Dispatchers.IO) {
@@ -205,7 +173,7 @@ class ListNeuralModelsViewModel(application: Application) :
             /***
              * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
              */
-            val opencvSupported = supportedModels.contains(File(filePath).extension)
+            val opencvSupported = supportedNeuralModels.contains(File(filePath).extension)
             if (opencvSupported) {
                 addCustomOpenCVModel(filePath)
                 SelectModelStatus(true, ModelFormat.OPENCV, filePath)

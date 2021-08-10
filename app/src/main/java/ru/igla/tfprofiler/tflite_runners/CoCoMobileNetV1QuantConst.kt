@@ -4,11 +4,11 @@ import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 object CoCoMobileNetV1QuantConst : BuiltModel {
     private const val TF_OD_API_IMAGE_SIZE = 300
-    private val TF_OD_API_MODEL_FORMAT = ModelFormat.FLOATING
+    private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.FLOATING
     private const val TF_OD_API_MODEL_FILE = BuildConfig.ASSET_MOBILENETV1_FILE + "detect.tflite"
     private const val TF_OD_API_LABELS_FILE =
         "file:///android_asset/" + BuildConfig.ASSET_MOBILENETV1_FILE + "labelmap.txt"
@@ -19,7 +19,7 @@ object CoCoMobileNetV1QuantConst : BuiltModel {
         get() = TF_OD_API_IMAGE_SIZE
     override val imageWidth: Int
         get() = TF_OD_API_IMAGE_SIZE
-    override val modelFormat: ModelFormat
+    override val modelFormat: ModelOptimizedType
         get() = TF_OD_API_MODEL_FORMAT
     override val inputShapeType: InputShapeType
         get() = InputShapeType.NHWC

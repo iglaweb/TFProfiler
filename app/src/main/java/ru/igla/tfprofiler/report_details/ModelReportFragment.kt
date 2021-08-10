@@ -28,7 +28,6 @@ import kotlinx.coroutines.*
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.SharedViewModel
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.reports_list.ReportDelegateItem
@@ -36,6 +35,7 @@ import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.forEachNoIterator
+import ru.igla.tfprofiler.utils.logI
 import ru.igla.tfprofiler.utils.startClickSafely
 import ru.igla.tfprofiler.video.FileUtils
 import kotlin.coroutines.CoroutineContext
@@ -78,7 +78,7 @@ class ModelReportFragment :
             tintToolbarButton(toolbar, closeDrawable)
             toolbar.navigationIcon = closeDrawable
             toolbar.setNavigationOnClickListener {
-                Timber.i("Navigation clicked")
+                logI { "Navigation clicked" }
                 activity?.onBackPressed()
             }
         }
@@ -138,81 +138,99 @@ class ModelReportFragment :
 
         initAdapter(requireContext())
         sharedItem.modelsLiveData.observe(viewLifecycleOwner, { entity ->
+            require(entity.reportDelegateItems.isNotEmpty()) { "Report items empty!" }
+
             showBestResult(entity)
             reportsListAdapterDetails.notifyAdapterItems(entity)
         })
     }
 
+    private fun findBestMeanTime(entity: ListReportEntity): Pair<ReportDelegateItem?, Int> {
+        var minItem: ReportDelegateItem? = null
+        var curIndex = 0
+        var selectedIndex = -1
+        entity.reportDelegateItems.forEachNoIterator { item ->
+            if (item.exception.isNullOrEmpty()) {
+                minItem?.let {
+                    if (item.meanTime < it.meanTime) {
+                        minItem = item
+                        selectedIndex = curIndex
+                    }
+                }
+                if (minItem == null) {
+                    minItem = item
+                    selectedIndex = curIndex
+                }
+            }
+            curIndex++
+        }
+        return Pair(minItem, selectedIndex)
+    }
+
     @SuppressLint("SetTextI18n")
     private fun showBestResult(entity: ListReportEntity) {
         if (entity.reportDelegateItems.size > 1) {
-            var minItem: ReportDelegateItem? = null
-            var curIndex = 0
-            var selectedIndex = -1
-            entity.reportDelegateItems.forEachNoIterator { item ->
-                if (item.exception.isNullOrEmpty()) {
-                    minItem?.let {
-                        if (item.meanTime < it.meanTime) {
-                            minItem = item
-                            selectedIndex = curIndex
-                        }
-                    }
-                    if (minItem == null) minItem = item
-                }
-                curIndex++
-            }
+            val (minItem, selectedIndex) = findBestMeanTime(entity)
 
-            with(minItem) {
-                if (this == null) {
+            minItem.let { item ->
+                if (item == null) {
                     tvBestResult.visibility = View.GONE
                 } else {
-
                     if (selectedIndex == entity.reportDelegateItems.size - 1) { //no need to scroll, on top
                         tvBestResult.visibility = View.VISIBLE
-                        tvBestResult.text = "Fastest result: " + this.device
+                        tvBestResult.text = "Fastest result: " + item.device
                     } else {
-                        val link = "Go to"
-                        val ss =
-                            SpannableString("Fastest result: " + this.device + ". " + link)
-                        val clickableSpan: ClickableSpan = object : ClickableSpan() {
-                            override fun onClick(textView: View) {
-                                if (selectedIndex != -1) {
-                                    listReports.layoutManager?.scrollToPosition(selectedIndex)
-                                }
-                            }
-
-                            override fun updateDrawState(textPaint: TextPaint) {
-                                super.updateDrawState(textPaint)
-                                textPaint.color = textPaint.linkColor
-                                textPaint.isUnderlineText = false
-                            }
+                        tvBestResult.apply {
+                            visibility = View.VISIBLE
+                            movementMethod = LinkMovementMethod.getInstance()
+                            text = createSpannableStr(item, selectedIndex)
                         }
-                        val start = ss.length - link.length
-                        val end = ss.length
-                        val fcs = ForegroundColorSpan(Color.BLUE)
-                        ss.setSpan(
-                            fcs,
-                            start,
-                            end,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        ss.setSpan(
-                            clickableSpan,
-                            start,
-                            end,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-
-                        tvBestResult.visibility = View.VISIBLE
-                        tvBestResult.movementMethod = LinkMovementMethod.getInstance()
-                        tvBestResult.text = ss
                     }
                 }
             }
-
         } else {
             tvBestResult.visibility = View.GONE
         }
+    }
+
+    private fun createSpannableStr(
+        reportDelegateItem: ReportDelegateItem,
+        selectedIndex: Int
+    ): SpannableString {
+        val link = "Go to"
+        val ss =
+            SpannableString("Fastest result: " + reportDelegateItem.getDeviceConfigStr() + ". " + link)
+        val clickableSpan: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(textView: View) {
+                if (selectedIndex != -1) {
+                    listReports.layoutManager?.scrollToPosition(selectedIndex)
+                }
+            }
+
+            override fun updateDrawState(textPaint: TextPaint) {
+                super.updateDrawState(textPaint)
+                textPaint.color = textPaint.linkColor
+                textPaint.isUnderlineText = false
+            }
+        }
+        val start = ss.length - link.length
+        val end = ss.length
+        val fcs = ForegroundColorSpan(Color.BLUE)
+        ss.apply {
+            setSpan(
+                fcs,
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                clickableSpan,
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return ss
     }
 
     private fun openCsvWith(fileUriString: String) {

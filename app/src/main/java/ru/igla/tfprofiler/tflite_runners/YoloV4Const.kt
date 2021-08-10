@@ -4,7 +4,7 @@ import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.BuiltModel
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 /***
  * https://github.com/hunglc007/tensorflow-yolov4-tflite
@@ -13,7 +13,7 @@ import ru.igla.tfprofiler.core.ModelFormat
  */
 object YoloV4Const : BuiltModel {
     private const val TF_OD_API_INPUT_SIZE = 416
-    private val TF_OD_API_MODEL_FORMAT = ModelFormat.FLOATING
+    private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.FLOATING
 
     override val details: String
         get() = "CSP connections with the Darknet-53"
@@ -22,7 +22,7 @@ object YoloV4Const : BuiltModel {
         get() = TF_OD_API_INPUT_SIZE
     override val imageWidth: Int
         get() = TF_OD_API_INPUT_SIZE
-    override val modelFormat: ModelFormat
+    override val modelFormat: ModelOptimizedType
         get() = TF_OD_API_MODEL_FORMAT
     override val inputShapeType: InputShapeType
         get() = InputShapeType.NHWC

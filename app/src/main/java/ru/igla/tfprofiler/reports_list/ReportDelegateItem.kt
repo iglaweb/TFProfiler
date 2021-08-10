@@ -30,4 +30,13 @@ class ReportDelegateItem(
 
     val inference: Int,
     val warmupRuns: Int
-) : Parcelable
+) : Parcelable {
+    fun getDeviceConfigStr(): String {
+        val threadStr = if (device == Device.CPU) (if (threads == 1) {
+            " $threads Thread"
+        } else {
+            " $threads Threads"
+        }) else ""
+        return "" + this.device + threadStr
+    }
+}

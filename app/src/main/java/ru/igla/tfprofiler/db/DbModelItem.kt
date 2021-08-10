@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 import ru.igla.tfprofiler.core.ModelType
 
 const val MODEL_TABLE = "models"
@@ -45,7 +45,7 @@ class DbModelItem(
     val inputHeight: Int,
 
     @ColumnInfo(name = "model_format")
-    val modelFormat: ModelFormat,
+    val modelFormat: ModelOptimizedType,
 
     @ColumnInfo(name = "color_space")
     val colorSpace: ColorSpace,

@@ -2,7 +2,7 @@ package ru.igla.tfprofiler.db
 
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelFormat
+import ru.igla.tfprofiler.core.ModelOptimizedType
 
 interface DbModelsController {
 
@@ -16,7 +16,7 @@ interface DbModelsController {
         modelId: Long,
         inputWidth: Int,
         inputHeight: Int,
-        modelFormat: ModelFormat,
+        modelFormat: ModelOptimizedType,
         colorSpace: ColorSpace,
         inputShapeType: InputShapeType
     )
