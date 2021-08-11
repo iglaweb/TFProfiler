@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
 import java.util.Locale;
 
 public final class StringUtils {
@@ -23,13 +22,9 @@ public final class StringUtils {
         return (cs == null || String.valueOf(cs).trim().length() == 0);
     }
 
-    public static boolean isNullOrEmpty(final @Nullable List<String> list) {
-        return list == null || list.isEmpty();
-    }
-
     @NotNull
     public static String getReadableFileSize(long byteSize, boolean includeUnit) {
-        if (byteSize < 1024) return "0"; //less than 1 Kb not to show
+        if (byteSize < 1024L) return "0"; //less than 1 Kb not to show
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(byteSize) / Math.log10(1024));
         String unit = includeUnit ? " " + units[digitGroups] : "";

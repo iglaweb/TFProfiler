@@ -12,7 +12,7 @@ import ru.igla.tfprofiler.core.Timber;
 /**
  * Created by Michael Dietz on 07.11.2019.
  */
-public class SingleShotMultiBoxDetector {
+public final class SingleShotMultiBoxDetector {
     private final AnchorOptions anchorOptions;
     private final CalculatorOptions calculatorOptions;
 

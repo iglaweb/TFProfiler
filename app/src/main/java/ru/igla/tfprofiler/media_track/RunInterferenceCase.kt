@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.SystemClock
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
-import ru.igla.tfprofiler.env.ImageUtils
+import ru.igla.tfprofiler.utils.ImageUtils
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing

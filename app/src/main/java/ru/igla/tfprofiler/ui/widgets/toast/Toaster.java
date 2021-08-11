@@ -63,7 +63,6 @@ public final class Toaster {
         return mToast != null &&
                 !StringUtils.isNullOrEmpty(mCurrentText) &&
                 mCurrentText.equals(text);
-
     }
 
     /**

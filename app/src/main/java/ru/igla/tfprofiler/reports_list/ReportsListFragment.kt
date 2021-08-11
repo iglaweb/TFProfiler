@@ -56,8 +56,8 @@ class ReportsListFragment : BaseFragment(R.layout.fragment_main_report_list), Co
             fr.inTransaction {
                 addToBackStack(TAG)
                 add(R.id.content, fragment)
-                val hide = fr.findFragmentById(R.id.content)
-                hide(hide!!)
+                val contentFragment = fr.findFragmentById(R.id.content)
+                hide(contentFragment!!)
             }
         }
     }

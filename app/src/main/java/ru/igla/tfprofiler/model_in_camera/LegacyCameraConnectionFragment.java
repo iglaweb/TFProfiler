@@ -22,7 +22,7 @@ import java.util.List;
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
-import ru.igla.tfprofiler.env.ImageUtils;
+import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.utils.CameraUtils;
 

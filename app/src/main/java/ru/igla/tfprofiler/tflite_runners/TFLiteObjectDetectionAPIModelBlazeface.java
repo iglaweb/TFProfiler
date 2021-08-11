@@ -104,7 +104,7 @@ public final class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDe
 
         float[][] arr = boxesResult[0];
         final int batchCount = arr.length / batchImageCount;
-        int len = arr.length;
+        final int len = arr.length;
         List<ImageBatchProcessing.ImageResult> imageResults = new ArrayList<>();
         for (int i = 0; i < len - batchCount + 1; i += batchCount) {
 

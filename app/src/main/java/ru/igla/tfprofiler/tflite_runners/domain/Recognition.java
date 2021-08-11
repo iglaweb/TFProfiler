@@ -2,6 +2,8 @@ package ru.igla.tfprofiler.tflite_runners.domain;
 
 import android.graphics.RectF;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 /**
  * An immutable result returned by a Classifier describing what was recognized.
  */
-public class Recognition {
+public final class Recognition {
     /**
      * A unique identifier for what has been recognized. Specific to the class, not the instance of
      * the object.
@@ -35,6 +37,7 @@ public class Recognition {
      */
     private RectF location;
 
+    @NonNull
     public List<Keypoint> keypoints;
 
     /***
@@ -47,7 +50,7 @@ public class Recognition {
             final Label label,
             final Float confidence,
             final RectF location,
-            final List<Keypoint> keypoints) {
+            @NonNull final List<Keypoint> keypoints) {
         this.id = id;
         this.title = label;
         this.confidence = confidence;
@@ -58,25 +61,25 @@ public class Recognition {
     public Recognition(
             final String id,
             final Label title,
-            final Float confidence,
-            final RectF location) {
+            final float confidence,
+            @NonNull final RectF location) {
         this(id, title, confidence, location, new ArrayList<>());
     }
 
     public Recognition(
             final String id,
             final String title,
-            final Float confidence,
-            final RectF location) {
+            final float confidence,
+            @NonNull final RectF location) {
         this(id, new Label(title, 0), confidence, location, new ArrayList<>());
     }
 
     public Recognition(
             final String id,
             final String title,
-            final Float confidence,
-            final RectF location,
-            final List<Keypoint> keypoints) {
+            final float confidence,
+            @NonNull final RectF location,
+            @NonNull final List<Keypoint> keypoints) {
         this(id, new Label(title, 0), confidence, location, keypoints);
     }
 
@@ -96,10 +99,11 @@ public class Recognition {
         return title;
     }
 
-    public Float getConfidence() {
+    public float getConfidence() {
         return confidence;
     }
 
+    @NonNull
     public RectF getLocation() {
         return new RectF(location);
     }

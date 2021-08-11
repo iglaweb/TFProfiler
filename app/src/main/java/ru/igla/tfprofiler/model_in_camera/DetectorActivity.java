@@ -29,8 +29,8 @@ import ru.igla.tfprofiler.core.ModelOptimizedType;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
 import ru.igla.tfprofiler.customview.OverlayView;
-import ru.igla.tfprofiler.env.CameraUtils;
-import ru.igla.tfprofiler.env.ImageUtils;
+import ru.igla.tfprofiler.utils.CameraUtils;
+import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.models_list.MediaRequest;
 import ru.igla.tfprofiler.models_list.ModelEntity;
@@ -43,7 +43,6 @@ import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 import ru.igla.tfprofiler.tracking.MultiBoxTracker;
-import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 import ru.igla.tfprofiler.utils.DebugDrawer;
 import ru.igla.tfprofiler.utils.IOUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
@@ -78,19 +77,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private ModelEntity modelEntity = null;
     private CameraType cameraType;
 
-    @Nullable
-    private Toaster mToaster;
-
     private final DebugDrawer debugDrawer = new DebugDrawer();
 
     @Nullable
     private StatisticsEstimator statisticsEstimator;
-
-    public void showToast(@NonNull String text) {
-        Toaster toast = mToaster == null ? new Toaster(getApplicationContext()) : mToaster;
-        mToaster = toast;
-        toast.showToast(text);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

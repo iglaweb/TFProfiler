@@ -6,7 +6,6 @@ import android.graphics.RectF;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,18 +51,13 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
     private final PriorityQueue<Recognition> pq =
             new PriorityQueue<>(
                     50,
-                    new Comparator<Recognition>() {
-                        @Override
-                        public int compare(final Recognition lhs, final Recognition rhs) {
-                            // Intentionally reversed to put high confidence at the head of the queue.
-                            return Float.compare(rhs.getConfidence(), lhs.getConfidence());
-                        }
+                    (lhs, rhs) -> {
+                        // Intentionally reversed to put high confidence at the head of the queue.
+                        return Float.compare(rhs.getConfidence(), lhs.getConfidence());
                     });
 
     @Override
     public Map<Integer, Object> prepareOutputImage() {
-        Map<Integer, Object> outputMap = new HashMap<>();
-
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (IS_TINY) {
             bboxes = new float[1][OUTPUT_WIDTH_TINY[0] * batchImageCount][4];
@@ -73,6 +67,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
             outScore = new float[1][OUTPUT_WIDTH_FULL[1] * batchImageCount][labels.size()];
         }
 
+        Map<Integer, Object> outputMap = new HashMap<>();
         outputMap.put(0, bboxes);
         outputMap.put(1, outScore);
         return outputMap;

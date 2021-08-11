@@ -41,14 +41,14 @@ import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.SharedViewModel;
 import ru.igla.tfprofiler.core.Timber;
-import ru.igla.tfprofiler.env.CameraUtils;
-import ru.igla.tfprofiler.env.ImageUtils;
+import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.report_details.ModelReportActivity;
 import ru.igla.tfprofiler.report_details.ModelReportFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
+import ru.igla.tfprofiler.utils.CameraUtils;
 import ru.igla.tfprofiler.utils.IntentUtils;
 import ru.igla.tfprofiler.utils.PermissionUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
@@ -109,7 +109,7 @@ public abstract class CameraActivity extends AppCompatActivity
     @Nullable
     private Toaster mToaster;
 
-    public void showToast(@NonNull String text) {
+    protected void showToast(@NonNull String text) {
         Toaster toast = mToaster == null ? new Toaster(getApplicationContext()) : mToaster;
         mToaster = toast;
         toast.showToast(text);

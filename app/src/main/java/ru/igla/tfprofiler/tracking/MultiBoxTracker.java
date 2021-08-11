@@ -34,7 +34,7 @@ import java.util.Locale;
 
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.env.BorderedText;
-import ru.igla.tfprofiler.env.ImageUtils;
+import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**

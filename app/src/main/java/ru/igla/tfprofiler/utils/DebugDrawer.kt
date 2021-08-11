@@ -1,7 +1,6 @@
 package ru.igla.tfprofiler.utils
 
 import android.graphics.*
-import ru.igla.tfprofiler.env.ImageUtils
 
 class DebugDrawer {
     companion object {

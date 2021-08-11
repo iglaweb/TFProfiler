@@ -6,9 +6,17 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.hardware.Camera
 import android.hardware.Camera.CameraInfo
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CameraMetadata
 import android.net.Uri
 import android.os.Build
+import android.util.Pair
+import android.view.Surface
+import android.view.WindowManager
 import androidx.exifinterface.media.ExifInterface
+import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.models_list.CameraType
 import java.io.IOException
 
@@ -101,5 +109,89 @@ object CameraUtils {
             if (cameraType === CameraType.FRONT && ci.facing == CameraInfo.CAMERA_FACING_FRONT) return i
         }
         return -1 // No camera found
+    }
+
+    @JvmStatic
+    fun getScreenOrientation(windowManager: WindowManager): Int {
+        return when (windowManager.defaultDisplay.rotation) {
+            Surface.ROTATION_270 -> 270
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_90 -> 90
+            else -> 0
+        }
+    }
+
+    @JvmStatic
+    fun chooseCamera(cameraType: CameraType, context: Context): Pair<String, Boolean>? {
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager?
+            ?: return null
+        try {
+            for (cameraId in manager.cameraIdList) {
+                val characteristics = manager.getCameraCharacteristics(cameraId)
+
+                // We don't use a front facing camera in this sample.
+                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+                if (facing != null) {
+                    // exclude other cameras
+                    if (facing == CameraMetadata.LENS_FACING_FRONT &&
+                        cameraType === CameraType.REAR
+                    ) {
+                        continue
+                    }
+                    if (facing == CameraMetadata.LENS_FACING_BACK &&
+                        cameraType === CameraType.FRONT
+                    ) {
+                        continue
+                    }
+                } else {
+                    continue
+                }
+                characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    ?: continue
+
+                // Fallback to camera1 API for internal cameras that don't have full support.
+                // This should help with legacy situations where using the camera2 API causes
+                // distorted or otherwise broken previews.
+                val useCamera2API = (facing == CameraMetadata.LENS_FACING_EXTERNAL
+                        || isHardwareLevelSupported(
+                    characteristics, CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
+                ))
+                Timber.i("Camera API lv2?: %s", useCamera2API)
+                return Pair.create(cameraId, useCamera2API)
+            }
+        } catch (e: CameraAccessException) {
+            Timber.e(e, "Not allowed to access camera")
+        }
+        return null
+    }
+
+    @JvmStatic
+    // Returns true if the device supports the required hardware level, or better.
+    private fun isHardwareLevelSupported(
+        characteristics: CameraCharacteristics,
+        requiredLevel: Int
+    ): Boolean {
+        val deviceLevel =
+            characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) ?: return false
+        return if (deviceLevel == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
+            requiredLevel == deviceLevel
+        } else requiredLevel <= deviceLevel
+        // deviceLevel is not LEGACY, can use numerical sort
+    }
+
+    @JvmStatic
+    fun getFrontFacingCameraId(context: Context): String? {
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager?
+            ?: return null
+        try {
+            for (cameraId in manager.cameraIdList) {
+                val characteristics = manager.getCameraCharacteristics(cameraId)
+                val cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING)
+                if (cOrientation == CameraMetadata.LENS_FACING_FRONT) return cameraId
+            }
+        } catch (e: CameraAccessException) {
+            Timber.e(e)
+        }
+        return null
     }
 }

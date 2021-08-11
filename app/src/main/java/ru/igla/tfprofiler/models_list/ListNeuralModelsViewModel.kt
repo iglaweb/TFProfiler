@@ -23,11 +23,6 @@ import java.io.File
 class ListNeuralModelsViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    companion object {
-        private val VIDEO_EXT = listOf("mp4", "avi", "mov", "mpeg", "flv", "wmv")
-        private val supportedNeuralModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
-    }
-
     private val modelDeleteUseCase by lazy {
         ModelDeleteUseCase(application)
     }
@@ -90,13 +85,12 @@ class ListNeuralModelsViewModel(application: Application) :
             logI { "Selected file: $selectedImagePath" }
         }
 
-        val fileExt = selectedImagePath.substringAfterLast('.', "")
-        if (!VIDEO_EXT.contains(fileExt)) {
-            throw Exception("Selected file is not a video")
+        if (!FileUtils.isVideo(selectedImagePath)) {
+            throw IllegalArgumentException("Selected file is not a video")
         }
 
         val modelEntity =
-            selectedModelOptionsVideo ?: throw Exception("Passed model entity is null")
+            selectedModelOptionsVideo ?: throw IllegalStateException("Passed model entity is null")
         return MediaRequest(RequestMode.VIDEO, selectedImagePath, modelEntity)
     }
 
@@ -173,7 +167,7 @@ class ListNeuralModelsViewModel(application: Application) :
             /***
              * https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html#ga3b34fe7a29494a6a4295c169a7d32422
              */
-            val opencvSupported = supportedNeuralModels.contains(File(filePath).extension)
+            val opencvSupported = FileUtils.supportedNeuralModels.contains(File(filePath).extension)
             if (opencvSupported) {
                 addCustomOpenCVModel(filePath)
                 SelectModelStatus(true, ModelFormat.OPENCV, filePath)

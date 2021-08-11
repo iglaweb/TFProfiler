@@ -50,10 +50,10 @@ import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.ErrorDialog;
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.customview.AutoFitTextureView;
-import ru.igla.tfprofiler.env.CameraUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.ui.BaseFragment;
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
+import ru.igla.tfprofiler.utils.CameraUtils;
 
 @SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends BaseFragment {
@@ -356,7 +356,9 @@ public class CameraConnectionFragment extends BaseFragment {
 
     public void setCamera(CameraType cameraType, Context context) {
         Pair<String, Boolean> pair = CameraUtils.chooseCamera(cameraType, context.getApplicationContext());
-        this.cameraId = pair.first;
+        if (pair != null) {
+            this.cameraId = pair.first;
+        }
         this.requestedCamera = cameraType;
     }
 
@@ -414,8 +416,7 @@ public class CameraConnectionFragment extends BaseFragment {
     private void openCamera(final int width, final int height) {
         setUpCameraOutputs();
         configureTransform(width, height);
-        final Activity activity = getActivity();
-        final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+        final CameraManager manager = (CameraManager) requireContext().getSystemService(Context.CAMERA_SERVICE);
         try {
             if (!cameraOpenCloseLock.tryAcquire(2500L, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");

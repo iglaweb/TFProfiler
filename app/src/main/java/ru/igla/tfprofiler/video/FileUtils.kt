@@ -20,6 +20,14 @@ object FileUtils {
         "jpeg"
     )
 
+    private val VIDEO_EXT = listOf("mp4", "avi", "mov", "mpeg", "flv", "wmv")
+    val supportedNeuralModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
+
+    fun isVideo(path: String): Boolean {
+        val fileExt = path.substringAfterLast('.', "")
+        return VIDEO_EXT.contains(fileExt)
+    }
+
     fun isImage(path: String): Boolean {
         val lowerPath = path.lowercase(Locale.US)
         for (extension in imageFileExtensions) {

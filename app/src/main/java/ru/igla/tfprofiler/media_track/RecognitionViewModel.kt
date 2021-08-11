@@ -1,6 +1,5 @@
 package ru.igla.tfprofiler.media_track
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -27,8 +26,6 @@ import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory
 import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.*
-import ru.igla.tfprofiler.video.TakeVideoFrameListener
-import ru.igla.tfprofiler.video.UpdateProgressListener
 import java.util.*
 
 
@@ -69,24 +66,11 @@ class RecognitionViewModel(
 
     val previewImageLiveData = MutableLiveData<Bitmap>()
 
-    private val progressProcessImageListener: UpdateProgressListener by lazy {
-        object : UpdateProgressListener {
-            @SuppressLint("SetTextI18n")
-            override fun onUpdate(information: FrameInformation) {
-                livedataProcessFrameInfo.sendValueIfNew(information)
-            }
+    private fun onTakeVideoFrame(bitmap: Bitmap) {
+        if (!viewModelScope.isActive) {
+            throw CancellationException()
         }
-    }
-
-    private val takeVideoFramesListener by lazy {
-        object : TakeVideoFrameListener {
-            override fun onTakeFrame(bitmap: Bitmap) {
-                if (!viewModelScope.isActive) {
-                    throw CancellationException()
-                }
-                runImageInterference(bitmap)
-            }
-        }
+        runImageInterference(bitmap)
     }
 
     private val runInterferenceCase by lazy {
@@ -164,13 +148,13 @@ class RecognitionViewModel(
                 .onEach { value ->
                     value.data?.let { valueData ->
                         if (value.status == Status.SUCCESS || value.status == Status.LOADING) {
-                            progressProcessImageListener.onUpdate(
+                            livedataProcessFrameInfo.sendValueIfNew(
                                 FrameInformation(valueData.totalFrames, valueData.frameNumber)
                             )
                         }
                         if (value.status == Status.LOADING) {
                             valueData.bitmap?.apply {
-                                takeVideoFramesListener.onTakeFrame(this)
+                                onTakeVideoFrame(this)
                             }
                         }
                     }
