@@ -11,7 +11,7 @@ class TFLiteCustomModelClassifier : TFLiteObjectDetectionAPIModelBase<ImageResul
      */
     private var outputProbabilityBuffer: TensorBuffer? = null
 
-    override fun prepareOutputImage(): Map<Int, Any> {
+    override fun prepareOutputs(): Map<Int, Any> {
         val interpreter = tfLiteExecutor.tfLite
             ?: throw IllegalStateException("Interpreter is not configured")
 
@@ -31,7 +31,7 @@ class TFLiteCustomModelClassifier : TFLiteObjectDetectionAPIModelBase<ImageResul
         return outputs
     }
 
-    override fun getDetections(): List<ImageResult> {
+    override fun getDetections(outputMap: MutableMap<Int, Any>): List<ImageResult> {
         return emptyList()
     }
 }

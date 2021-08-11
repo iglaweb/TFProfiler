@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.BuiltModel
+import ru.igla.tfprofiler.core.ModelConfig
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
 import ru.igla.tfprofiler.core.ModelOptimizedType
@@ -9,7 +9,7 @@ import ru.igla.tfprofiler.core.ModelOptimizedType
 /***
  * https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_landmark.tflite
  */
-object TFLiteModelLandmarksSSD : BuiltModel {
+object TFLiteModelLandmarksSSD : ModelConfig {
     private const val TF_OD_API_INPUT_SIZE = 192
     private const val TF_OD_API_MODEL_FILE = BuildConfig.ASSET_LANDMARK_FILE
     private val TF_OD_API_IS_QUANTIZED = ModelOptimizedType.FLOATING

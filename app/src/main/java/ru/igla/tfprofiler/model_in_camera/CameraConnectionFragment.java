@@ -371,11 +371,14 @@ public class CameraConnectionFragment extends BaseFragment {
      * Sets up member variables related to camera.
      */
     private void setUpCameraOutputs() {
-        final Activity activity = getActivity();
-        final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+        final CameraManager manager = (CameraManager) requireContext().getSystemService(Context.CAMERA_SERVICE);
+        if (manager == null) {
+            ErrorDialog.newInstance(getString(R.string.tfe_od_camera_error), (dialog, which) -> getActivity().finish())
+                    .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+            return;
+        }
         try {
             final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-
             final StreamConfigurationMap map =
                     characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
@@ -402,7 +405,7 @@ public class CameraConnectionFragment extends BaseFragment {
         } catch (final NullPointerException e) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
-            ErrorDialog.Companion.newInstance(getString(R.string.tfe_od_camera_error), (dialog, which) -> activity.finish())
+            ErrorDialog.newInstance(getString(R.string.tfe_od_camera_error), (dialog, which) -> getActivity().finish())
                     .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             throw new IllegalStateException(getString(R.string.tfe_od_camera_error));
         }

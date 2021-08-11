@@ -40,11 +40,11 @@ public final class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDe
     }
 
     @Override
-    public Map<Integer, Object> prepareOutputImage() {
-        HashMap<Integer, Object> outputs = new HashMap<>();
+    public Map<Integer, Object> prepareOutputs() {
         int batchImageCount = modelOptions.getNumberOfInputImages();
         this.boxesResult = new float[1][896 * batchImageCount][16];
         this.scoresResult = new float[1][896 * batchImageCount][1];
+        HashMap<Integer, Object> outputs = new HashMap<>();
         outputs.put(0, boxesResult);
         outputs.put(1, scoresResult);
         return outputs;
@@ -95,7 +95,7 @@ public final class TFLiteObjectDetectionAPIModelBlazeface extends TFLiteObjectDe
     }
 
     @Override
-    public List<ImageBatchProcessing.ImageResult> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections(Map<Integer, Object> outputMap) {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(boxesResult, scoresResult);

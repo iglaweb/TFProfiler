@@ -27,7 +27,7 @@ class ResolveModelsListUseCase(val application: Application) :
         if (dbModels.isEmpty()) { //first start
             val items = NeuralModelsProvider.resolveBuiltInModels(application)
             items.forEachNoIterator {
-                val modelPath = it.model.modelFile
+                val modelPath = it.modelConfig.modelFile
                 if (!TensorFlowUtils.isAssetFileExists(application, modelPath)) {
                     Timber.e(Exception("Predefined model assets/$modelPath not exists"))
                 } else {
@@ -35,15 +35,15 @@ class ResolveModelsListUseCase(val application: Application) :
                         idModel = it.id,
                         modelType = it.modelType,
                         title = it.modelType.title,
-                        inputWidth = it.model.imageWidth,
-                        inputHeight = it.model.imageHeight,
-                        modelPath = it.model.modelFile,
-                        labelPath = it.model.labelFile,
-                        source = it.model.source,
-                        details = it.model.details,
-                        modelFormat = it.model.modelFormat,
-                        colorSpace = it.model.colorSpace,
-                        inputShapeType = it.model.inputShapeType
+                        inputWidth = it.modelConfig.imageWidth,
+                        inputHeight = it.modelConfig.imageHeight,
+                        modelPath = it.modelConfig.modelFile,
+                        labelPath = it.modelConfig.labelFile,
+                        source = it.modelConfig.source,
+                        details = it.modelConfig.details,
+                        modelFormat = it.modelConfig.modelFormat,
+                        colorSpace = it.modelConfig.colorSpace,
+                        inputShapeType = it.modelConfig.inputShapeType
                     )
                     roomModelsDbController.insertModel(item)
                 }

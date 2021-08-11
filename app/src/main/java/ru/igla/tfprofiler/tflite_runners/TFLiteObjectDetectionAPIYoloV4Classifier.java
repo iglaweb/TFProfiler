@@ -57,7 +57,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
                     });
 
     @Override
-    public Map<Integer, Object> prepareOutputImage() {
+    public Map<Integer, Object> prepareOutputs() {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (IS_TINY) {
             bboxes = new float[1][OUTPUT_WIDTH_TINY[0] * batchImageCount][4];
@@ -237,7 +237,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
     }
 
     @Override
-    public List<ImageBatchProcessing.ImageResult> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections(Map<Integer, Object> outputMap) {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(bboxes, outScore);

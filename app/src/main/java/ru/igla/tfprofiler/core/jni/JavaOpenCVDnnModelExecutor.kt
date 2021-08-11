@@ -10,12 +10,12 @@ import ru.igla.tfprofiler.utils.forEachNoIterator
 import ru.igla.tfprofiler.utils.logI
 
 class JavaOpenCVDnnModelExecutor(
-    val modelPath: String,
-    val cuda: Boolean,
-    var useNHWC: Boolean = false,
-    val channelsCount: Int = 3,
-    val inputWidth: Int,
-    val inputHeight: Int
+    private val modelPath: String,
+    private val cuda: Boolean,
+    private var useNHWC: Boolean = false,
+    private val channelsCount: Int = 3,
+    inputWidth: Int,
+    inputHeight: Int
 ) : DnnModelExecutor {
 
     private val imageSize = Size(inputWidth, inputHeight)

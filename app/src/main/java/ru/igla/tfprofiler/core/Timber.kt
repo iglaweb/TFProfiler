@@ -15,32 +15,32 @@ class Timber private constructor() {
         /**
          * Priority constant for the println method; use Log.v.
          */
-        val VERBOSE = 2
+        const val VERBOSE = 2
 
         /**
          * Priority constant for the println method; use Log.d.
          */
-        val DEBUG = 3
+        const val DEBUG = 3
 
         /**
          * Priority constant for the println method; use Log.i.
          */
-        val INFO = 4
+        const val INFO = 4
 
         /**
          * Priority constant for the println method; use Log.w.
          */
-        val WARN = 5
+        const val WARN = 5
 
         /**
          * Priority constant for the println method; use Log.e.
          */
-        val ERROR = 6
+        const val ERROR = 6
 
         /**
          * Priority constant for the println method.
          */
-        val ASSERT = 7
+        const val ASSERT = 7
     }
 
     init {
@@ -212,7 +212,6 @@ class Timber private constructor() {
         @JvmStatic
         fun plant(vararg trees: Tree) {
             for (tree in trees) {
-                requireNotNull(tree) { "trees contained null" }
                 require(tree !== this) { "Cannot plant Timber into itself." }
             }
             synchronized(this.trees) {

@@ -20,8 +20,8 @@ android {
         applicationId "ru.igla.tfprofiler"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
-        versionName "0.95"
+        versionCode 10
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         //http://www.vision.caltech.edu/Image_Datasets/Caltech101/

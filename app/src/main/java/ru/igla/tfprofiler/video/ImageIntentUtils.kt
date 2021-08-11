@@ -24,8 +24,7 @@ object ImageIntentUtils {
     const val SELECT_PICTURE_REQUEST_CODE = 1024
 
     fun getMimeType(context: Context, uri: Uri): String? {
-        val mimeType: String?
-        mimeType = if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
             val cr = context.contentResolver
             cr?.getType(uri)
         } else {
@@ -34,14 +33,12 @@ object ImageIntentUtils {
                     .toString()
             )
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                fileExtension.toLowerCase(Locale.getDefault())
+                fileExtension.lowercase(Locale.getDefault())
             )
         }
-        return mimeType
     }
 
     fun openImageIntent(intentManager: IntentManager): Uri {
-
         // Determine Uri of camera image to save.
         val path = FileUtils.getMediaPath(intentManager.context)
         val root = File("$path/")

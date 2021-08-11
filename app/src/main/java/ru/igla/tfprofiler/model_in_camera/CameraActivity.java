@@ -279,6 +279,7 @@ public abstract class CameraActivity extends AppCompatActivity
                             }
                             break;
                             case BottomSheetBehavior.STATE_DRAGGING:
+                                //ignore
                                 break;
                             case BottomSheetBehavior.STATE_SETTLING:
                                 bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);

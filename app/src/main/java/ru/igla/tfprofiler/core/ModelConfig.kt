@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.core
 
 
-interface BuiltModel {
+interface ModelConfig {
     val details: String
     val imageHeight: Int
     val imageWidth: Int

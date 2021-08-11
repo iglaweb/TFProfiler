@@ -6,11 +6,11 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 class OpenCVDnnModelExecutor(
-    val modelPath: String,
-    val nhwc: Boolean,
-    val cuda: Boolean,
-    val channels: Int,
-    val inputSize: Size
+    private val modelPath: String,
+    private val nhwc: Boolean,
+    private val cuda: Boolean,
+    private val channels: Int,
+    private val inputSize: Size
 ) : DnnModelExecutor {
 
     private var initialized = false

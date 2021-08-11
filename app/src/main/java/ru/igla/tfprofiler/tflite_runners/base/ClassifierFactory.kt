@@ -24,10 +24,10 @@ object ClassifierFactory {
                     TFLiteCustomModelClassifier()
                 }
                 ModelType.MOBILENET_V1_OBJECT_DETECT -> {
-                    TFLiteObjectDetectionAPIModel_COCOMobileNetV1()
+                    TFLiteObjectDetectionModelCOCOMobileNetV1()
                 }
                 ModelType.MOBILENET_V2_OBJECT_DETECT -> {
-                    TFLiteObjectDetectionAPIModel_COCOMobileNetV2()
+                    TFLiteObjectDetectionModelCOCOMobileNetV2()
                 }
                 ModelType.BLAZEFACE_MEDIAPIPE -> {
                     TFLiteObjectDetectionAPIModelBlazeface()

@@ -13,6 +13,7 @@ class ErrorDialog(private val listener: DialogInterface.OnClickListener? = null)
     companion object {
         private const val ARG_MESSAGE = "message"
 
+        @JvmStatic
         fun newInstance(
             message: String?,
             listener: DialogInterface.OnClickListener? = null

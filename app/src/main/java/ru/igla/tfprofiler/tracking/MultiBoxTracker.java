@@ -34,8 +34,8 @@ import java.util.Locale;
 
 import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.env.BorderedText;
-import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
+import ru.igla.tfprofiler.utils.ImageUtils;
 
 /**
  * A tracker that handles non-max suppression and matches existing objects to new detections.
@@ -177,16 +177,17 @@ public class MultiBoxTracker {
         final Matrix rgbFrameToScreen = new Matrix(getFrameToCanvasMatrix());
 
         for (final Recognition result : results) {
-            if (result.getLocation() == null) {
+            RectF location = result.getLocation();
+            if (location.isEmpty()) {
                 continue;
             }
-            final RectF detectionFrameRect = new RectF(result.getLocation());
 
+            final RectF detectionFrameRect = new RectF(location);
             final RectF detectionScreenRect = new RectF();
             rgbFrameToScreen.mapRect(detectionScreenRect, detectionFrameRect);
 
             Timber.v(
-                    "Result! Frame: " + result.getLocation() + " mapped to screen:" + detectionScreenRect);
+                    "Result! Frame: " + location + " mapped to screen:" + detectionScreenRect);
 
             screenRects.add(new Pair<>(result.getConfidence(), detectionScreenRect));
 

@@ -35,7 +35,7 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
     }
 
     @Override
-    public Map<Integer, Object> prepareOutputImage() {
+    public Map<Integer, Object> prepareOutputs() {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         this.landmarkPoints = new float[batchImageCount][1][1][LANDMARKS_LEN];
         this.result = new float[batchImageCount][1][1][1];
@@ -84,7 +84,7 @@ public class TFLiteAPIModelFacemeshLandmarks extends TFLiteObjectDetectionAPIMod
     }
 
     @Override
-    public List<ImageBatchProcessing.ImageResult> getDetections() {
+    public List<ImageBatchProcessing.ImageResult> getDetections(Map<Integer, Object> outputMap) {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
             List<Recognition> detections = extractDetections(result[0], landmarkPoints[0]);

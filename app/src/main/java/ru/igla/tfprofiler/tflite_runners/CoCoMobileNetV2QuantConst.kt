@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.BuiltModel
+import ru.igla.tfprofiler.core.ModelConfig
 import ru.igla.tfprofiler.core.ColorSpace
 import ru.igla.tfprofiler.core.InputShapeType
 import ru.igla.tfprofiler.core.ModelOptimizedType
@@ -9,7 +9,7 @@ import ru.igla.tfprofiler.core.ModelOptimizedType
 /***
  * https://tfhub.dev/google/lite-model/object_detection/mobile_object_localizer_v1/1/default/1
  */
-object CoCoMobileNetV2QuantConst : BuiltModel {
+object CoCoMobileNetV2QuantConst : ModelConfig {
     private const val TF_OD_API_IMAGE_SIZE = 192
     private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.QUANTIZED
     private const val TF_OD_API_MODEL_FILE = BuildConfig.ASSET_MOBILENETV2_FILE

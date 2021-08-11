@@ -17,13 +17,9 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 
-fun Int.toDp(displayMetrics: DisplayMetrics): Float = this.toFloat() / displayMetrics.density
-fun Int.toSp(displayMetrics: DisplayMetrics): Float = this.toFloat() / displayMetrics.scaledDensity
 fun Float.spToPx(displayMetrics: DisplayMetrics): Int =
     (this * displayMetrics.scaledDensity).round()
 
-
-fun Context.dpToPx(dp: Float): Int = Math.round(dpF(dp))
 fun Context.dpF(dp: Float): Float = dp * resources.displayMetrics.density
 
 @UiThread

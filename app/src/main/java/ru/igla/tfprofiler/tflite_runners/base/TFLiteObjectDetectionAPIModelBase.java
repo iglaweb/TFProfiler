@@ -40,9 +40,9 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     protected ModelOptions modelOptions;
 
-    public abstract Map<Integer, Object> prepareOutputImage();
+    public abstract Map<Integer, Object> prepareOutputs();
 
-    public abstract List<T> getDetections();
+    public abstract List<T> getDetections(Map<Integer, Object> outputMap);
 
     // Pre-allocated buffers.
     protected List<String> labels = new ArrayList<>();
@@ -56,7 +56,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     private OpNormalizer opNormalizer;
 
-    public TFLiteObjectDetectionAPIModelBase() {
+    protected TFLiteObjectDetectionAPIModelBase() {
     }
 
     /**
@@ -66,7 +66,10 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
      * @param modelEntity The filepath of the model GraphDef protocol buffer.
      */
     @Override
-    public void init(@NotNull Context context, ModelEntity modelEntity, @NotNull ModelOptions modelOptions) throws Exception {
+    public void init(
+            @NotNull Context context,
+            @NotNull ModelEntity modelEntity,
+            @NotNull ModelOptions modelOptions) throws Exception {
         final String modelFilename = modelEntity.getModelFile();
         final String labelFilename = modelEntity.getLabelFile();
         if (!StringUtils.isNullOrEmpty(labelFilename)) {
@@ -124,7 +127,7 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
     /***
      * Bitmaps of equal size and the size matches the neural network input
-     * @param bitmaps
+     * @param bitmaps bitmaps to normalize
      */
     private void normalizeBitmaps(final List<Bitmap> bitmaps) {
         imgData.rewind();
@@ -160,13 +163,13 @@ public abstract class TFLiteObjectDetectionAPIModelBase<T> implements Classifier
 
         // Copy the input data into TensorFlow.
         Trace.beginSection("feed");
-        Map<Integer, Object> outputMap = prepareOutputImage();
+        Map<Integer, Object> outputMap = prepareOutputs();
         Object[] inputArray = {imgData};
         Trace.endSection();
 
         runInferenceCall(inputArray, outputMap);
 
-        final List<T> recognitions = getDetections();
+        final List<T> recognitions = getDetections(outputMap);
         Trace.endSection(); // "recognizeImage"
         return recognitions;
     }
