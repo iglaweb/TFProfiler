@@ -1,15 +1,14 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
-import ru.igla.tfprofiler.core.Size
-import ru.igla.tfprofiler.core.Timber
-import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.NeuralModelsProvider
 import ru.igla.tfprofiler.db.RoomModelsDbController
 import ru.igla.tfprofiler.utils.forEachNoIterator
+import timber.log.Timber
 import java.io.File
 
 class ResolveModelsListUseCase(val application: Application) :
@@ -27,25 +26,46 @@ class ResolveModelsListUseCase(val application: Application) :
         if (dbModels.isEmpty()) { //first start
             val items = NeuralModelsProvider.resolveBuiltInModels(application)
             items.forEachNoIterator {
-                val modelPath = it.modelConfig.modelFile
+                val modelPath = it.modelInfoConfig.modelFile
                 if (!TensorFlowUtils.isAssetFileExists(application, modelPath)) {
                     Timber.e(Exception("Predefined model assets/$modelPath not exists"))
                 } else {
-                    val item = DbModelItem(
-                        idModel = it.id,
-                        modelType = it.modelType,
-                        title = it.modelType.title,
-                        inputWidth = it.modelConfig.imageWidth,
-                        inputHeight = it.modelConfig.imageHeight,
-                        modelPath = it.modelConfig.modelFile,
-                        labelPath = it.modelConfig.labelFile,
-                        source = it.modelConfig.source,
-                        details = it.modelConfig.details,
-                        modelFormat = it.modelConfig.modelFormat,
-                        colorSpace = it.modelConfig.colorSpace,
-                        inputShapeType = it.modelConfig.inputShapeType
-                    )
-                    roomModelsDbController.insertModel(item)
+                    when (it.modelInfoConfig) {
+                        is TextConfig -> {
+                            val item = DbModelItem(
+                                idModel = it.id,
+                                modelType = it.modelType,
+                                title = it.modelType.title,
+                                inputWidth = -1,
+                                inputHeight = -1,
+                                modelPath = it.modelInfoConfig.modelFile,
+                                labelPath = it.modelInfoConfig.labelFile,
+                                source = it.modelInfoConfig.source,
+                                details = it.modelInfoConfig.details,
+                                modelFormat = it.modelInfoConfig.modelFormat,
+                                colorSpace = ColorSpace.COLOR,
+                                inputShapeType = InputShapeType.NCHW
+                            )
+                            roomModelsDbController.insertModel(item)
+                        }
+                        is ImageConfig -> {
+                            val item = DbModelItem(
+                                idModel = it.id,
+                                modelType = it.modelType,
+                                title = it.modelType.title,
+                                inputWidth = it.modelInfoConfig.imageWidth,
+                                inputHeight = it.modelInfoConfig.imageHeight,
+                                modelPath = it.modelInfoConfig.modelFile,
+                                labelPath = it.modelInfoConfig.labelFile,
+                                source = it.modelInfoConfig.source,
+                                details = it.modelInfoConfig.details,
+                                modelFormat = it.modelInfoConfig.modelFormat,
+                                colorSpace = it.modelInfoConfig.colorSpace,
+                                inputShapeType = it.modelInfoConfig.inputShapeType
+                            )
+                            roomModelsDbController.insertModel(item)
+                        }
+                    }
                 }
             }
         }

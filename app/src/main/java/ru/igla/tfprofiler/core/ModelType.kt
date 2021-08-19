@@ -7,9 +7,15 @@ enum class ModelType(val title: String, val id: String) {
     LANDMARKS468_MEDIAPIPE("FaceMesh MediaPipe", "landmarks468"),
     YOLOV4("YOLOv4", "yolov4"),
     CUSTOM_TFLITE("Custom TFLite", "custom_tflite"),
-    CUSTOM_OPENCV("Custom OpenCV", "custom_opencv");
+    CUSTOM_OPENCV("Custom OpenCV", "custom_opencv"),
+
+    TEXT_CLASSIFICATION("Text Classification", "text_classify");
 
     fun isCustomModel(): Boolean {
         return this == CUSTOM_OPENCV || this == CUSTOM_TFLITE
+    }
+
+    fun isTextModel(): Boolean {
+        return this == TEXT_CLASSIFICATION
     }
 }

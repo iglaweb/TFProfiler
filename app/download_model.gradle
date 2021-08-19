@@ -5,12 +5,13 @@ def blazefaceFrontCameraUrl = 'https://raw.githubusercontent.com/google/mediapip
 //def blazefaceBackCameraUrl = 'https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_detection_back.tflite'
 def yolov4DownloadUrl = 'https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite'
 def faceLandmarkUrl = "https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/modules/face_landmark/face_landmark.tflite"
-
+def textClassificationUrl = 'https://storage.googleapis.com/download.tensorflow.org/models/tflite/text_classification/text_classification_v2.tflite'
 
 project.ext.faceLandmarkLocalFile = "face_landmark.tflite"
 project.ext.blazefaceFrontLocalFile = "face_detection_front.tflite"
 project.ext.mobilenetv2LocalFile = "object_detection_mobile_object_localizer_v1_1_default_1.tflite"
 project.ext.yolov4LocalFile = "yolov4.tflite"
+project.ext.textClassifyLocalFile = "text_classification.tflite"
 
 
 project.ext.mobilenetv1 = "mobilenetv1"
@@ -27,6 +28,15 @@ def targetMobileNetv2Folder = project.ext.ASSET_DIR + project.ext.mobilenetv2
 def targetBlazefaceFrontFolder = project.ext.ASSET_DIR + project.ext.blazefacefront
 def targetYolov4Folder = project.ext.ASSET_DIR + project.ext.yolov4
 def targetFaceLandmarkFolder = project.ext.ASSET_DIR + project.ext.facelandmark
+
+
+
+task downloadTextClassifyModelFile(type: Download) {
+    src textClassificationUrl
+    dest project.ext.ASSET_DIR + '/' + project.ext.textClassifyLocalFile
+    overwrite true
+}
+
 
 
 ////////// Face landmark
@@ -149,6 +159,7 @@ task extractModels(type: Copy) {
     dependsOn downloadAndCopyBlazefaceFront
     dependsOn downloadAndCopyYoloV4
     dependsOn downloadAndCopyFaceLandmark
+    dependsOn downloadTextClassifyModelFile
 }
 
 tasks.whenTaskAdded { task ->
@@ -159,3 +170,5 @@ tasks.whenTaskAdded { task ->
         task.dependsOn 'extractModels'
     }
 }
+
+preBuild.dependsOn downloadTextClassifyModelFile

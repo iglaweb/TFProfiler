@@ -17,8 +17,8 @@ package ru.igla.tfprofiler.customview;
 
 import java.util.List;
 
-import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
+import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition;
 
 public interface ResultsView {
-    void setResults(final List<Recognition> results);
+    void setResults(final List<ImRecognition> results);
 }

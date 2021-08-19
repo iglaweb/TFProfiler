@@ -1,27 +1,25 @@
 package ru.igla.tfprofiler.utils
 
-import ru.igla.tfprofiler.core.Timber.Log.DEBUG
-import ru.igla.tfprofiler.core.Timber.Log.ERROR
-import ru.igla.tfprofiler.core.Timber.Log.WARN
-import ru.igla.tfprofiler.core.Tree
+import android.util.Log
+import timber.log.Timber
 
 /**
  * A tree which logs important information for crash reporting.
  */
-class DevelopReportingTree : Tree() {
+class DevelopReportingTree : Timber.Tree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         when (priority) {
-            ERROR -> {
-                Log.e(t)
+            Log.ERROR -> {
+                ru.igla.tfprofiler.utils.Log.e(t)
             }
-            WARN -> {
-                Log.w(message)
+            Log.WARN -> {
+                ru.igla.tfprofiler.utils.Log.w(message)
             }
-            DEBUG -> {
-                Log.d(message)
+            Log.DEBUG -> {
+                ru.igla.tfprofiler.utils.Log.d(message)
             }
             else -> {
-                Log.i(message)
+                ru.igla.tfprofiler.utils.Log.i(message)
             }
         }
     }

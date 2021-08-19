@@ -14,8 +14,8 @@ import org.jcodec.common.io.IOUtils
 import org.jcodec.common.io.NIOUtils
 import org.jcodec.common.model.Picture
 import ru.igla.tfprofiler.core.Resource
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.logI
+import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

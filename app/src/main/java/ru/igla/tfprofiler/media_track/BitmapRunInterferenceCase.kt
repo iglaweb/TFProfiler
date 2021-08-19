@@ -3,25 +3,35 @@ package ru.igla.tfprofiler.media_track
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.SystemClock
+import ru.igla.tfprofiler.core.ResolveStats
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
-import ru.igla.tfprofiler.utils.ImageUtils
 import ru.igla.tfprofiler.models_list.ModelEntity
-import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
+import ru.igla.tfprofiler.prefs.IPreferenceManager
 import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
-import ru.igla.tfprofiler.tflite_runners.base.ImageRecognizer
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.tflite_runners.base.ProcessType
+import ru.igla.tfprofiler.tflite_runners.base.Recognizer
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
+import ru.igla.tfprofiler.utils.ImageUtils
+import ru.igla.tfprofiler.utils.lazyNonSafe
 import ru.igla.tfprofiler.utils.logI
 
-class RunInterferenceCase(
+class BitmapRunInterferenceCase(
     private val statisticsEstimator: StatisticsEstimator,
-    private val preferenceManager: AndroidPreferenceManager,
-    private val recognizeImageCallback: RecgonizeImageCallback
+    preferenceManager: IPreferenceManager,
+    private val recognizeImageCallback: RecognizeImageCallback
 ) {
+
+    private val resolveStats by lazyNonSafe {
+        ResolveStats(
+            statisticsEstimator,
+            preferenceManager
+        )
+    }
 
     @Throws(java.lang.Exception::class)
     fun runImageInterference(
-        detector: ImageRecognizer<ImageBatchProcessing.ImageResult>,
+        detector: Recognizer<List<Bitmap>, List<ImageResult>>,
         modelEntity: ModelEntity,
         selectedModelOptions: ModelOptions,
         bitmap: Bitmap
@@ -54,7 +64,7 @@ class RunInterferenceCase(
             val startTime = SystemClock.uptimeMillis()
             val ret: ImageBatchProcessing.RecognitionBatch =
                 if (selectedModelOptions.numberOfInputImages == 1) {
-                    val results = detector.recognizeImage(listOf(croppedBitmap))
+                    val results = detector.runInference(listOf(croppedBitmap))
                     ImageBatchProcessing.RecognitionBatch(
                         ProcessType.PROCESSED, results, -1, -1
                     )
@@ -69,22 +79,9 @@ class RunInterferenceCase(
             if (ret.type == ProcessType.PROCESSED) {
                 statisticsEstimator.incrementFrameNumber(selectedModelOptions)
 
-                // warmup run check
-                val prefWarmupRuns = preferenceManager.defaultPrefs.warmupRuns
-                val frameNumber = statisticsEstimator.getFrameNumber(selectedModelOptions)
-                if (frameNumber < prefWarmupRuns) return
-
-                statisticsEstimator.setInterferenceTime(selectedModelOptions, lastProcessingTimeMs)
-                val fps = statisticsEstimator.calcFps(selectedModelOptions)
-                val memoryUsage = statisticsEstimator.appMemoryEstimator.getMemory()
-                statisticsEstimator.setMemoryUsage(selectedModelOptions, memoryUsage)
-
-                val descriptiveStatistics =
-                    statisticsEstimator.getStats(selectedModelOptions).statistics
-                val std = descriptiveStatistics.standardDeviation
-                val mean = descriptiveStatistics.mean
-
-                val initTime = statisticsEstimator.getStats(selectedModelOptions).initializationTime
+                val statOutResult =
+                    resolveStats.resolveStats(selectedModelOptions, lastProcessingTimeMs)
+                        ?: return
 
                 recognizeImageCallback.startRecognizeImage(
                     BitmapResult(
@@ -92,13 +89,7 @@ class RunInterferenceCase(
                         previewHeight,
                         croppedBitmap.width,
                         croppedBitmap.height,
-
-                        initTime,
-                        lastProcessingTimeMs,
-                        mean,
-                        std,
-                        fps,
-                        memoryUsage
+                        statOutResult
                     )
                 )
             }

@@ -1,12 +1,14 @@
 package ru.igla.tfprofiler.tflite_runners.base
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.*
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 
-object ClassifierFactory {
+object ImageClassifierFactory {
     @Throws(Exception::class)
     @JvmStatic
     @WorkerThread
@@ -14,14 +16,14 @@ object ClassifierFactory {
         context: Context,
         modelEntity: ModelEntity,
         modelOptions: ModelOptions
-    ): Classifier<ImageBatchProcessing.ImageResult> {
-        val classifier: Classifier<ImageBatchProcessing.ImageResult> =
+    ): Classifier<List<Bitmap>, List<ImageResult>> {
+        val classifier: Classifier<List<Bitmap>, List<ImageResult>> =
             when (modelEntity.modelType) {
                 ModelType.CUSTOM_OPENCV -> {
-                    OpenCVObjectDetectionAPIModelBase()
+                    OpenCVImageObjectDetectionAPIModelBase()
                 }
                 ModelType.CUSTOM_TFLITE -> {
-                    TFLiteCustomModelClassifier()
+                    TFLiteImageCustomModelClassifier()
                 }
                 ModelType.MOBILENET_V1_OBJECT_DETECT -> {
                     TFLiteObjectDetectionModelCOCOMobileNetV1()
@@ -37,6 +39,9 @@ object ClassifierFactory {
                 }
                 ModelType.YOLOV4 -> {
                     TFLiteObjectDetectionAPIYoloV4Classifier()
+                }
+                else -> {
+                    throw IllegalStateException("Model ${modelEntity.modelType.title} not supported here")
                 }
             }
         classifier.init(context, modelEntity, modelOptions)

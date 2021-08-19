@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.annotation.NonNull
 import androidx.annotation.WorkerThread
 import androidx.arch.core.util.Function
 import androidx.lifecycle.*
@@ -22,14 +21,15 @@ import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.tflite_runners.base.Classifier
-import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory
-import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
+import ru.igla.tfprofiler.tflite_runners.base.ImageClassifierFactory
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 import ru.igla.tfprofiler.utils.*
+import timber.log.Timber
 import java.util.*
 
 
-class RecognitionViewModel(
+class VideoRecognitionViewModel(
     application: Application,
     val modelEntity: ModelEntity
 ) : AndroidViewModel(application) {
@@ -47,7 +47,7 @@ class RecognitionViewModel(
             numberOfInputImages = 1
         )
 
-    private var detector: Classifier<ImageBatchProcessing.ImageResult>? = null
+    private var detector: Classifier<List<Bitmap>, List<ImageResult>>? = null
 
     val liveDataBitmapOutput = MutableLiveData<BitmapResult>()
 
@@ -74,10 +74,10 @@ class RecognitionViewModel(
     }
 
     private val runInterferenceCase by lazy {
-        RunInterferenceCase(
+        BitmapRunInterferenceCase(
             statisticsEstimator,
             preferenceManager,
-            object : RecgonizeImageCallback {
+            object : RecognizeImageCallback {
                 override fun startRecognizeImage(timestampBitmap: BitmapResult) {
                     liveDataBitmapOutput.sendValueIfNew(timestampBitmap)
                 }
@@ -212,7 +212,8 @@ class RecognitionViewModel(
             try {
                 logD { "Creating classifier $modelOptions" }
                 emit(Resource.loading(modelOptions))
-                detector = ClassifierFactory.create(getApplication(), modelEntity, modelOptions)
+                detector =
+                    ImageClassifierFactory.create(getApplication(), modelEntity, modelOptions)
                 emit(Resource.success(modelOptions))
             } catch (e: Exception) {
                 statisticsEstimator.setError(modelOptions, e)
@@ -256,26 +257,6 @@ class RecognitionViewModel(
             return response?.queue ?: ArrayDeque()
         }
         return ArrayDeque()
-    }
-
-    /**
-     * A creator is used to inject the product ID into the ViewModel
-     *
-     *
-     * This creator is to showcase how to inject dependencies into ViewModels. It's not
-     * actually necessary in this case, as the product ID can be passed in a public method.
-     */
-    @Suppress("UNCHECKED_CAST")
-    class Factory(
-        @field:NonNull @param:NonNull private val mApplication: Application,
-        private val entity: ModelEntity
-    ) :
-        ViewModelProvider.NewInstanceFactory() {
-
-        @NonNull
-        override fun <T : ViewModel?> create(@NonNull modelClass: Class<T>): T {
-            return RecognitionViewModel(mApplication, entity) as T
-        }
     }
 
     fun getDelegateDetails(modelOptions: ModelOptions): String {

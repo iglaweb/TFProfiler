@@ -10,6 +10,8 @@ import android.os.Looper
 import android.view.WindowManager
 import androidx.annotation.UiThread
 import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.core.RequestMode
+import ru.igla.tfprofiler.utils.sentenceCase
 
 object InferenceTypeLauncher {
 
@@ -29,9 +31,28 @@ object InferenceTypeLauncher {
         context: Context,
         listener: InferenceLaunchListener
     ) {
-        val launchOptions = listOf(InferenceType.TFLITE.humanName, InferenceType.OPENCV.humanName)
+        val launchOptions = listOf(
+            InferenceType.TFLITE.humanName,
+            InferenceType.OPENCV.humanName
+        )
         showDialog(context, launchOptions) { _, item ->
             val selectedOption = InferenceType.values()[item]
+            listener.onSelectedOption(selectedOption)
+        }
+    }
+
+    @UiThread
+    fun showImageTypeDialog(
+        context: Context,
+        listener: ImageRequestListener
+    ) {
+        val launchOptions = listOf(
+            RequestMode.CAMERA.name.sentenceCase(),
+            RequestMode.VIDEO.name.sentenceCase(),
+            RequestMode.DATASET.name.sentenceCase()
+        )
+        showDialog(context, launchOptions) { _, item ->
+            val selectedOption = RequestMode.values()[item]
             listener.onSelectedOption(selectedOption)
         }
     }

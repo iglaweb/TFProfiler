@@ -5,7 +5,8 @@ import android.graphics.Bitmap
 import android.os.Trace
 import ru.igla.tfprofiler.core.tflite.OpenCVInterpeterThreadExecutor
 import ru.igla.tfprofiler.models_list.ModelEntity
-import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing.ImageResult
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
+import ru.igla.tfprofiler.utils.forEachNoIterator
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -17,7 +18,8 @@ import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing.ImageResult
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
-class OpenCVObjectDetectionAPIModelBase : Classifier<ImageResult> {
+class OpenCVImageObjectDetectionAPIModelBase :
+    Classifier<List<Bitmap>, List<ImageResult>> {
     private var opencvExecutor: OpenCVInterpeterThreadExecutor? = null
 
     /**
@@ -34,10 +36,13 @@ class OpenCVObjectDetectionAPIModelBase : Classifier<ImageResult> {
         }
     }
 
-    override fun recognizeImage(bitmaps: List<Bitmap>): List<ImageResult> {
+    override fun runInference(data: List<Bitmap>): List<ImageResult> {
+        val cvExecutor = requireNotNull(opencvExecutor) {
+            "OpenCV executor not created"
+        }
         Trace.beginSection("recognizeImage")
-        for (bmp in bitmaps) {
-            opencvExecutor?.runBitmapProcessing(bmp)
+        data.forEachNoIterator { bmp ->
+            cvExecutor.runBitmapProcessing(bmp)
         }
         Trace.endSection() // "recognizeImage"
         return emptyList()

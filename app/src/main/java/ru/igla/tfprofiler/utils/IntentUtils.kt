@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
-import ru.igla.tfprofiler.core.Timber
+import timber.log.Timber
 
 /**
  * Created by lashkov on 30/06/16.

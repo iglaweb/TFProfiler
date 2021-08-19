@@ -8,7 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Debug
 import android.os.Process
 import androidx.annotation.WorkerThread
-import ru.igla.tfprofiler.core.Timber
+import timber.log.Timber
 
 
 object SystemUtils {

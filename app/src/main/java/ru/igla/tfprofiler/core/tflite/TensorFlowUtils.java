@@ -21,9 +21,9 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.utils.IOUtils;
+import timber.log.Timber;
 
 
 public final class TensorFlowUtils {
@@ -67,10 +67,17 @@ public final class TensorFlowUtils {
     }
 
     @NonNull
-    public static List<String> loadLabelList(AssetManager assetManager, String labelPath) throws IOException {
+    public static List<String> loadLabelList(@NonNull AssetManager assetManager, String labelPath) throws IOException {
+        try (InputStream is = assetManager.open(labelPath)) {
+            return loadLabelList(is);
+        }
+    }
+
+    @NonNull
+    public static List<String> loadLabelList(@NonNull InputStream inputStream) throws IOException {
         List<String> labelList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(assetManager.open(labelPath)))) {
+                new InputStreamReader(inputStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Timber.w(line);
@@ -121,7 +128,7 @@ public final class TensorFlowUtils {
     }
 
     @Nullable
-    public static MetadataExtractor getMetaData(Context context, String modelFilename) {
+    public static MetadataExtractor getMetaData(@NonNull Context context, @NonNull String modelFilename) {
         try {
             MappedByteBuffer m = loadModelFileFromAssets(context, modelFilename);
             MetadataExtractor metadataExtractor;
@@ -136,7 +143,7 @@ public final class TensorFlowUtils {
         return null;
     }
 
-    public static long getModelFileSize(Context context, ModelEntity modelEntity) {
+    public static long getModelFileSize(@NonNull Context context, @NonNull ModelEntity modelEntity) {
         if (modelEntity.getModelType().isCustomModel()) {
             return new File(modelEntity.getModelFile()).length();
         }

@@ -78,7 +78,7 @@ class ListNeuralModelsViewModel(application: Application) :
     suspend fun getMediaRequest(
         selectedImageUri: Uri,
         selectedModelOptionsVideo: ModelEntity?
-    ): MediaRequest {
+    ): ExtraMediaRequest {
         val selectedImagePath =
             FileUtils.getRealFilePath(getApplication(), selectedImageUri).trim()
         withContext(Dispatchers.Main) {
@@ -91,7 +91,7 @@ class ListNeuralModelsViewModel(application: Application) :
 
         val modelEntity =
             selectedModelOptionsVideo ?: throw IllegalStateException("Passed model entity is null")
-        return MediaRequest(RequestMode.VIDEO, selectedImagePath, modelEntity)
+        return ExtraMediaRequest(RequestMode.VIDEO, selectedImagePath, modelEntity)
     }
 
     fun getDelegateRequest(): DelegateRunRequest {

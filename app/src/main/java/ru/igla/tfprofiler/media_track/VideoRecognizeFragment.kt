@@ -20,7 +20,7 @@ import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.Status
 import ru.igla.tfprofiler.core.intents.IntentManager
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.models_list.MediaRequest
+import ru.igla.tfprofiler.models_list.ExtraMediaRequest
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment
 import ru.igla.tfprofiler.report_details.ModelReportActivity
 import ru.igla.tfprofiler.report_details.ModelReportFragment
@@ -40,7 +40,7 @@ class VideoRecognizeFragment :
 
     private val exceptionHandler by lazy { ExceptionHandler { _, _ -> } } // for cancellation exception
 
-    private lateinit var recognitionViewModel: RecognitionViewModel
+    private lateinit var recognitionViewModel: VideoRecognitionViewModel
 
     override val coroutineContext: CoroutineContext
         get() = dispatcherProvider.background
@@ -56,7 +56,7 @@ class VideoRecognizeFragment :
     }
 
     fun withArguments(
-        mediaRequest: MediaRequest,
+        mediaRequest: ExtraMediaRequest,
         delegateRunRequest: DelegateRunRequest
     ): VideoRecognizeFragment =
         apply {
@@ -134,7 +134,7 @@ class VideoRecognizeFragment :
             openReport()
         }
 
-        val mediaRequest: MediaRequest? =
+        val mediaRequest: ExtraMediaRequest? =
             arguments?.getParcelable(NeuralModelsListFragment.MEDIA_ITEM)
         if (mediaRequest == null) {
             mToaster.showToast("Model is null")
@@ -148,14 +148,15 @@ class VideoRecognizeFragment :
             return
         }
 
-        val factory: RecognitionViewModel.Factory = RecognitionViewModel.Factory(
-            requireActivity().application, mediaRequest.modelEntity
+        val factory = ModelFactory(
+            requireActivity().application,
+            mediaRequest.modelEntity
         )
         recognitionViewModel = ViewModelProvider(
             this,
             factory
         ).get(
-            RecognitionViewModel::class.java
+            VideoRecognitionViewModel::class.java
         ).apply {
 
             val delegateRunRequest: DelegateRunRequest? =
@@ -194,8 +195,8 @@ class VideoRecognizeFragment :
         }
     }
 
-    private fun RecognitionViewModel.observeDelegateCreator(
-        mediaRequest: MediaRequest,
+    private fun VideoRecognitionViewModel.observeDelegateCreator(
+        mediaRequest: ExtraMediaRequest,
         queue: Queue<ModelOptions>
     ) {
         liveDataCreateDelegate.observe(viewLifecycleOwner) {
@@ -224,7 +225,7 @@ class VideoRecognizeFragment :
         }
     }
 
-    private fun RecognitionViewModel.observeRecognitionResult() {
+    private fun VideoRecognitionViewModel.observeRecognitionResult() {
         // recognition result
         liveDataBitmapOutput.observe(
             viewLifecycleOwner
@@ -233,19 +234,20 @@ class VideoRecognizeFragment :
             showCropInfo(
                 it.croppedWidth.toString() + "x" + it.croppedHeight
             )
-            showInference(it.inferenceTime.toString() + " ms")
-            showFps(it.fps.toString())
+            val state = it.statOutResult
+            showInference(state.inferenceTime.toString() + " ms")
+            showFps(state.fps.toString())
 
-            val memoryStr = StringUtils.getReadableFileSize(it.memoryUsage, true)
+            val memoryStr = StringUtils.getReadableFileSize(state.memoryUsage, true)
             showMemoryUsage(memoryStr)
 
-            showInitTime("" + it.initTime + " ms")
-            showMeanTime(it.meanTime, it.stdTime)
+            showInitTime("" + state.initTime + " ms")
+            showMeanTime(state.meanTime, state.stdTime)
         }
     }
 
     private fun runRecognition(
-        mediaRequest: MediaRequest,
+        mediaRequest: ExtraMediaRequest,
         queue: Queue<ModelOptions>
     ) {
         launch(Dispatchers.Default + exceptionHandler) {

@@ -1,12 +1,9 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.ModelConfig
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelOptimizedType
+import ru.igla.tfprofiler.core.*
 
-object CoCoMobileNetV1QuantConst : ModelConfig {
+object CoCoMobileNetV1QuantConst : ImageConfig() {
     private const val TF_OD_API_IMAGE_SIZE = 300
     private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.QUANTIZED
     private const val TF_OD_API_MODEL_FILE = BuildConfig.ASSET_MOBILENETV1_FILE + "detect.tflite"

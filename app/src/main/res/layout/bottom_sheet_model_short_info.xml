@@ -22,6 +22,7 @@
         tools:text="Adapter from Single Shot Multibox Detector (SSD)" />
 
     <TextView
+        android:id="@+id/tvTitleImageSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -30,7 +31,7 @@
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/modelSize"
+        android:id="@+id/tvImageSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

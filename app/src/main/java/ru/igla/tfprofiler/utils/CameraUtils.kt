@@ -16,8 +16,8 @@ import android.util.Pair
 import android.view.Surface
 import android.view.WindowManager
 import androidx.exifinterface.media.ExifInterface
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.models_list.CameraType
+import timber.log.Timber
 import java.io.IOException
 
 
@@ -156,7 +156,7 @@ object CameraUtils {
                         || isHardwareLevelSupported(
                     characteristics, CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
                 ))
-                Timber.i("Camera API lv2?: %s", useCamera2API)
+                logI { String.format("Camera API lv2?: %s", useCamera2API) }
                 return Pair.create(cameraId, useCamera2API)
             }
         } catch (e: CameraAccessException) {

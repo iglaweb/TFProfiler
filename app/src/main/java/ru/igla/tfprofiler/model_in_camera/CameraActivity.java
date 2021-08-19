@@ -40,7 +40,6 @@ import java.nio.ByteBuffer;
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.SharedViewModel;
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
 import ru.igla.tfprofiler.report_details.ModelReportActivity;
@@ -52,6 +51,7 @@ import ru.igla.tfprofiler.utils.CameraUtils;
 import ru.igla.tfprofiler.utils.IntentUtils;
 import ru.igla.tfprofiler.utils.PermissionUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
+import timber.log.Timber;
 
 
 public abstract class CameraActivity extends AppCompatActivity

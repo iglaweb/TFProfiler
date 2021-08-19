@@ -6,8 +6,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.annotation.WorkerThread
 import ru.igla.tfprofiler.TFProfilerApp.Companion.instance
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.IOUtils
+import timber.log.Timber
 import java.io.*
 import java.util.*
 

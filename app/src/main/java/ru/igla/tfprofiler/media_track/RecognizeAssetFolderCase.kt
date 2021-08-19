@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import ru.igla.tfprofiler.core.Resource
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.logI
 import ru.igla.tfprofiler.video.FileUtils
+import timber.log.Timber
 import java.io.IOException
 import kotlin.coroutines.coroutineContext
 

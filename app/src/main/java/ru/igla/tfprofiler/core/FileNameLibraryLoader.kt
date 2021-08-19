@@ -1,6 +1,7 @@
 package ru.igla.tfprofiler.core
 
 import ru.igla.tfprofiler.utils.logI
+import timber.log.Timber
 
 class FileNameLibraryLoader : LibraryLoader {
     override fun loadLibraryFile(filename: String) {

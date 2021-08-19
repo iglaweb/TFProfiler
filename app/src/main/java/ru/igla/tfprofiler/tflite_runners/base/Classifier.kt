@@ -7,7 +7,13 @@ import java.io.Closeable
 /**
  * Generic interface for interacting with different recognition engines.
  */
-interface Classifier<T> : ImageRecognizer<T>, Closeable {
+interface Classifier<Input, Output> :
+    Recognizer<Input, Output>,
+    Closeable {
     @Throws(Exception::class)
-    fun init(context: Context, modelEntity: ModelEntity, modelOptions: ModelOptions)
+    fun init(
+        context: Context,
+        modelEntity: ModelEntity,
+        modelOptions: ModelOptions
+    )
 }

@@ -11,6 +11,7 @@ import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.models_list.ModelConfig
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.video.FileUtils
+import timber.log.Timber
 import java.nio.MappedByteBuffer
 
 class TFInterpreterWrapper(

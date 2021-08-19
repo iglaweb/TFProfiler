@@ -7,6 +7,7 @@ import ru.igla.tfprofiler.core.tflite.TFInterpreterWrapper
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.RoomModelsDbController
+import timber.log.Timber
 import java.io.File
 
 class AddTfliteModelUseCase(val application: Application) :

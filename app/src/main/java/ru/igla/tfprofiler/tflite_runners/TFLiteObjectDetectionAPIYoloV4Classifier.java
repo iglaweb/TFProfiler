@@ -3,6 +3,8 @@ package ru.igla.tfprofiler.tflite_runners;
 
 import android.graphics.RectF;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,10 +16,10 @@ import java.util.PriorityQueue;
 import ru.igla.tfprofiler.core.ColorSpace;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
-import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
-import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase;
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteImageDetectAPIModelBase;
+import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition;
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult;
 import ru.igla.tfprofiler.tflite_runners.domain.Label;
-import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -29,7 +31,7 @@ import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
 public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
-        TFLiteObjectDetectionAPIModelBase<ImageBatchProcessing.ImageResult> {
+        TFLiteImageDetectAPIModelBase<ImageResult> {
 
     private static final float THRESHOLD_DETECT = 0.1f;
 
@@ -48,7 +50,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
     private float[][][] outScore;
 
     //1.find max confidence per class
-    private final PriorityQueue<Recognition> pq =
+    private final PriorityQueue<ImRecognition> pq =
             new PriorityQueue<>(
                     50,
                     (lhs, rhs) -> {
@@ -74,8 +76,8 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
     }
 
     //non maximum suppression
-    protected List<Recognition> nms(List<Recognition> list) {
-        List<Recognition> nmsList = new ArrayList<>();
+    protected List<ImRecognition> nms(List<ImRecognition> list) {
+        List<ImRecognition> nmsList = new ArrayList<>();
 
         for (int k = 0; k < labels.size(); k++) {
             //1.find max confidence per class
@@ -90,14 +92,14 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
             //2.do non maximum suppression
             while (!pq.isEmpty()) {
                 //insert detection with max confidence
-                Recognition[] a = new Recognition[pq.size()];
-                Recognition[] detections = pq.toArray(a);
-                Recognition max = detections[0];
+                ImRecognition[] a = new ImRecognition[pq.size()];
+                ImRecognition[] detections = pq.toArray(a);
+                ImRecognition max = detections[0];
                 nmsList.add(max);
                 pq.clear();
 
                 for (int j = 1; j < detections.length; j++) {
-                    Recognition detection = detections[j];
+                    ImRecognition detection = detections[j];
                     RectF b = detection.getLocation();
                     if (box_iou(max.getLocation(), b) < mNmsThresh) {
                         pq.add(detection);
@@ -140,7 +142,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
 
 
     @Override
-    public OpNormalizer getNormalizer(boolean isQuantized, ColorSpace colorSpace) {
+    public OpNormalizer getNormalizer(boolean isQuantized, @NotNull ColorSpace colorSpace) {
         return new BaseOpNormalizer(isQuantized, 0, IMAGE_STD);
     }
 
@@ -153,8 +155,8 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
      * @param outScore
      * @return an array list containing the recognitions
      */
-    private ArrayList<Recognition> getDetectionsForFull(float[][][] bboxes, float[][][] outScore) {
-        ArrayList<Recognition> detections = new ArrayList<>();
+    private ArrayList<ImRecognition> getDetectionsForFull(float[][][] bboxes, float[][][] outScore) {
+        ArrayList<ImRecognition> detections = new ArrayList<>();
 
         int gridWidth = OUTPUT_WIDTH_FULL[0];
 
@@ -180,17 +182,17 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(mInputSize.getWidth() - 1, xPos + w / 2),
-                        Math.min(mInputSize.getHeight() - 1, yPos + h / 2));
+                        Math.min(inputSize.getWidth() - 1, xPos + w / 2),
+                        Math.min(inputSize.getHeight() - 1, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
-                detections.add(new Recognition("" + i, label, score, rectF));
+                detections.add(new ImRecognition("" + i, label, score, rectF));
             }
         }
         return detections;
     }
 
-    private ArrayList<Recognition> getDetectionsForTiny(float[][][] bboxes, float[][][] outScore) {
-        ArrayList<Recognition> detections = new ArrayList<>();
+    private ArrayList<ImRecognition> getDetectionsForTiny(float[][][] bboxes, float[][][] outScore) {
+        ArrayList<ImRecognition> detections = new ArrayList<>();
 
         int gridWidth = OUTPUT_WIDTH_TINY[0];
 
@@ -216,18 +218,17 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
                 final RectF rectF = new RectF(
                         Math.max(0, xPos - w / 2),
                         Math.max(0, yPos - h / 2),
-                        Math.min(mInputSize.getWidth() - 1f, xPos + w / 2),
-                        Math.min(mInputSize.getHeight() - 1f, yPos + h / 2));
+                        Math.min(inputSize.getWidth() - 1f, xPos + w / 2),
+                        Math.min(inputSize.getHeight() - 1f, yPos + h / 2));
                 Label label = new Label(labels.get(detectedClass), detectedClass);
-                detections.add(new Recognition("" + i, label, score, rectF));
+                detections.add(new ImRecognition("" + i, label, score, rectF));
             }
         }
         return detections;
     }
 
-
-    private List<Recognition> extractDetections(float[][][] bboxes, float[][][] outScore) {
-        List<Recognition> detections;
+    private List<ImRecognition> extractDetections(float[][][] bboxes, float[][][] outScore) {
+        List<ImRecognition> detections;
         if (IS_TINY) {
             detections = getDetectionsForTiny(bboxes, outScore);
         } else {
@@ -237,17 +238,17 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
     }
 
     @Override
-    public List<ImageBatchProcessing.ImageResult> getDetections(Map<Integer, Object> outputMap) {
+    public List<ImageResult> getDetections(@NotNull Map<Integer, ?> outputMap) {
         final int batchImageCount = modelOptions.getNumberOfInputImages();
         if (batchImageCount == 1) {
-            List<Recognition> detections = extractDetections(bboxes, outScore);
-            return Collections.singletonList(new ImageBatchProcessing.ImageResult(detections));
+            List<ImRecognition> detections = extractDetections(bboxes, outScore);
+            return Collections.singletonList(new ImageResult(detections));
         }
 
         float[][] arr = bboxes[0];
         final int batchCount = arr.length / batchImageCount;
         int len = arr.length;
-        List<ImageBatchProcessing.ImageResult> imageResults = new ArrayList<>();
+        List<ImageResult> imageResults = new ArrayList<>();
         for (int i = 0; i < len - batchCount + 1; i += batchCount) {
             float[][] boxArr = bboxes[0];
             float[][] box = Arrays.copyOfRange(boxArr, i, i + batchCount);
@@ -257,8 +258,8 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
             float[][] score = Arrays.copyOfRange(scoreArr, i, i + batchCount);
             float[][][] scaledScores = {score};
 
-            List<Recognition> detections = extractDetections(scaledBoxes, scaledScores);
-            imageResults.add(new ImageBatchProcessing.ImageResult(detections));
+            List<ImRecognition> detections = extractDetections(scaledBoxes, scaledScores);
+            imageResults.add(new ImageResult(detections));
         }
         return imageResults;
     }

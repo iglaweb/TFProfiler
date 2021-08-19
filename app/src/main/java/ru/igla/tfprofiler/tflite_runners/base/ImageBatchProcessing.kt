@@ -1,15 +1,13 @@
 package ru.igla.tfprofiler.tflite_runners.base
 
 import android.graphics.Bitmap
-import ru.igla.tfprofiler.tflite_runners.domain.Recognition
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 import ru.igla.tfprofiler.utils.DateUtils
 import ru.igla.tfprofiler.utils.logI
 import java.util.*
 
 
 object ImageBatchProcessing {
-
-    class ImageResult(val results: List<Recognition>)
 
     class RecognitionBatch(
         val type: ProcessType,
@@ -22,7 +20,7 @@ object ImageBatchProcessing {
         }
     }
 
-    private lateinit var imageDetector: ImageRecognizer<ImageResult>
+    private lateinit var imageDetector: Recognizer<List<Bitmap>, List<ImageResult>>
     private var batchSize = 10
 
     private val imageQueue: Queue<Bitmap> = ArrayDeque()
@@ -31,7 +29,7 @@ object ImageBatchProcessing {
 
     @JvmStatic
     fun init(
-        eyeStateEstimatorHpe: ImageRecognizer<ImageResult>,
+        eyeStateEstimatorHpe: Recognizer<List<Bitmap>, List<ImageResult>>,
         batchSize: Int,
     ) {
         this.imageDetector = eyeStateEstimatorHpe
@@ -74,7 +72,7 @@ object ImageBatchProcessing {
 
         logI { "Detect batch" }
         val timeStart = DateUtils.getCurrentDateInMs()
-        val ret = imageDetector.recognizeImage(copyImageList)
+        val ret = imageDetector.runInference(copyImageList)
         copyImageList.clear()
         val timeEnd = DateUtils.getCurrentDateInMs()
         logI { "Recognized eye batch in ${timeEnd - timeStart} ms" }

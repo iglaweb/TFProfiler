@@ -1,9 +1,9 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import android.graphics.RectF
-import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing.ImageResult
-import ru.igla.tfprofiler.tflite_runners.base.TFLiteObjectDetectionAPIModelBase
-import ru.igla.tfprofiler.tflite_runners.domain.Recognition
+import ru.igla.tfprofiler.tflite_runners.base.TFLiteImageDetectAPIModelBase
+import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 import java.util.*
 import kotlin.math.min
 
@@ -23,7 +23,7 @@ import kotlin.math.min
  * This model may not perform well on very small objects.
  */
 class TFLiteObjectDetectionModelCOCOMobileNetV2 :
-    TFLiteObjectDetectionAPIModelBase<ImageResult>() {
+    TFLiteImageDetectAPIModelBase<ImageResult>() {
     // outputLocations: array of shape [Batchsize, NUM_DETECTIONS,4]
     // contains the location of detected boxes
     private lateinit var outputLocations: Array<Array<FloatArray>>
@@ -40,7 +40,7 @@ class TFLiteObjectDetectionModelCOCOMobileNetV2 :
     // contains the number of detected boxes
     private lateinit var numDetections: FloatArray
 
-    override fun prepareOutputs(): Map<Int, Any> {
+    override fun prepareOutputs(): MutableMap<Int, Any> {
         outputLocations = Array(1) { Array(NUM_DETECTIONS) { FloatArray(4) } }
         outputClasses = Array(1) { FloatArray(NUM_DETECTIONS) }
         outputScores = Array(1) { FloatArray(NUM_DETECTIONS) }
@@ -53,7 +53,7 @@ class TFLiteObjectDetectionModelCOCOMobileNetV2 :
         return outputMap
     }
 
-    override fun getDetections(outputMap: MutableMap<Int, Any>): List<ImageResult> {
+    override fun getDetections(outputMap: Map<Int, Any>): List<ImageResult> {
         // Show the best detections.
         // after scaling them back to the input size.
 
@@ -65,21 +65,21 @@ class TFLiteObjectDetectionModelCOCOMobileNetV2 :
             NUM_DETECTIONS,
             numDetections[0].toInt()
         ) // cast from float to integer, use min for safety
-        val recognitions: MutableList<Recognition> = ArrayList(numDetectionsOutput)
+        val recognitions: MutableList<ImRecognition> = ArrayList(numDetectionsOutput)
         for (i in 0 until numDetectionsOutput) {
             val confidence = outputScores[0][i]
             if (confidence > MINIMUM_CONFIDENCE_TF_OD_API) {
                 val detection = RectF(
-                    outputLocations[0][i][1] * mInputSize.width,
-                    outputLocations[0][i][0] * mInputSize.height,
-                    outputLocations[0][i][3] * mInputSize.width,
-                    outputLocations[0][i][2] * mInputSize.height
+                    outputLocations[0][i][1] * inputSize.width,
+                    outputLocations[0][i][0] * inputSize.height,
+                    outputLocations[0][i][3] * inputSize.width,
+                    outputLocations[0][i][2] * inputSize.height
                 )
                 // SSD Mobilenet V1 Model assumes class 0 is background class
                 // in label file and class labels start from 1 to number_of_classes+1,
                 // while outputClasses correspond to class index from 0 to number_of_classes
                 recognitions.add(
-                    Recognition(
+                    ImRecognition(
                         "" + i,
                         "Entity",
                         outputScores[0][i],

@@ -10,8 +10,8 @@ import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
 
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.utils.IOUtils;
+import timber.log.Timber;
 
 /***
  * Taken from https://gist.github.com/tatocaster/32aad15f6e0c50311626

@@ -45,9 +45,13 @@ class ReportsListRecyclerViewAdapter(
         val modelHolder = modelHolderList[position]
 
         val modelConfig = modelHolder.modelConfig
-        val sizes = modelConfig.inputSize.toString()
-        val floating = modelConfig.quantizedStr()
-        val title = String.format("%s (%s, %s)", modelHolder.modelName, floating, sizes)
+        val title: String = if (modelHolder.modelType.isTextModel()) {
+            modelHolder.modelName
+        } else {
+            val sizes = modelConfig.inputSize.toString()
+            val floating = modelConfig.quantizedStr()
+            String.format("%s (%s, %s)", modelHolder.modelName, floating, sizes)
+        }
 
         holder.textViewTitle.text = title
         val date = DateUtils.getSimpleReadableDateTime(modelHolder.createdAt)

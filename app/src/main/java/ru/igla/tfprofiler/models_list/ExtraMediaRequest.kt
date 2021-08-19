@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 import ru.igla.tfprofiler.core.RequestMode
 
 @Parcelize
-class MediaRequest(
+class ExtraMediaRequest(
     val requestMode: RequestMode,
     val mediaPath: String,
     val modelEntity: ModelEntity

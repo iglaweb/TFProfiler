@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.utils
 
 import kotlinx.coroutines.CoroutineExceptionHandler
-import ru.igla.tfprofiler.core.Timber
+import timber.log.Timber
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 

@@ -36,11 +36,14 @@ import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.*
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
+import ru.igla.tfprofiler.text_track.TextRecognizeActivity
 import ru.igla.tfprofiler.ui.BaseFragment
+import ru.igla.tfprofiler.ui.pick_inference_type.ImageRequestListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceLaunchListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceTypeLauncher
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.*
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 
@@ -120,23 +123,45 @@ class NeuralModelsListFragment :
                 scrollable = true,
                 horizontalPadding = true
             )
-            positiveButton(text = "Camera") {
-                interceptCustomDialogClick(item) {
-                    openModel(RequestMode.CAMERA, item)
+//            positiveButton(text = "Camera") {
+//                interceptCustomDialogClick(item) {
+//                    openModel(RequestMode.CAMERA, item)
+//                }
+//            }
+//            neutralButton(text = "Dataset") {
+//                interceptCustomDialogClick(item) {
+//                    openModel(RequestMode.DATASET, item)
+//                }
+//            }
+//            negativeButton(text = "Video") {
+//                interceptCustomDialogClick(item) {
+//                    openModel(RequestMode.VIDEO, item)
+//                }
+//            }
+
+            if(item.modelType.isTextModel()) {
+                positiveButton(text = "Text") {
+                    requestTextRun(item)
                 }
-            }
-            neutralButton(text = "Dataset") {
-                interceptCustomDialogClick(item) {
-                    openModel(RequestMode.DATASET, item)
-                }
-            }
-            negativeButton(text = "Video") {
-                interceptCustomDialogClick(item) {
-                    openModel(RequestMode.VIDEO, item)
+            } else {
+                positiveButton(text = "Image") {
+                    requestImageRun(it, item)
                 }
             }
             debugMode(false)
         }
+    }
+
+    private fun requestImageRun(materialDialog: MaterialDialog, item: ModelEntity) {
+        InferenceTypeLauncher.showImageTypeDialog(
+            requireContext(), object : ImageRequestListener {
+                override fun onSelectedOption(selectedOption: RequestMode) {
+                    materialDialog.interceptCustomDialogClick(item) {
+                        openModel(selectedOption, item)
+                    }
+                }
+            }
+        )
     }
 
     @SuppressLint("SetTextI18n")
@@ -189,11 +214,23 @@ class NeuralModelsListFragment :
             tvModelDetails.text = item.details
 
             val modelConfig = item.modelConfig
-            val tvModelSize: TextView = customView.modelSize
-            tvModelSize.text = "${modelConfig.inputSize.width}x${modelConfig.inputSize.height}"
+
+            val tvModelSize: TextView = customView.tvImageSize
+            val tvTitleImageSize: TextView = customView.tvTitleImageSize
 
             val tvModelType: TextView = customView.tvModelTypeFloating
-            tvModelType.text = modelConfig.quantizedStr()
+            if (item.modelType.isTextModel()) {
+                tvTitleImageSize.visibility = View.GONE
+                tvModelSize.visibility = View.GONE
+                tvModelType.visibility = View.GONE
+            } else {
+                tvTitleImageSize.visibility = View.VISIBLE
+                tvModelSize.visibility = View.VISIBLE
+                tvModelSize.text = "${modelConfig.inputSize.width}x${modelConfig.inputSize.height}"
+
+                tvModelType.visibility = View.VISIBLE
+                tvModelType.text = modelConfig.quantizedStr()
+            }
 
             if (StringUtils.isNullOrEmpty(item.source)) {
                 customView.modelSource.visibility = View.GONE
@@ -452,7 +489,7 @@ class NeuralModelsListFragment :
         modelEntity: ModelEntity,
         cameraType: CameraType
     ) {
-        val mediaRequest = MediaRequest(requestMode, "", modelEntity)
+        val mediaRequest = ExtraMediaRequest(requestMode, "", modelEntity)
         startClickSafely {
             val intent = Intent(context, DetectorActivity::class.java).apply {
                 putExtra(EXTRA_CAMERA_TYPE, cameraType.name)
@@ -467,6 +504,28 @@ class NeuralModelsListFragment :
         super.onStop()
     }
 
+    private fun requestTextRun(modelEntity: ModelEntity) {
+        val delegateRunRequest = listNeuralModelsViewModel.getDelegateRequest()
+        if (delegateRunRequest.deviceList.isEmpty()) {
+            mToaster.showToast("None of the delegates selected")
+            return
+        }
+
+        val mediaRequest = ExtraTextRequest(
+            modelEntity
+        )
+        startClickSafely {
+            val intent = Intent(context, TextRecognizeActivity::class.java).apply {
+                putExtra(MEDIA_ITEM, mediaRequest)
+                putExtra(MODEL_OPTIONS, delegateRunRequest)
+            }
+            IntentUtils.startActivitySafely(
+                requireContext(),
+                intent
+            )
+        }
+    }
+
     private fun onClickDataset(requestMode: RequestMode, modelEntity: ModelEntity) {
         val delegateRunRequest = listNeuralModelsViewModel.getDelegateRequest()
         if (delegateRunRequest.deviceList.isEmpty()) {
@@ -474,7 +533,7 @@ class NeuralModelsListFragment :
             return
         }
 
-        val mediaRequest = MediaRequest(
+        val mediaRequest = ExtraMediaRequest(
             requestMode,
             BuildConfig.ASSET_IMG_DATASET,
             modelEntity

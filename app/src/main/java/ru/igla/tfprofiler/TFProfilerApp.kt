@@ -7,8 +7,8 @@ import android.os.StrictMode.VmPolicy
 import com.facebook.stetho.Stetho
 import ru.igla.tfprofiler.analytics.InitAnalyticsImpl
 import ru.igla.tfprofiler.core.FileNameLibraryLoader
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.utils.DevelopReportingTree
+import timber.log.Timber
 
 /**
  * Created by lashkov on 17/09/20.

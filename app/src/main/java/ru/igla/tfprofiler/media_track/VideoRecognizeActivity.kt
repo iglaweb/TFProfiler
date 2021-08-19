@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.models_list.MediaRequest
+import ru.igla.tfprofiler.models_list.ExtraMediaRequest
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster
 import ru.igla.tfprofiler.utils.inTransaction
@@ -16,7 +16,7 @@ class VideoRecognizeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mediaRequest: MediaRequest? =
+        val mediaRequest: ExtraMediaRequest? =
             intent?.getParcelableExtra(NeuralModelsListFragment.MEDIA_ITEM)
         check(mediaRequest != null) { "MediaRequest is not provided" }
 

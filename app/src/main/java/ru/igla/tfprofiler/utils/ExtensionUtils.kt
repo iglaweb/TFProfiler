@@ -1,18 +1,24 @@
 package ru.igla.tfprofiler.utils
 
+import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.widget.ImageView
+import androidx.annotation.NonNull
 import androidx.annotation.UiThread
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.Timber
+import ru.igla.tfprofiler.models_list.ModelEntity
+import timber.log.Timber
 import java.io.File
+import java.util.*
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -88,5 +94,33 @@ fun Double.round(decimals: Int): Double {
 inline fun startClickSafely(action: () -> Unit) {
     if (ClickTimeoutLock.canProceedClick()) {
         action()
+    }
+}
+
+fun String.sentenceCase(): String {
+    return lowercase().replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+    }
+}
+
+/**
+ * A creator is used to inject the product ID into the ViewModel
+ *
+ *
+ * This creator is to showcase how to inject dependencies into ViewModels. It's not
+ * actually necessary in this case, as the product ID can be passed in a public method.
+ */
+@Suppress("UNCHECKED_CAST")
+class ModelFactory(
+    @field:NonNull @param:NonNull private val mApplication: Application,
+    private val entity: ModelEntity
+) :
+    ViewModelProvider.NewInstanceFactory() {
+
+    @NonNull
+    override fun <T : ViewModel?> create(@NonNull modelClass: Class<T>): T {
+        return modelClass.getConstructor(Application::class.java, ModelEntity::class.java)
+            .newInstance(mApplication, entity)
+        //return VideoRecognitionViewModel(mApplication, entity) as T
     }
 }

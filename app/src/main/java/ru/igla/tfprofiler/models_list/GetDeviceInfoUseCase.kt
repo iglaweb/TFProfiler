@@ -6,10 +6,10 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.annotation.Nullable
-import ru.igla.tfprofiler.core.Timber
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.utils.SystemUtils
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader

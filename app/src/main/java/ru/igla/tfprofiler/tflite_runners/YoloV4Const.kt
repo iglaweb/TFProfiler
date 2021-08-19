@@ -1,17 +1,14 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.ModelConfig
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelOptimizedType
+import ru.igla.tfprofiler.core.*
 
 /***
  * https://github.com/hunglc007/tensorflow-yolov4-tflite
  * https://github.com/hunglc007/tensorflow-yolov4-tflite/blob/master/android/app/src/main/assets/yolov4-416-fp32.tflite
  * Direct url https://raw.githubusercontent.com/hunglc007/tensorflow-yolov4-tflite/master/android/app/src/main/assets/yolov4-416-fp32.tflite
  */
-object YoloV4Const : ModelConfig {
+object YoloV4Const : ImageConfig() {
     private const val TF_OD_API_INPUT_SIZE = 416
     private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.FLOATING
 

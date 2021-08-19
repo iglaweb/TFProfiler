@@ -1,13 +1,13 @@
 package ru.igla.tfprofiler.models_list
 
 import org.tensorflow.lite.support.metadata.MetadataExtractor
-import ru.igla.tfprofiler.core.ModelConfig
+import ru.igla.tfprofiler.core.ModelInfoConfig
 import ru.igla.tfprofiler.core.ModelType
 
 data class ModelItem(
     val id: Long,
     val modelType: ModelType,
-    val modelConfig: ModelConfig
+    val modelInfoConfig: ModelInfoConfig
 ) {
     private var tensorInputCount = 0
 

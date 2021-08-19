@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ru.igla.tfprofiler.core.Timber;
+import timber.log.Timber;
 
 
 /**

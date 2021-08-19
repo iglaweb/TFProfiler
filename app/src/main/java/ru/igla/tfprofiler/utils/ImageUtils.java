@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import ru.igla.tfprofiler.TFProfilerApp;
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.video.FileUtils;
+import timber.log.Timber;
 
 /**
  * Utility class for manipulating images.

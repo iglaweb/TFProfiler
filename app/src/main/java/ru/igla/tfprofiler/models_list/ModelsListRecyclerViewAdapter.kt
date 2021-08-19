@@ -52,9 +52,15 @@ class ModelsListRecyclerViewAdapter(
         val fileSizeStr = StringUtils.getReadableFileSize(fileModelSize, true)
         holder.textViewTitle.text = modelEntity.name
         holder.textViewQuantized.text = modelEntity.modelConfig.quantizedStr()
+
+        val imageDetails: String = if (modelEntity.modelType.isTextModel()) {
+            ""
+        } else {
+            "Image: " + modelEntity.modelConfig.inputSize.toString() + ", "
+        }
+
         val fileSize = "File size: $fileSizeStr"
-        holder.textViewModelSize.text =
-            "Image: " + modelEntity.modelConfig.inputSize.toString() + ", " + fileSize
+        holder.textViewModelSize.text = imageDetails + fileSize
         holder.itemView.setOnClickListener {
             listener.onClickItem(modelEntity)
         }

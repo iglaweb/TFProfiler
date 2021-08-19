@@ -26,27 +26,27 @@ import java.util.Objects;
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.Device;
 import ru.igla.tfprofiler.core.ModelOptimizedType;
-import ru.igla.tfprofiler.core.Timber;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
 import ru.igla.tfprofiler.customview.OverlayView;
-import ru.igla.tfprofiler.utils.CameraUtils;
-import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.models_list.CameraType;
-import ru.igla.tfprofiler.models_list.MediaRequest;
+import ru.igla.tfprofiler.models_list.ExtraMediaRequest;
 import ru.igla.tfprofiler.models_list.ModelEntity;
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.Classifier;
-import ru.igla.tfprofiler.tflite_runners.base.ClassifierFactory;
-import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing;
+import ru.igla.tfprofiler.tflite_runners.base.ImageClassifierFactory;
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
-import ru.igla.tfprofiler.tflite_runners.domain.Recognition;
+import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition;
+import ru.igla.tfprofiler.tflite_runners.domain.ImageResult;
 import ru.igla.tfprofiler.tracking.MultiBoxTracker;
+import ru.igla.tfprofiler.utils.CameraUtils;
 import ru.igla.tfprofiler.utils.DebugDrawer;
 import ru.igla.tfprofiler.utils.IOUtils;
+import ru.igla.tfprofiler.utils.ImageUtils;
 import ru.igla.tfprofiler.utils.StringUtils;
 import ru.igla.tfprofiler.utils.TimeWatchClockOS;
+import timber.log.Timber;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -60,7 +60,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private OverlayView trackingOverlay;
 
     @Nullable
-    private Classifier<ImageBatchProcessing.ImageResult> detector;
+    private Classifier<List<Bitmap>, List<ImageResult>> detector;
 
     private Bitmap rgbFrameBitmap = null;
     private Bitmap croppedBitmap = null;
@@ -86,7 +86,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         if (intent != null) {
-            MediaRequest mediaRequest = intent.getParcelableExtra(NeuralModelsListFragment.MEDIA_ITEM);
+            ExtraMediaRequest mediaRequest = intent.getParcelableExtra(NeuralModelsListFragment.MEDIA_ITEM);
             Objects.requireNonNull(mediaRequest, "MediaRequest is null");
 
             this.modelEntity = mediaRequest.getModelEntity();
@@ -203,11 +203,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 () -> runRecognitionInterference(currTimestamp));
     }
 
-    private List<Recognition> createMappedRecognitions(List<Recognition> results) {
-        final List<Recognition> mappedRecognitions =
+    private List<ImRecognition> createMappedRecognitions(List<ImRecognition> results) {
+        final List<ImRecognition> mappedRecognitions =
                 new LinkedList<>();
 
-        for (final Recognition result : results) {
+        for (final ImRecognition result : results) {
             final RectF location = result.getLocation();
             if (location != null) {
                 debugDrawer.draw(location);
@@ -241,10 +241,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         Timber.i("Running detection on image " + currTimestamp);
         timeWatchInference.start();
-        final List<ImageBatchProcessing.ImageResult> ret = detector.recognizeImage(
+        final List<ImageResult> ret = detector.runInference(
                 Collections.singletonList(croppedBitmap));
-        final List<Recognition> recognitions = new ArrayList<>();
-        for (ImageBatchProcessing.ImageResult imageResult : ret) {
+        final List<ImRecognition> recognitions = new ArrayList<>();
+        for (ImageResult imageResult : ret) {
             recognitions.addAll(imageResult.getResults());
         }
         final long lastProcessingTimeMs = timeWatchInference.stop();
@@ -261,7 +261,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         debugDrawer.prepareOutput(croppedBitmap);
 
-        final List<Recognition> mappedRecognitions = createMappedRecognitions(recognitions);
+        final List<ImRecognition> mappedRecognitions = createMappedRecognitions(recognitions);
         debugDrawer.writeOutput();
 
         tracker.trackResults(mappedRecognitions, currTimestamp);
@@ -363,7 +363,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     "Creating classifier %s",
                     modelOptions.toString()
             );
-            detector = ClassifierFactory.create(
+            detector = ImageClassifierFactory.create(
                     getApplicationContext(),
                     modelEntity,
                     modelOptions

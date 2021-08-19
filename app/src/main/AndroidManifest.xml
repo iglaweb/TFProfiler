@@ -6,7 +6,6 @@
     <queries>
         <intent>
             <action android:name="android.intent.action.GET_CONTENT" />
-
             <data android:mimeType="file/*" />
         </intent>
     </queries>
@@ -53,6 +52,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".media_track.VideoRecognizeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppMediaFitScreen" />
+        <activity
+            android:name=".text_track.TextRecognizeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppMediaFitScreen" />
     </application>

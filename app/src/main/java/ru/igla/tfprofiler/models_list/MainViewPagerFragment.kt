@@ -36,7 +36,9 @@ class MainViewPagerFragment :
 
     private var gpuInfo: GPUInfo? = null
 
-    private val preferenceManager by lazy { AndroidPreferenceManager(requireContext().applicationContext).defaultPrefs }
+    private val preferenceManager by lazy {
+        AndroidPreferenceManager(requireContext().applicationContext).defaultPrefs
+    }
 
     private var deviceInfoDialog: Dialog? = null
 

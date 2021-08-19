@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.ExceptionHandler
+import ru.igla.tfprofiler.utils.logI
 import java.util.concurrent.Executors
 
 class TFInterpeterThreadExecutor(val context: Context, private val modelPath: String) {
@@ -17,7 +18,9 @@ class TFInterpeterThreadExecutor(val context: Context, private val modelPath: St
         Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     }
 
-    private val exceptionHandler by lazy { ExceptionHandler { _, _ -> } } // for cancellation exception
+    private val exceptionHandler by lazy { ExceptionHandler { _, t ->
+        logI { t.message ?: "" }
+    } } // for cancellation exception
 
     var tfLite: TFInterpreterWrapper? = null
 

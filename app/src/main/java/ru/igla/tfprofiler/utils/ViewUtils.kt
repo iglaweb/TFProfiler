@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.utils
 import android.content.DialogInterface
 import android.os.Handler
 import android.os.Looper
-import ru.igla.tfprofiler.core.Timber
+import timber.log.Timber
 
 
 /**
