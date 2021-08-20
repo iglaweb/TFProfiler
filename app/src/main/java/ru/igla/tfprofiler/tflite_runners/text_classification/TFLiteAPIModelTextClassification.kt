@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.tflite_runners.textclassify
+package ru.igla.tfprofiler.tflite_runners.text_classification
 
 import android.content.Context
 import org.tensorflow.lite.support.metadata.MetadataExtractor
@@ -16,41 +16,22 @@ import java.util.*
 
 
 /***
- * https://google.github.io/mediapipe/solutions/face_mesh.html
- * Model: https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_detection/face_detection_front.tflite
+ * https://github.com/tensorflow/examples/tree/master/lite/examples/text_classification/android
  */
 class TFLiteAPIModelTextClassification : TFLiteTextDetectAPIModelBase() {
 
     private val dic: MutableMap<String, Int> = mutableMapOf()
 
-    private val priorityQueue = PriorityQueue(
-        MAX_RESULTS
-    ) { lhs: TextRecognition, rhs: TextRecognition ->
-        rhs.confidence.compareTo(lhs.confidence)
+    private val priorityQueue by lazy {
+        PriorityQueue(
+            MAX_RESULTS
+        ) { lhs: TextRecognition, rhs: TextRecognition ->
+            rhs.confidence.compareTo(lhs.confidence)
+        }
     }
 
     private val outputScoreArray by lazy {
         Array(modelOptions.numberOfInputImages) { FloatArray(labels.size) }
-    }
-
-    companion object {
-        /** Number of results to show in the UI.  */
-        private const val MAX_RESULTS = 3
-
-        private const val SENTENCE_LEN = 256 // The maximum length of an input sentence.
-
-        // Simple delimiter to split words.
-        private const val SIMPLE_SPACE_OR_PUNCTUATION = " |\\,|\\.|\\!|\\?|\n"
-
-        /*
-       * Reserved values in ImdbDataSet dic:
-       * dic["<PAD>"] = 0      used for padding
-       * dic["<START>"] = 1    mark for the start of a sentence
-       * dic["<UNKNOWN>"] = 2  mark for unknown words (OOV)
-       */
-        private const val START = "<START>"
-        private const val PAD = "<PAD>"
-        private const val UNKNOWN = "<UNKNOWN>"
     }
 
     override fun init(context: Context, modelEntity: ModelEntity, modelOptions: ModelOptions) {
@@ -82,7 +63,6 @@ class TFLiteAPIModelTextClassification : TFLiteTextDetectAPIModelBase() {
         }
     }
 
-
     override fun prepareOutputs(): MutableMap<Int, Any> {
         val outputs = HashMap<Int, Any>()
         outputs[0] = outputScoreArray
@@ -90,6 +70,7 @@ class TFLiteAPIModelTextClassification : TFLiteTextDetectAPIModelBase() {
     }
 
     override fun getDetections(outputMap: Map<Int, Any>): List<TextRecognition> {
+        priorityQueue.clear()
         for (i in labels.indices) {
             val label = labels[i]
             priorityQueue.add(TextRecognition("" + i, Label(label, i), outputScoreArray[0][i]))
@@ -126,5 +107,25 @@ class TFLiteAPIModelTextClassification : TFLiteTextDetectAPIModelBase() {
         // Padding and wrapping.
         Arrays.fill(tmp, index, SENTENCE_LEN - 1, dic[PAD] as Int)
         return tmp
+    }
+
+    companion object {
+        /** Number of results to show in the UI.  */
+        private const val MAX_RESULTS = 3
+
+        private const val SENTENCE_LEN = 256 // The maximum length of an input sentence.
+
+        // Simple delimiter to split words.
+        private const val SIMPLE_SPACE_OR_PUNCTUATION = " |\\,|\\.|\\!|\\?|\n"
+
+        /*
+       * Reserved values in ImdbDataSet dic:
+       * dic["<PAD>"] = 0      used for padding
+       * dic["<START>"] = 1    mark for the start of a sentence
+       * dic["<UNKNOWN>"] = 2  mark for unknown words (OOV)
+       */
+        private const val START = "<START>"
+        private const val PAD = "<PAD>"
+        private const val UNKNOWN = "<UNKNOWN>"
     }
 }

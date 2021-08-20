@@ -70,37 +70,6 @@ class TextRecognizeFragment :
         delegate_details.text = viewModel.getDelegateDetails(modelOptions)
     }
 
-    private fun showInference(inferenceTime: String) {
-        inference_info.text = inferenceTime
-    }
-
-    private fun showFps(fps: String) {
-        fps_info.text = fps
-    }
-
-    private fun showMemoryUsage(memoryUsage: String) {
-        memory_info.text = memoryUsage
-    }
-
-    private fun showInitTime(time: String) {
-        tvInitTime.text = time
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun showMeanTime(mean: Double, std: Double) {
-        if (java.lang.Double.isNaN(mean) || java.lang.Double.isNaN(std)) {
-            tvMeanInterferenceTime.text = "Not defined"
-        } else {
-            val statsStr = String.format(
-                Locale.getDefault(),
-                "%.2f ± %.2f ms",
-                mean,
-                std
-            )
-            tvMeanInterferenceTime.text = statsStr
-        }
-    }
-
     private fun openReport() {
         val intent = Intent(context, ModelReportActivity::class.java).apply {
             putExtra(
@@ -148,9 +117,7 @@ class TextRecognizeFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //hide image specific fields
-        frameInfoContainer.visibility = View.GONE
-        cropInfoContainer.visibility = View.GONE
+        inferenceInfoLayout.setTextMode(true)
 
         textViewResult.text = ""
         btnSettings.setOnClickListener {
@@ -255,7 +222,9 @@ class TextRecognizeFragment :
                     results.forEachNoIterator { res ->
                         val conf = res.confidence
                         sb.append(
-                            String.format("%s with score %.2f", res.label.label, (100 * conf)) + "%"
+                            String.format(
+                                Locale.US, "%s with score %.2f", res.label.label, (100 * conf)
+                            ) + "%"
                         )
                         sb.append("\n")
                     }
@@ -263,14 +232,7 @@ class TextRecognizeFragment :
                 } ?: ""
 
                 it.data?.statOutResult?.let { stat ->
-                    showInference(stat.inferenceTime.toString() + " ms")
-                    showFps(stat.fps.toString())
-
-                    val memoryStr = StringUtils.getReadableFileSize(stat.memoryUsage, true)
-                    showMemoryUsage(memoryStr)
-
-                    showInitTime("" + stat.initTime + " ms")
-                    showMeanTime(stat.meanTime, stat.stdTime)
+                    inferenceInfoLayout.showStat(stat)
                 }
             } else if (it.status == Status.ERROR) {
                 mToaster.showToast(it.message ?: "Error occurred")

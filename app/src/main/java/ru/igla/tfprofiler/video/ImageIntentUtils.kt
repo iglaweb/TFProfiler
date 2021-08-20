@@ -55,8 +55,7 @@ object ImageIntentUtils {
         val listCameraIntents = packageManager.queryIntentActivities(captureIntent, 0)
         for (res in listCameraIntents) {
             val packageName = res.activityInfo.packageName
-            val intent = Intent(captureIntent)
-            intent.apply {
+            val intent = Intent(captureIntent).apply {
                 component = ComponentName(packageName, res.activityInfo.name)
                 `package` = packageName
                 putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)

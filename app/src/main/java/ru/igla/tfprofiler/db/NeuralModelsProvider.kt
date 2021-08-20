@@ -6,6 +6,7 @@ import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.models_list.ModelItem
 import ru.igla.tfprofiler.tflite_runners.*
 import ru.igla.tfprofiler.tflite_runners.blazeface.TFLiteModelBlazefaceFloatConst
+import ru.igla.tfprofiler.tflite_runners.text_classification.TextClassifyModelConst
 
 /***
  * For other models look here:

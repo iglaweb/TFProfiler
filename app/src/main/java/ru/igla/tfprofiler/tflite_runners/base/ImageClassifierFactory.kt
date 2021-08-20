@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.models_list.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.*
+import ru.igla.tfprofiler.tflite_runners.blazeface.TFLiteObjectDetectionAPIModelBlazeface
 import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 
 object ImageClassifierFactory {
@@ -35,7 +36,7 @@ object ImageClassifierFactory {
                     TFLiteObjectDetectionAPIModelBlazeface()
                 }
                 ModelType.LANDMARKS468_MEDIAPIPE -> {
-                    TFLiteAPIModelFacemeshLandmarks()
+                    TFLiteImageModelFacemeshLandmarks()
                 }
                 ModelType.YOLOV4 -> {
                     TFLiteObjectDetectionAPIYoloV4Classifier()

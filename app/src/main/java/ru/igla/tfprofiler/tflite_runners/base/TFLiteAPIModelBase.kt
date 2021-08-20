@@ -3,7 +3,6 @@ package ru.igla.tfprofiler.tflite_runners.base
 import android.content.Context
 import android.os.Trace
 import androidx.annotation.CallSuper
-import org.checkerframework.checker.nullness.qual.NonNull
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import ru.igla.tfprofiler.core.ModelOptimizedType
@@ -43,6 +42,8 @@ abstract class TFLiteAPIModelBase<Input, Output> :
     @JvmField
     protected var labels: List<String> = ArrayList()
 
+    protected lateinit var modelOptions: ModelOptions
+
     /**
      * Initializes a native TensorFlow session for classifying images.
      *
@@ -56,6 +57,7 @@ abstract class TFLiteAPIModelBase<Input, Output> :
         modelEntity: ModelEntity,
         modelOptions: ModelOptions
     ) {
+        this.modelOptions = modelOptions
         val modelFilename = modelEntity.modelFile
         tfLiteExecutor = TFInterpeterThreadExecutor(context, modelFilename).apply {
             init(modelEntity, modelOptions)

@@ -6,7 +6,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import ru.igla.tfprofiler.utils.safeLet
 
-class RecyclerViewEmptySupport : RecyclerView {
+class RecyclerViewEmptySupport @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : RecyclerView(context, attrs, defStyleAttr) {
+
     private var emptyView: View? = null
 
     private val emptyObserver: AdapterDataObserver = object : AdapterDataObserver() {
@@ -22,18 +25,6 @@ class RecyclerViewEmptySupport : RecyclerView {
             }
         }
     }
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet) : super(
-        context,
-        attrs
-    )
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet,
-        defStyle: Int
-    ) : super(context, attrs, defStyle)
 
     override fun setAdapter(adapter: Adapter<*>?) {
         super.setAdapter(adapter)

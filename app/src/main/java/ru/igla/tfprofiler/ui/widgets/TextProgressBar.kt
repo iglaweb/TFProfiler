@@ -9,7 +9,9 @@ import android.util.AttributeSet
 import android.widget.ProgressBar
 import ru.igla.tfprofiler.utils.dpF
 
-class TextProgressBar : ProgressBar {
+class TextProgressBar @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : ProgressBar(context, attrs, defStyleAttr) {
 
     private var progressText = "0%"
 
@@ -18,14 +20,6 @@ class TextProgressBar : ProgressBar {
         textSize = context.dpF(15f)
     }
     private val bounds = Rect()
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, attributeSetId: Int) : super(
-        context,
-        attrs,
-        attributeSetId
-    )
 
     @Synchronized
     override fun onDraw(canvas: Canvas) {

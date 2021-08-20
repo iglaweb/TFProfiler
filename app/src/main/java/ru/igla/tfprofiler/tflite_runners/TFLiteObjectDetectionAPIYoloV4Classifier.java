@@ -155,11 +155,10 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
      * @param outScore
      * @return an array list containing the recognitions
      */
-    private ArrayList<ImRecognition> getDetectionsForFull(float[][][] bboxes, float[][][] outScore) {
-        ArrayList<ImRecognition> detections = new ArrayList<>();
+    private List<ImRecognition> getDetectionsForFull(float[][][] bboxes, float[][][] outScore) {
+        List<ImRecognition> detections = new ArrayList<>();
 
         int gridWidth = OUTPUT_WIDTH_FULL[0];
-
         for (int i = 0; i < gridWidth; i++) {
             float maxClass = 0;
             int detectedClass = -1;
@@ -191,11 +190,10 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
         return detections;
     }
 
-    private ArrayList<ImRecognition> getDetectionsForTiny(float[][][] bboxes, float[][][] outScore) {
-        ArrayList<ImRecognition> detections = new ArrayList<>();
+    private List<ImRecognition> getDetectionsForTiny(float[][][] bboxes, float[][][] outScore) {
+        List<ImRecognition> detections = new ArrayList<>();
 
         int gridWidth = OUTPUT_WIDTH_TINY[0];
-
         for (int i = 0; i < gridWidth; i++) {
             float maxClass = 0;
             int detectedClass = -1;

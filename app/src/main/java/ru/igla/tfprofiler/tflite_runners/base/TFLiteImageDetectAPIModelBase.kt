@@ -27,9 +27,6 @@ open class TFLiteImageDetectAPIModelBase<T> :
     TFLiteAPIModelBase<List<Bitmap>, List<T>>(),
     Classifier<List<Bitmap>, List<T>> {
 
-    @JvmField
-    protected var modelOptions: ModelOptions? = null
-
     // Pre-allocated buffers.
     private lateinit var tempIntValues: IntArray
     private lateinit var imgData: ByteBuffer
@@ -49,7 +46,6 @@ open class TFLiteImageDetectAPIModelBase<T> :
         modelOptions: ModelOptions
     ) {
         super.init(context, modelEntity, modelOptions)
-        this.modelOptions = modelOptions
         this.inputSize = modelEntity.modelConfig.inputSize
         this.opNormalizer = getNormalizer(
             isModelQuantized,

@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.tflite_runners
+package ru.igla.tfprofiler.tflite_runners.text_classification
 
 import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.core.ModelOptimizedType
@@ -13,7 +13,7 @@ object TextClassifyModelConst : TextConfig() {
     private val TF_OD_API_MODEL_FORMAT = ModelOptimizedType.FLOATING
 
     override val details: String
-        get() = "N/A"
+        get() = "This model predicts if a paragraph's sentiment is positive or negative. It was trained on Large Movie Review Dataset v1.0 from Mass et al, which consists of IMDB movie reviews labeled as either positive or negative."
 
     override val modelFormat: ModelOptimizedType
         get() = TF_OD_API_MODEL_FORMAT
@@ -22,5 +22,5 @@ object TextClassifyModelConst : TextConfig() {
     override val labelFile: String
         get() = ""
     override val source: String
-        get() = ""
+        get() = "https://www.tensorflow.org/lite/examples/text_classification/overview"
 }

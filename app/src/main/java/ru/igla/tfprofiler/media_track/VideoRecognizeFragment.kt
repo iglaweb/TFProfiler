@@ -70,45 +70,6 @@ class VideoRecognizeFragment :
         delegate_details.text = recognitionViewModel.getDelegateDetails(modelOptions)
     }
 
-    private fun showFrameInfo(frameInfo: String) {
-        frame_info.text = frameInfo
-    }
-
-    private fun showCropInfo(cropInfo: String) {
-        crop_info.text = cropInfo
-    }
-
-    private fun showInference(inferenceTime: String) {
-        inference_info.text = inferenceTime
-    }
-
-    private fun showFps(fps: String) {
-        fps_info.text = fps
-    }
-
-    private fun showMemoryUsage(memoryUsage: String) {
-        memory_info.text = memoryUsage
-    }
-
-    private fun showInitTime(time: String) {
-        tvInitTime.text = time
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun showMeanTime(mean: Double, std: Double) {
-        if (java.lang.Double.isNaN(mean) || java.lang.Double.isNaN(std)) {
-            tvMeanInterferenceTime.text = "Not defined"
-        } else {
-            val statsStr = String.format(
-                Locale.getDefault(),
-                "%.2f ± %.2f ms",
-                mean,
-                std
-            )
-            tvMeanInterferenceTime.text = statsStr
-        }
-    }
-
     private fun openReport() {
         val intent = Intent(context, ModelReportActivity::class.java).apply {
             putExtra(
@@ -137,7 +98,7 @@ class VideoRecognizeFragment :
         val mediaRequest: ExtraMediaRequest? =
             arguments?.getParcelable(NeuralModelsListFragment.MEDIA_ITEM)
         if (mediaRequest == null) {
-            mToaster.showToast("Model is null")
+            mToaster.showToast("Passed request is null")
             activity?.finish()
             return
         }
@@ -230,19 +191,9 @@ class VideoRecognizeFragment :
         liveDataBitmapOutput.observe(
             viewLifecycleOwner
         ) {
-            showFrameInfo(it.previewWidth.toString() + "x" + it.previewHeight)
-            showCropInfo(
-                it.croppedWidth.toString() + "x" + it.croppedHeight
-            )
+            inferenceInfoLayout.showBitmapInfo(it)
             val state = it.statOutResult
-            showInference(state.inferenceTime.toString() + " ms")
-            showFps(state.fps.toString())
-
-            val memoryStr = StringUtils.getReadableFileSize(state.memoryUsage, true)
-            showMemoryUsage(memoryStr)
-
-            showInitTime("" + state.initTime + " ms")
-            showMeanTime(state.meanTime, state.stdTime)
+            inferenceInfoLayout.showStat(state)
         }
     }
 
