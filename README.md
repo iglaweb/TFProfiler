@@ -6,19 +6,20 @@
 
 # Overview
 
-TFProfiler is an app that aims to profile your [TensorFlow Lite](https://www.tensorflow.org/lite) model. 
+TFProfiler is an app that aims to profile your [TensorFlow Lite](https://www.tensorflow.org/lite) and [OpenCV DNN][opencv] supported model right on the smartphone. 
 
-Measure model performance with FPS, model initialization time,  inference time, memory consumption, etc. 
+Measure model performance with model initialization time, inference time, FPS, memory consumption, etc. 
 
 Tweak model runs with different delegates (CPU, GPU, NNAPI, HEXAGON), XNNPACK option, and number of threads. 
 
 Apply a batch processing, adjusting the number of input images. TFLite batch inference is [partially supported](https://github.com/tensorflow/tensorflow/issues/37706) by TensorFlow.
 
-Run various (*.caffemodel, *.onnx, *.pb, etc) neural models supported by [OpenCV DNN module](https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html). OpenCV **4.5.2** is integrated inside the app.
+Run neural models (*.caffemodel, *.onnx, *.pb, etc) supported by [OpenCV DNN module][opencv].
 
 - **Android API SDK 21+**
 - **Written in [Kotlin](https://kotlinlang.org)**
 - **TFLite 2.5.0 inside**
+- **OpenCV 4.5.2 inside**
 
 
 
@@ -47,19 +48,20 @@ Or download app via Google Play:
 
 ## Built-in models
 
-App has built-in models that you can play with to see how inference performance is analyzed.
+App has built-in models that you can play with to see how inference performance is estimated.
 
 * [MobileNetV1][tf-models]
 * [MobileNetV2][tf-models]
 * [YOLOV4][yolov4]
 * [Blazeface][blazeface]
 * [Facemesh][facemesh]
+* [TextClassification][textclassification]
 
 [tf-models]: https://www.tensorflow.org/lite/guide/hosted_models
 [yolov4]: https://github.com/hunglc007/tensorflow-yolov4-tflite
 [facemesh]: https://google.github.io/mediapipe/solutions/face_mesh.html
 [blazeface]: https://google.github.io/mediapipe/solutions/face_detection.html
-
+[textclassification]: https://www.tensorflow.org/lite/examples/text_classification/overview
 
 ## Image Dataset
 The app has built-in a subset of image dataset [Caltech 101](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). It is used for running model inteferences.
@@ -70,6 +72,7 @@ The app has built-in a subset of image dataset [Caltech 101](http://www.vision.c
 * [Timber][timber] for logging
 * [Room][room] - Access your app's SQLite database with in-app objects and compile-time checks.
 
+[opencv]: https://docs.opencv.org/4.5.2/d6/d0f/group__dnn.html
 [tf-lite]: https://www.tensorflow.org/lite
 [arch]: https://developer.android.com/arch
 [room]: https://developer.android.com/topic/libraries/architecture/room

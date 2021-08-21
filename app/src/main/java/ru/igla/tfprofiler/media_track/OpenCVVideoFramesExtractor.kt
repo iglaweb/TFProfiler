@@ -19,7 +19,7 @@ class OpenCVVideoFramesExtractor : ReadVideoFileInterface {
     ): Flow<Resource<FrameMetaInfo>> {
         return flow {
             if (!File(filePath).exists()) {
-                throw Exception("Video file not exists")
+                throw IOException("Video file not exists")
             }
             val videoCapture = VideoCapture(filePath)
             if (!videoCapture.isOpened) {

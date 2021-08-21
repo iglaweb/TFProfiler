@@ -1,8 +1,12 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
+import android.content.Context
 import android.text.SpannableStringBuilder
 import androidx.lifecycle.AndroidViewModel
+import ru.igla.tfprofiler.BuildConfig
+import ru.igla.tfprofiler.utils.IntentUtils
+import ru.igla.tfprofiler.utils.logI
 
 
 class MainViewPagerViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,5 +21,15 @@ class MainViewPagerViewModel(application: Application) : AndroidViewModel(applic
         )
         checkNotNull(resource.data)
         return resource.data.text
+    }
+
+    fun openAppGooglePlay(context: Context) {
+        val flag = IntentUtils.openGooglePlayPage(
+            BuildConfig.APPLICATION_ID,
+            context.applicationContext
+        )
+        if (!flag) {
+            logI { "Failed to proceed Google Play" }
+        }
     }
 }

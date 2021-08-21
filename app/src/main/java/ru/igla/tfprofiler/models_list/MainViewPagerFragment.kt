@@ -49,6 +49,23 @@ class MainViewPagerFragment :
     override val coroutineContext: CoroutineContext
         get() = Job() + uiDispatcher
 
+    private val drawListener = object : DrawerLayout.DrawerListener {
+        override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+        }
+
+        override fun onDrawerOpened(drawerView: View) {
+            onBackPressedCallback.isEnabled = true // allow to close drawer
+        }
+
+        override fun onDrawerClosed(drawerView: View) {
+            onBackPressedCallback.isEnabled = false
+            saveRunDelegatePrefs()
+        }
+
+        override fun onDrawerStateChanged(newState: Int) {
+        }
+    }
+
     override fun onStop() {
         ViewUtils.dismissDialogSafety(deviceInfoDialog)
         super.onStop()
@@ -61,6 +78,11 @@ class MainViewPagerFragment :
 
         configureSettings()
         getGPUInformation()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        drawer_layout.removeDrawerListener(drawListener)
     }
 
     private fun setAdapter() {
@@ -124,6 +146,9 @@ class MainViewPagerFragment :
             }
             R.id.action_about -> {
                 AboutDialog.show(requireActivity())
+            }
+            R.id.action_rate_app -> {
+                mainViewPagerViewModel.openAppGooglePlay(requireContext())
             }
             R.id.licenses -> {
                 OssLicensesMenuActivity.setActivityTitle(getString(R.string.about_license_title))
@@ -226,22 +251,7 @@ class MainViewPagerFragment :
             true
         }
 
-        drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-                onBackPressedCallback.isEnabled = true // allow to close drawer
-            }
-
-            override fun onDrawerClosed(drawerView: View) {
-                onBackPressedCallback.isEnabled = false
-                saveRunDelegatePrefs()
-            }
-
-            override fun onDrawerStateChanged(newState: Int) {
-            }
-        })
+        drawer_layout.addDrawerListener(drawListener)
     }
 
     private val onBackPressedCallback: OnBackPressedCallback =

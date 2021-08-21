@@ -19,6 +19,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_rate_app"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="@string/rate_app"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/licenses"
         android:icon="@drawable/ic_baseline_copyright_24"
         android:title="@string/about_license_title"

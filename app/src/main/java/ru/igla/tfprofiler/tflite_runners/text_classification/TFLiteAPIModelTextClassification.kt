@@ -31,7 +31,7 @@ class TFLiteAPIModelTextClassification : TFLiteTextDetectAPIModelBase() {
     }
 
     private val outputScoreArray by lazy {
-        Array(modelOptions.numberOfInputImages) { FloatArray(labels.size) }
+        Array(1) { FloatArray(labels.size) }
     }
 
     override fun init(context: Context, modelEntity: ModelEntity, modelOptions: ModelOptions) {

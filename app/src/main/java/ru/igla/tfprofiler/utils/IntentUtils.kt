@@ -65,15 +65,6 @@ object IntentUtils {
         }
     }
 
-    private fun openGooglePlayProductDetails(context: Context, packageName: String): Boolean {
-        val uri = Uri.parse("market://details?id=$packageName")
-        return try {
-            openGooglePlay(context, uri)
-        } catch (e: ActivityNotFoundException) {
-            openWebBrowser(context, "http://play.google.com/store/apps/details?id=$packageName")
-        }
-    }
-
     private fun openGooglePlay(context: Context, uri: Uri): Boolean {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -81,13 +72,19 @@ object IntentUtils {
     }
 
     fun openGooglePlayPage(applicationId: String, context: Context): Boolean {
-        return openGooglePlayProductDetails(context, applicationId)
+        return try {
+            val uri = Uri.parse("market://details?id=$applicationId")
+            openGooglePlay(context, uri)
+        } catch (e: ActivityNotFoundException) {
+            openWebBrowser(context, "http://play.google.com/store/apps/details?id=$applicationId")
+        }
     }
 
-    private fun openWebBrowser(context: Context, url: String?): Boolean {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    private fun openWebBrowser(context: Context, url: String): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         return startActivitySafely(context, intent)
     }
 }
