@@ -8,14 +8,9 @@ import android.content.pm.PackageManager
 import android.os.Debug
 import android.os.Process
 import androidx.annotation.WorkerThread
-import timber.log.Timber
 
 
 object SystemUtils {
-
-    fun rnd2Percent(num: Float): Int {
-        return (num * 100f).toInt()
-    }
 
     /***
      * https://android.googlesource.com/platform/cts/+/f1b6c7d504ae31f3500ce5c9b2e75dadb2799f4d/tests/tests/opengl/src/android/opengl/cts/OpenGlEsVersionTest.java
@@ -23,15 +18,13 @@ object SystemUtils {
     fun getGLESVersionFromPackageManager(context: Context): Int {
         val packageManager: PackageManager = context.packageManager
         val featureInfos = packageManager.systemAvailableFeatures
-        if (featureInfos.isNotEmpty()) {
-            for (featureInfo in featureInfos) {
-                // Null feature name means this feature is the open gl es version feature.
-                if (featureInfo.name == null) {
-                    return if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) {
-                        featureInfo.reqGlEsVersion
-                    } else {
-                        1 shl 16 // Lack of property means OpenGL ES version 1
-                    }
+        for (featureInfo in featureInfos) {
+            // Null feature name means this feature is the open gl es version feature.
+            if (featureInfo.name == null) {
+                return if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) {
+                    featureInfo.reqGlEsVersion
+                } else {
+                    1 shl 16 // Lack of property means OpenGL ES version 1
                 }
             }
         }
@@ -74,9 +67,9 @@ object SystemUtils {
             activityManager.getProcessMemoryInfo(intArrayOf(id))
         if (memoryInfo.isNotEmpty()) {
             val memInfo = memoryInfo[0]
-            Timber.d(
+            logD {
                 "getProcessMemoryInfo: myMemoryInfo " + memInfo.dalvikPrivateDirty
-            )
+            }
             var res = memInfo.totalPrivateDirty
             res += memInfo.totalPrivateClean
             return res * 1024L

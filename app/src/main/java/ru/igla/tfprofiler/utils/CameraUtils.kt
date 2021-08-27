@@ -74,9 +74,9 @@ object CameraUtils {
      */
     @Throws(IOException::class)
     private fun rotateImageIfRequired(context: Context, img: Bitmap, selectedImage: Uri): Bitmap {
-        context.contentResolver.openInputStream(selectedImage).use {
-            val ei = if (it != null && Build.VERSION.SDK_INT > 23)
-                ExifInterface(it)
+        context.contentResolver.openInputStream(selectedImage).use { ins ->
+            val ei = if (ins != null && Build.VERSION.SDK_INT > 23)
+                ExifInterface(ins)
             else if (selectedImage.path != null)
                 ExifInterface(selectedImage.path!!)
             else

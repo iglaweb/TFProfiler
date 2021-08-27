@@ -1,6 +1,8 @@
 package ru.igla.tfprofiler.utils;
 
 
+import java.util.Locale;
+
 import ru.igla.tfprofiler.BuildConfig;
 
 @SuppressWarnings("ALL")
@@ -189,7 +191,10 @@ public final class Log {
                 break;
 
             StackTraceElement trace = traces[i];
-            sb.append(String.format("    at %s.%s:%s\n", trace.getClassName(), trace.getMethodName(), trace.getLineNumber()));
+            sb.append(String.format(
+                    Locale.US,
+                    "    at %s.%s:%s\n", trace.getClassName(), trace.getMethodName(), trace.getLineNumber())
+            );
         }
         sb.delete(sb.length() - 1, sb.length());
         return "\n" + sb.toString();

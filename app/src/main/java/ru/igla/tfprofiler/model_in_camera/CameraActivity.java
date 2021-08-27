@@ -434,7 +434,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(
-            final int requestCode, @NotNull final String[] permissions, @NotNull final int[] grantResults) {
+            final int requestCode, @NotNull final String @NotNull [] permissions, @NotNull final int @NotNull [] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST) {
             if (PermissionUtils.allPermissionsGranted(grantResults)) {
@@ -599,9 +599,10 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @SuppressLint("SetTextI18n")
     protected void showInferenceMore(long timeMin, long timeMax, long memory) {
-        String memoryStr = StringUtils.getReadableFileSize(memory, true);
         inferenceTimeMin.setText(timeMin + " ms");
         inferenceTimeMax.setText(timeMax + " ms");
+
+        String memoryStr = StringUtils.getReadableFileSize(memory, true);
         inferenceMemory.setText(memoryStr);
     }
 

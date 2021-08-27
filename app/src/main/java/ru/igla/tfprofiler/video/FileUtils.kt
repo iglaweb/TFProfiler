@@ -21,6 +21,7 @@ object FileUtils {
     )
 
     private val VIDEO_EXT = listOf("mp4", "avi", "mov", "mpeg", "flv", "wmv")
+
     val supportedNeuralModels = listOf("caffemodel", "pb", "t7", "onnx", "bin")
 
     fun isVideo(path: String): Boolean {
@@ -162,7 +163,7 @@ object FileUtils {
                 outputStream.flush()
             }
         } catch (e: Exception) {
-            Timber.w(e.message)
+            Timber.e(e.message)
             return false
         }
         return true
