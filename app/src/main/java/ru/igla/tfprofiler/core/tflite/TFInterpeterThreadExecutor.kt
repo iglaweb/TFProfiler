@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.core.tflite
 import android.content.Context
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.ExceptionHandler
 import ru.igla.tfprofiler.utils.logI

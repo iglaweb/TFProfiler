@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package ru.igla.tfprofiler.env;
+package ru.igla.tfprofiler.ui;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

@@ -1,7 +1,10 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.*
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.ImageConfig
+import ru.igla.tfprofiler.core.domain.InputShapeType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 
 /***
  * https://raw.githubusercontent.com/google/mediapipe/master/mediapipe/models/face_landmark.tflite

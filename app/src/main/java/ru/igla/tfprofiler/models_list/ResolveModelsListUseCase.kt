@@ -2,11 +2,14 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.Application
 import ru.igla.tfprofiler.core.*
+import ru.igla.tfprofiler.core.domain.*
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem
 import ru.igla.tfprofiler.db.NeuralModelsProvider
 import ru.igla.tfprofiler.db.RoomModelsDbController
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import timber.log.Timber
 import java.io.File

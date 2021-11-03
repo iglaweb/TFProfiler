@@ -7,13 +7,12 @@ import androidx.lifecycle.*
 import kotlinx.android.synthetic.main.fragment_text_layout.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import ru.igla.tfprofiler.core.Device
 import ru.igla.tfprofiler.core.Resource
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
 import ru.igla.tfprofiler.media_track.ResolveRunDelegatesExtrasUseCase
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.tflite_runners.base.Classifier
@@ -35,13 +34,7 @@ class TextRecognitionViewModel(
     }
 
     // create detector
-    private var selectedModelOptions: ModelOptions =
-        ModelOptions(
-            device = Device.CPU,
-            numThreads = 4,
-            useXnnpack = false,
-            numberOfInputImages = 1
-        )
+    private var selectedModelOptions: ModelOptions = ModelOptions.default
 
     private var detector: Classifier<String, List<TextRecognition>>? = null
 

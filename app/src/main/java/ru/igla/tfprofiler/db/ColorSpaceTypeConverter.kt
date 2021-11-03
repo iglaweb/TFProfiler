@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.db
 
 import androidx.room.TypeConverter
-import ru.igla.tfprofiler.core.ColorSpace
+import ru.igla.tfprofiler.core.domain.ColorSpace
 
 class ColorSpaceTypeConverter {
     @TypeConverter

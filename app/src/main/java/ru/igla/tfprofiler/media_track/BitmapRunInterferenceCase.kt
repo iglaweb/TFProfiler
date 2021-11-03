@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.os.SystemClock
 import ru.igla.tfprofiler.core.ResolveStats
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.prefs.IPreferenceManager
 import ru.igla.tfprofiler.tflite_runners.base.ImageBatchProcessing
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions

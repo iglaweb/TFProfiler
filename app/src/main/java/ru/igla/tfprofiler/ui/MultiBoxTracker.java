@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package ru.igla.tfprofiler.tracking;
+package ru.igla.tfprofiler.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -32,7 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import ru.igla.tfprofiler.env.BorderedText;
 import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition;
 import ru.igla.tfprofiler.utils.ImageUtils;
 import timber.log.Timber;

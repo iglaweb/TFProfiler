@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import ru.igla.tfprofiler.core.ColorSpace;
+import ru.igla.tfprofiler.core.domain.ColorSpace;
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer;
 import ru.igla.tfprofiler.core.ops.OpNormalizer;
 import ru.igla.tfprofiler.tflite_runners.base.TFLiteImageDetectAPIModelBase;
@@ -143,7 +143,7 @@ public final class TFLiteObjectDetectionAPIYoloV4Classifier extends
 
     @Override
     public OpNormalizer getNormalizer(boolean isQuantized, @NotNull ColorSpace colorSpace) {
-        return new BaseOpNormalizer(isQuantized, 0, IMAGE_STD);
+        return new BaseOpNormalizer(ColorSpace.COLOR, isQuantized, 0, IMAGE_STD);
     }
 
     /**

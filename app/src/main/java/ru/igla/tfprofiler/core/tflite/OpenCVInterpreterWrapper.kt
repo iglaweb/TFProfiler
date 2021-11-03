@@ -6,11 +6,11 @@ import org.opencv.core.Mat
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgproc.Imgproc
-import ru.igla.tfprofiler.core.Device
-import ru.igla.tfprofiler.core.InputShapeType
+import ru.igla.tfprofiler.core.domain.Device
+import ru.igla.tfprofiler.core.domain.InputShapeType
 import ru.igla.tfprofiler.core.jni.DnnModelExecutor
 import ru.igla.tfprofiler.core.jni.JavaOpenCVDnnModelExecutor
-import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import ru.igla.tfprofiler.utils.logI

@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core
+package ru.igla.tfprofiler.core.analytics
 
 import android.app.Application
 

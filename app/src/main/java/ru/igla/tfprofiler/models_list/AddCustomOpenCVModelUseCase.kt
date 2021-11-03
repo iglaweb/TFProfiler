@@ -2,6 +2,9 @@ package ru.igla.tfprofiler.models_list
 
 import android.app.Application
 import ru.igla.tfprofiler.core.*
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.InputShapeType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 import ru.igla.tfprofiler.core.tflite.OpenCVInterpreterWrapper
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.DbModelItem

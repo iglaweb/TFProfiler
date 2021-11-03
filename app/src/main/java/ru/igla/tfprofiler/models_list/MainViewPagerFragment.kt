@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.dialog_configure_run_tf.*
 import kotlinx.android.synthetic.main.fragment_neural_pager.*
 import kotlinx.coroutines.*
 import ru.igla.tfprofiler.R
+import ru.igla.tfprofiler.models_list.domain.GPUInfo
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.ui.AboutDialog
 import ru.igla.tfprofiler.ui.BaseFragment
@@ -195,6 +196,7 @@ class MainViewPagerFragment :
                 nnapiDelegateEnabled = sc_nnapi_delegate.isChecked
                 hexagonDelegateEnabled = sc_hexagon_delegate.isChecked
                 xnnpackEnabled = sc_xnnpack.isChecked
+                cpuLoadEnabled = sc_cpu_load.isChecked
 
                 threadRangeMin = minValue.text.toString().toInt()
                 threadRangeMax = maxValue.text.toString().toInt()
@@ -210,6 +212,7 @@ class MainViewPagerFragment :
         sc_gpu_delegate.isChecked = preferenceManager.gpuDelegateEnabled
         sc_hexagon_delegate.isChecked = preferenceManager.hexagonDelegateEnabled
         sc_xnnpack.isChecked = preferenceManager.xnnpackEnabled
+        sc_cpu_load.isChecked = preferenceManager.cpuLoadEnabled
 
         val isNNApiEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
         sc_nnapi_delegate.isChecked =

@@ -9,15 +9,15 @@ import androidx.arch.core.util.Function
 import androidx.lifecycle.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
-import ru.igla.tfprofiler.core.*
+import ru.igla.tfprofiler.core.Resource
+import ru.igla.tfprofiler.core.Status
+import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator
+import ru.igla.tfprofiler.core.cpu_load.CPUIntenseLoadWorker
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.tflite_runners.base.Classifier
@@ -34,18 +34,16 @@ class VideoRecognitionViewModel(
     val modelEntity: ModelEntity
 ) : AndroidViewModel(application) {
 
+    private val cpuIntenseLoadWorker by lazy {
+        CPUIntenseLoadWorker()
+    }
+
     private val resolveRunDelegatesExtrasUseCase by lazy {
         ResolveRunDelegatesExtrasUseCase(application)
     }
 
     // create detector
-    private var selectedModelOptions: ModelOptions =
-        ModelOptions(
-            device = Device.CPU,
-            numThreads = 4,
-            useXnnpack = false,
-            numberOfInputImages = 1
-        )
+    private var selectedModelOptions: ModelOptions = ModelOptions.default
 
     private var detector: Classifier<List<Bitmap>, List<ImageResult>>? = null
 
@@ -102,10 +100,16 @@ class VideoRecognitionViewModel(
         classifierFunc
     )
 
-    private suspend fun iterateAssetsFiles(context: Context, imagesFolder: String) {
+    suspend fun recognizeImageDataset(imagesFolder: String) {
         val recognizeAssetFolderCase = RecognizeAssetFolderCase()
         try {
-            recognizeAssetFolderCase.iterateAssetsFiles(context, imagesFolder)
+            recognizeAssetFolderCase.iterateAssetsFiles(getApplication(), imagesFolder)
+                .onStart {
+                    logI { "Start read video frames" }
+                    if (selectedModelOptions.useCpuStress) {
+                        cpuIntenseLoadWorker.startWork()
+                    }
+                }
                 .onEach { value ->
                     value.data?.let { valueData ->
                         if (value.status == Status.LOADING) {
@@ -122,6 +126,13 @@ class VideoRecognitionViewModel(
                     Timber.e(e)
                     liveDataShowRecognitionError.postValue(Exception(e))
                 }
+                .onCompletion {
+                    //cancel
+                    logI { "End read video frames" }
+                    if (selectedModelOptions.useCpuStress) {
+                        cpuIntenseLoadWorker.stop()
+                    }
+                }
                 .flowOn(Dispatchers.IO)
                 .collect()
         } catch (e: Exception) {
@@ -129,8 +140,8 @@ class VideoRecognitionViewModel(
         }
     }
 
-    suspend fun recognizeImageDataset(imagesFolder: String) {
-        iterateAssetsFiles(getApplication(), imagesFolder)
+    fun isVideoFile(mimeType: String?): Boolean {
+        return mimeType?.startsWith("video") ?: false
     }
 
     suspend fun recognizeVideo(filePath: String) {
@@ -145,16 +156,23 @@ class VideoRecognitionViewModel(
                 else //e.g. .mp4
                     jCodecExtractor
             framesExtractor.readVideoFile(filePath)
+                .onStart {
+                    logI { "Start read video frames" }
+                    if (selectedModelOptions.useCpuStress) {
+                        cpuIntenseLoadWorker.startWork()
+                    }
+                }
                 .onEach { value ->
                     value.data?.let { valueData ->
                         if (value.status == Status.SUCCESS || value.status == Status.LOADING) {
                             livedataProcessFrameInfo.sendValueIfNew(
                                 FrameInformation(valueData.totalFrames, valueData.frameNumber)
                             )
-                        }
-                        if (value.status == Status.LOADING) {
-                            valueData.bitmap?.apply {
-                                onTakeVideoFrame(this)
+
+                            if (value.status == Status.LOADING) {
+                                valueData.bitmap?.apply {
+                                    onTakeVideoFrame(this)
+                                }
                             }
                         }
                     }
@@ -162,6 +180,13 @@ class VideoRecognitionViewModel(
                 .catch { e ->
                     Timber.e(e)
                     liveDataShowRecognitionError.postValue(Exception(e))
+                }
+                .onCompletion {
+                    //cancel
+                    logI { "End read video frames" }
+                    if (selectedModelOptions.useCpuStress) {
+                        cpuIntenseLoadWorker.stop()
+                    }
                 }
                 .flowOn(Dispatchers.IO)
                 .collect()

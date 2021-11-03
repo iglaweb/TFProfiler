@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.igla.tfprofiler.R
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.domain.Device
 import ru.igla.tfprofiler.utils.DateUtils
 import ru.igla.tfprofiler.utils.forEachNoIterator
 

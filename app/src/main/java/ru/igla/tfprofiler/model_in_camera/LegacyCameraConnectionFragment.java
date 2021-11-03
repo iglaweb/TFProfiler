@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.List;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.customview.AutoFitTextureView;
-import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.ui.customview.AutoFitTextureView;
+import ru.igla.tfprofiler.models_list.domain.CameraType;
 import ru.igla.tfprofiler.utils.CameraUtils;
 import ru.igla.tfprofiler.utils.ImageUtils;
 import timber.log.Timber;

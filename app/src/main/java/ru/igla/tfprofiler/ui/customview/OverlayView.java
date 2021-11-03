@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.customview;
+package ru.igla.tfprofiler.ui.customview;
 
 import android.content.Context;
 import android.graphics.Canvas;

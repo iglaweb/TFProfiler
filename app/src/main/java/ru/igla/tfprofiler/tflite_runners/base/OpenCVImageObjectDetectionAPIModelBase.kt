@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Trace
 import ru.igla.tfprofiler.core.tflite.OpenCVInterpeterThreadExecutor
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.domain.ImageResult
 import ru.igla.tfprofiler.utils.forEachNoIterator
 

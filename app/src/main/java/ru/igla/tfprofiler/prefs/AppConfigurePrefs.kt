@@ -1,6 +1,6 @@
 package ru.igla.tfprofiler.prefs
 
-import ru.igla.tfprofiler.models_list.CameraType
+import ru.igla.tfprofiler.models_list.domain.CameraType
 
 
 class AppConfigurePrefs(private val pref: PrefsBase) {
@@ -15,8 +15,9 @@ class AppConfigurePrefs(private val pref: PrefsBase) {
         private const val PREF_GPU_ENABLED = "gpu_enabled"
         private const val PREF_HEXAGON_ENABLED = "hexagon_enabled"
         private const val PREF_NNAPI_ENABLED = "nnapi_enabled"
-
         private const val PREF_XNNPACK_ENABLED = "xnnpack_enabled"
+
+        private const val PREF_CPU_STRESS = "cpu_stress"
 
         private const val PREF_THREAD_RANGE_MIN = "thread_range_min"
         private const val PREF_THREAD_RANGE_MAX = "thread_range_max"
@@ -64,6 +65,10 @@ class AppConfigurePrefs(private val pref: PrefsBase) {
     var xnnpackEnabled: Boolean
         get() = pref.getBoolValue(PREF_XNNPACK_ENABLED, false)
         set(value) = pref.editBoolValue(PREF_XNNPACK_ENABLED, value)
+
+    var cpuLoadEnabled: Boolean
+        get() = pref.getBoolValue(PREF_CPU_STRESS, false)
+        set(value) = pref.editBoolValue(PREF_CPU_STRESS, value)
 
     var cameraType: CameraType
         get() {

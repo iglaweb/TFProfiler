@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.tflite_runners.text_classification
 import android.content.Context
 import org.tensorflow.lite.support.metadata.MetadataExtractor
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.tflite_runners.base.TFLiteTextDetectAPIModelBase
 import ru.igla.tfprofiler.tflite_runners.domain.Label

@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.core.analytics
 
 import android.content.Context
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.reports_list.ReportDelegateItem
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions

@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.models_list
 
 import android.app.Application
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.domain.Device
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 
@@ -36,7 +36,9 @@ class ResolveAvailableDelegatesUseCase(val application: Application) :
             ),
             modelList,
             preferenceManager.xnnpackEnabled,
-            preferenceManager.batchImageCount
+            preferenceManager.batchImageCount,
+
+            preferenceManager.cpuLoadEnabled
         )
 
         val responseValue = ResponseValue(delegateRunRequest)

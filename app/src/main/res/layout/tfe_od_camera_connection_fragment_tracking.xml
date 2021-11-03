@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:background="@color/black_color">
 
-    <ru.igla.tfprofiler.customview.AutoFitTextureView
+    <ru.igla.tfprofiler.ui.customview.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ru.igla.tfprofiler.customview.OverlayView
+    <ru.igla.tfprofiler.ui.customview.OverlayView
         android:id="@+id/tracking_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

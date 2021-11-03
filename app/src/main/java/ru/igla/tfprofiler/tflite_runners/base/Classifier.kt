@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.tflite_runners.base
 
 import android.content.Context
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import java.io.Closeable
 
 /**

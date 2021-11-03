@@ -2,7 +2,7 @@ package ru.igla.tfprofiler.reports_list
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.domain.Device
 
 @Parcelize
 class ReportDelegateItem(

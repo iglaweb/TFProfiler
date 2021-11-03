@@ -254,7 +254,7 @@ class VideoRecognizeFragment :
             logI { filePath }
 
             val type = ImageIntentUtils.getMimeType(context, selectedImageUri)
-            if (isVideoFile(type)) {
+            if (recognitionViewModel.isVideoFile(type)) {
                 recognizeVideo(context, selectedImageUri)
             } else {
                 val isSuccess = recognitionViewModel.recognizePhoto(context, selectedImageUri)
@@ -264,10 +264,6 @@ class VideoRecognizeFragment :
             }
             onEndRecognition()
         }
-    }
-
-    private fun isVideoFile(mimeType: String?): Boolean {
-        return mimeType != null && mimeType.startsWith("video")
     }
 
     private suspend fun recognizeVideo(context: Context, selectedImageUri: Uri) {

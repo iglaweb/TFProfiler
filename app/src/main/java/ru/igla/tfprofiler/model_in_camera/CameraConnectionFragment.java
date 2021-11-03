@@ -48,8 +48,8 @@ import java.util.concurrent.TimeUnit;
 
 import ru.igla.tfprofiler.R;
 import ru.igla.tfprofiler.core.ErrorDialog;
-import ru.igla.tfprofiler.customview.AutoFitTextureView;
-import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.ui.customview.AutoFitTextureView;
+import ru.igla.tfprofiler.models_list.domain.CameraType;
 import ru.igla.tfprofiler.ui.BaseFragment;
 import ru.igla.tfprofiler.ui.widgets.toast.Toaster;
 import ru.igla.tfprofiler.utils.CameraUtils;

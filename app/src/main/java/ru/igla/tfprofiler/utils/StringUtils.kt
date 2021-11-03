@@ -25,9 +25,10 @@ object StringUtils {
         if (byteSize < 1024L) return "0" //less than 1 Kb not to show
         val digitGroups = (log10(byteSize.toDouble()) / log10(1024.0)).toInt()
         val unit = if (includeUnit) " " + units[digitGroups] else ""
-        val otherSymbols = DecimalFormatSymbols(Locale.US)
-        otherSymbols.decimalSeparator = '.'
-        otherSymbols.groupingSeparator = '.'
+        val otherSymbols = DecimalFormatSymbols(Locale.US).apply {
+            decimalSeparator = '.'
+            groupingSeparator = '.'
+        }
         val s = byteSize / 1024.0.pow(digitGroups.toDouble())
         return DecimalFormat("#,##0.#", otherSymbols).format(s.toLong()) + unit
     }

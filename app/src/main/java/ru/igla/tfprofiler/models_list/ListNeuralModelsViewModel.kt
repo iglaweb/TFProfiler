@@ -10,6 +10,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.igla.tfprofiler.core.RequestMode
 import ru.igla.tfprofiler.core.UseCase
+import ru.igla.tfprofiler.models_list.domain.CameraType
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelFormat
+import ru.igla.tfprofiler.models_list.domain.SelectModelStatus
 import ru.igla.tfprofiler.prefs.AndroidPreferenceManager
 import ru.igla.tfprofiler.reports_list.RefreshLiveData
 import ru.igla.tfprofiler.reports_list.RefreshLiveData.RefreshAction

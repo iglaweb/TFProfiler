@@ -5,6 +5,7 @@ import android.content.Context
 import android.text.SpannableStringBuilder
 import androidx.lifecycle.AndroidViewModel
 import ru.igla.tfprofiler.BuildConfig
+import ru.igla.tfprofiler.models_list.domain.GPUInfo
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.logI
 

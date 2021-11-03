@@ -4,6 +4,7 @@ import android.app.Application
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelsDbController
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
 
 class ModelConfigUpdateUseCase(val application: Application) :
     UseCase<ModelConfigUpdateUseCase.RequestValues,

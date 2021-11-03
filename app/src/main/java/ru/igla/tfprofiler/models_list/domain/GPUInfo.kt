@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.models_list
+package ru.igla.tfprofiler.models_list.domain
 
 class GPUInfo(
     val glEsVersionStr: String,

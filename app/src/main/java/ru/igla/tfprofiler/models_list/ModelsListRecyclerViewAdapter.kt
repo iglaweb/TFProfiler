@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.utils.StringUtils
 
 class ModelsListRecyclerViewAdapter(

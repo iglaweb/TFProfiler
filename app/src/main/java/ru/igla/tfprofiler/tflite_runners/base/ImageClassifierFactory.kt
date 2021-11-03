@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
 import ru.igla.tfprofiler.core.ModelType
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.*
 import ru.igla.tfprofiler.tflite_runners.blazeface.TFLiteObjectDetectionAPIModelBlazeface
 import ru.igla.tfprofiler.tflite_runners.domain.ImageResult

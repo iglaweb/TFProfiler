@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.db
 import android.content.Context
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
-import ru.igla.tfprofiler.models_list.ModelItem
+import ru.igla.tfprofiler.models_list.domain.ModelItem
 import ru.igla.tfprofiler.tflite_runners.*
 import ru.igla.tfprofiler.tflite_runners.blazeface.TFLiteModelBlazefaceFloatConst
 import ru.igla.tfprofiler.tflite_runners.text_classification.TextClassifyModelConst

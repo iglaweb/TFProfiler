@@ -1,7 +1,7 @@
-package ru.igla.tfprofiler.models_list
+package ru.igla.tfprofiler.models_list.domain
 
 import org.tensorflow.lite.support.metadata.MetadataExtractor
-import ru.igla.tfprofiler.core.ModelInfoConfig
+import ru.igla.tfprofiler.core.domain.ModelInfoConfig
 import ru.igla.tfprofiler.core.ModelType
 
 data class ModelItem(

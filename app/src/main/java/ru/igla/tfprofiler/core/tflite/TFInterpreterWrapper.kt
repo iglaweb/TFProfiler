@@ -7,8 +7,8 @@ import org.tensorflow.lite.HexagonDelegate
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
-import ru.igla.tfprofiler.core.*
-import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.core.domain.*
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.video.FileUtils
 import timber.log.Timber
@@ -119,7 +119,13 @@ class TFInterpreterWrapper(
                     ColorSpace.GRAYSCALE,
                     InputShapeType.NHWC
                 ),
-                ModelOptions(device = Device.CPU, numThreads = 1, useXnnpack = false)
+                ModelOptions(
+                    device = Device.CPU,
+                    numThreads = 1,
+                    useXnnpack = false,
+                    numberOfInputImages = 1,
+                    useCpuStress = false
+                )
             )
         }
 

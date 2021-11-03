@@ -122,7 +122,7 @@ repositories {
 def room_version = "2.3.0"
 def coroutines_version='1.5.1'
 def lifecycle_version='2.3.1'
-def tensorflow = '2.5.0'
+def tensorflow = '2.6.0'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

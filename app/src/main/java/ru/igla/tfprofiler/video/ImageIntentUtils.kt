@@ -28,10 +28,7 @@ object ImageIntentUtils {
             val cr = context.contentResolver
             cr?.getType(uri)
         } else {
-            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-                uri
-                    .toString()
-            )
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                 fileExtension.lowercase(Locale.getDefault())
             )

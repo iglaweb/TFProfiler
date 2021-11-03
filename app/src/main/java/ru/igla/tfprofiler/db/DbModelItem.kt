@@ -5,9 +5,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelOptimizedType
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.InputShapeType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 import ru.igla.tfprofiler.core.ModelType
 
 const val MODEL_TABLE = "models"

@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.core.jni
 
 import org.opencv.core.Mat
-import ru.igla.tfprofiler.core.Size
+import ru.igla.tfprofiler.core.domain.Size
 import java.util.logging.Level
 import java.util.logging.Logger
 

@@ -1,11 +1,11 @@
 package ru.igla.tfprofiler.media_track
 
 import android.app.Application
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.domain.Device
 import ru.igla.tfprofiler.core.ModelType
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import java.util.*
@@ -33,7 +33,8 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                         device = Device.CPU,
                         numThreads = 4,
                         useXnnpack = false,
-                        numberOfInputImages = 1
+                        numberOfInputImages = 1,
+                        useCpuStress = false
                     )
                 )
             )
@@ -45,7 +46,8 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                         device = Device.CPU,
                         numThreads = 1,
                         useXnnpack = false,
-                        numberOfInputImages = delegateRunRequest.batchImageCount
+                        numberOfInputImages = delegateRunRequest.batchImageCount,
+                        useCpuStress = delegateRunRequest.cpuStress
                     )
                 )
             )
@@ -59,7 +61,8 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                                 device = device,
                                 numThreads = it,
                                 useXnnpack = delegateRunRequest.xnnpack,
-                                numberOfInputImages = delegateRunRequest.batchImageCount
+                                numberOfInputImages = delegateRunRequest.batchImageCount,
+                                useCpuStress = delegateRunRequest.cpuStress
                             )
                         )
                     }
@@ -68,7 +71,8 @@ class ResolveRunDelegatesExtrasUseCase(val application: Application) :
                         ModelOptions(
                             device = device,
                             useXnnpack = delegateRunRequest.xnnpack,
-                            numberOfInputImages = delegateRunRequest.batchImageCount
+                            numberOfInputImages = delegateRunRequest.batchImageCount,
+                            useCpuStress = delegateRunRequest.cpuStress
                         )
                     )
                 }

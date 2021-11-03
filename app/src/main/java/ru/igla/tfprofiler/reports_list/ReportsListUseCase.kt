@@ -3,11 +3,11 @@ package ru.igla.tfprofiler.reports_list
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import ru.igla.tfprofiler.core.Size
+import ru.igla.tfprofiler.core.domain.Size
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.db.AppDatabase
 import ru.igla.tfprofiler.db.RoomModelReportsDbController
-import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
 import ru.igla.tfprofiler.utils.forEachNoIterator
 
 class ReportsListUseCase(val application: Application) :

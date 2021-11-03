@@ -1,6 +1,6 @@
 package ru.igla.tfprofiler.core.ops
 
-import ru.igla.tfprofiler.core.Size
+import ru.igla.tfprofiler.core.domain.Size
 import java.nio.ByteBuffer
 
 interface OpNormalizer {

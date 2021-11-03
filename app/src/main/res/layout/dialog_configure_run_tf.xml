@@ -186,4 +186,12 @@
         android:text="XNNPACK"
         android:textColor="@color/white_color" />
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sc_cpu_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="CPU load"
+        android:textColor="@color/white_color" />
+
 </LinearLayout>

@@ -4,7 +4,7 @@ import org.opencv.core.Mat
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgproc.Imgproc
-import ru.igla.tfprofiler.core.Size
+import ru.igla.tfprofiler.core.domain.Size
 import ru.igla.tfprofiler.core.tflite.OpenCVInterpreterWrapper
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import ru.igla.tfprofiler.utils.logI

@@ -1,8 +1,8 @@
 package ru.igla.tfprofiler.db
 
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.InputShapeType
-import ru.igla.tfprofiler.core.ModelOptimizedType
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.InputShapeType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 
 class RoomModelsDbController(private val appDatabase: AppDatabase) : DbModelsController {
     override fun getModels(): List<DbModelItem> {

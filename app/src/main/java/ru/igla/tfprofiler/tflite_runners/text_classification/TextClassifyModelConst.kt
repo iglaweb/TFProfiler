@@ -1,8 +1,8 @@
 package ru.igla.tfprofiler.tflite_runners.text_classification
 
 import ru.igla.tfprofiler.BuildConfig
-import ru.igla.tfprofiler.core.ModelOptimizedType
-import ru.igla.tfprofiler.core.TextConfig
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
+import ru.igla.tfprofiler.core.domain.TextConfig
 
 /***
  * https://github.com/hunglc007/tensorflow-yolov4-tflite

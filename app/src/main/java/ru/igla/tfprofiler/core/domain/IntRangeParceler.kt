@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core
+package ru.igla.tfprofiler.core.domain
 
 import android.os.Parcel
 import kotlinx.android.parcel.Parceler

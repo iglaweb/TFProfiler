@@ -8,6 +8,7 @@ import android.text.Spanned
 import androidx.annotation.Nullable
 import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
+import ru.igla.tfprofiler.models_list.domain.GPUInfo
 import ru.igla.tfprofiler.utils.SystemUtils
 import timber.log.Timber
 import java.io.BufferedReader

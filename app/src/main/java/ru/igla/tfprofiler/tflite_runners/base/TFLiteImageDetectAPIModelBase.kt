@@ -2,12 +2,11 @@ package ru.igla.tfprofiler.tflite_runners.base
 
 import android.content.Context
 import android.graphics.Bitmap
-import ru.igla.tfprofiler.core.ColorSpace
-import ru.igla.tfprofiler.core.Size
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.Size
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer
-import ru.igla.tfprofiler.core.ops.GrayOpNormalizer
 import ru.igla.tfprofiler.core.ops.OpNormalizer
-import ru.igla.tfprofiler.models_list.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -75,9 +74,7 @@ open class TFLiteImageDetectAPIModelBase<T> :
     }
 
     open fun getNormalizer(isQuantized: Boolean, colorSpace: ColorSpace): OpNormalizer? {
-        return if (colorSpace === ColorSpace.COLOR) BaseOpNormalizer(isQuantized) else GrayOpNormalizer(
-            isQuantized
-        )
+        return BaseOpNormalizer(colorSpace, isQuantized)
     }
 
     /***

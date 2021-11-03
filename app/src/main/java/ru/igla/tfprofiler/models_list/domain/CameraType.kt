@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.models_list
+package ru.igla.tfprofiler.models_list.domain
 
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

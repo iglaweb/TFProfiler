@@ -34,8 +34,15 @@ import ru.igla.tfprofiler.BuildConfig
 import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.TFProfilerApp
 import ru.igla.tfprofiler.core.*
+import ru.igla.tfprofiler.core.domain.ColorSpace
+import ru.igla.tfprofiler.core.domain.InputShapeType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
+import ru.igla.tfprofiler.core.domain.Size
 import ru.igla.tfprofiler.media_track.VideoRecognizeActivity
 import ru.igla.tfprofiler.model_in_camera.DetectorActivity
+import ru.igla.tfprofiler.models_list.domain.CameraType
+import ru.igla.tfprofiler.models_list.domain.ModelEntity
+import ru.igla.tfprofiler.models_list.domain.ModelFormat
 import ru.igla.tfprofiler.text_track.TextRecognizeActivity
 import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.pick_inference_type.ImageRequestListener

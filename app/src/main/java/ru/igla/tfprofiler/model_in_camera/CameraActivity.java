@@ -38,10 +38,10 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.core.Device;
+import ru.igla.tfprofiler.core.domain.Device;
 import ru.igla.tfprofiler.core.SharedViewModel;
 import ru.igla.tfprofiler.utils.ImageUtils;
-import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.models_list.domain.CameraType;
 import ru.igla.tfprofiler.report_details.ModelReportActivity;
 import ru.igla.tfprofiler.report_details.ModelReportFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
@@ -103,7 +103,8 @@ public abstract class CameraActivity extends AppCompatActivity
             device,
             numThreads,
             useXnnpack,
-            batchImageCount
+            batchImageCount,
+            false
     );
 
     @Nullable

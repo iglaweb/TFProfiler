@@ -1,4 +1,4 @@
-package ru.igla.tfprofiler.core
+package ru.igla.tfprofiler.core.domain
 
 enum class ColorSpace(val channels: Int) {
     COLOR(3),

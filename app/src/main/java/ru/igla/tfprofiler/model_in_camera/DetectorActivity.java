@@ -24,13 +24,13 @@ import java.util.Locale;
 import java.util.Objects;
 
 import ru.igla.tfprofiler.R;
-import ru.igla.tfprofiler.core.Device;
-import ru.igla.tfprofiler.core.ModelOptimizedType;
+import ru.igla.tfprofiler.core.domain.Device;
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType;
 import ru.igla.tfprofiler.core.analytics.StatisticsEstimator;
-import ru.igla.tfprofiler.customview.OverlayView;
-import ru.igla.tfprofiler.models_list.CameraType;
+import ru.igla.tfprofiler.ui.customview.OverlayView;
+import ru.igla.tfprofiler.models_list.domain.CameraType;
 import ru.igla.tfprofiler.models_list.ExtraMediaRequest;
-import ru.igla.tfprofiler.models_list.ModelEntity;
+import ru.igla.tfprofiler.models_list.domain.ModelEntity;
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment;
 import ru.igla.tfprofiler.reports_list.ListReportEntity;
 import ru.igla.tfprofiler.tflite_runners.base.Classifier;
@@ -39,7 +39,7 @@ import ru.igla.tfprofiler.tflite_runners.base.ModelOptions;
 import ru.igla.tfprofiler.tflite_runners.blazeface.ssd.Keypoint;
 import ru.igla.tfprofiler.tflite_runners.domain.ImRecognition;
 import ru.igla.tfprofiler.tflite_runners.domain.ImageResult;
-import ru.igla.tfprofiler.tracking.MultiBoxTracker;
+import ru.igla.tfprofiler.ui.MultiBoxTracker;
 import ru.igla.tfprofiler.utils.CameraUtils;
 import ru.igla.tfprofiler.utils.DebugDrawer;
 import ru.igla.tfprofiler.utils.IOUtils;
@@ -329,7 +329,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 device,
                 numThreads,
                 useXnnpack(),
-                1
+                1,
+                false
         );
     }
 

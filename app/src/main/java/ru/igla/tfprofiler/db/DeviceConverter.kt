@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.db
 
 import androidx.room.TypeConverter
-import ru.igla.tfprofiler.core.Device
+import ru.igla.tfprofiler.core.domain.Device
 
 class DeviceConverter {
     @TypeConverter

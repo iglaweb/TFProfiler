@@ -1,7 +1,7 @@
 package ru.igla.tfprofiler.tflite_runners
 
 import android.graphics.RectF
-import ru.igla.tfprofiler.core.ColorSpace
+import ru.igla.tfprofiler.core.domain.ColorSpace
 import ru.igla.tfprofiler.core.ops.BaseOpNormalizer
 import ru.igla.tfprofiler.core.ops.OpNormalizer
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
@@ -32,7 +32,7 @@ class TFLiteImageModelFacemeshLandmarks : TFLiteImageDetectAPIModelBase<ImageRes
     }
 
     override fun getNormalizer(isQuantized: Boolean, colorSpace: ColorSpace): OpNormalizer {
-        return BaseOpNormalizer(isQuantized, 127.5f, 127.5f)
+        return BaseOpNormalizer(ColorSpace.COLOR, isQuantized, 127.5f, 127.5f)
     }
 
     private fun extractDetections(

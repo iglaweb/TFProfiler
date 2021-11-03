@@ -3,7 +3,7 @@ package ru.igla.tfprofiler.reports_list
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import ru.igla.tfprofiler.core.ModelType
-import ru.igla.tfprofiler.models_list.ModelConfig
+import ru.igla.tfprofiler.models_list.domain.ModelConfig
 import ru.igla.tfprofiler.utils.forEachNoIterator
 
 @Parcelize
