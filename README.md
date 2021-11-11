@@ -101,6 +101,10 @@ Model optimization aims to create smaller models that are generally faster and m
 7. Deploy different models for different devices
 
 
+# Mentions
+
+Featured in [AppTractor](https://apptractor.ru/info/github/tfprofiler.html)
+
 # Credits
 Launcher icon was built using [this one](https://www.flaticon.com/free-icon/neural_2103620). Icons made by [Becris](https://www.flaticon.com/authors/becris) from [https://www.flaticon.com/](www.flaticon.com)
 
@@ -110,21 +114,6 @@ Launcher icon was built using [this one](https://www.flaticon.com/free-icon/neur
 If you find any problems or would like to suggest a feature, please
 feel free to file an [issue](https://github.com/iglaweb/TFProfiler/issues)
 
-## License
-
-    Copyright 2020 Igor Lashkov
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
 
  [build-status-svg]: https://travis-ci.com/iglaweb/TFProfiler.svg?branch=master
  [build-status-link]: https://travis-ci.com/github/iglaweb/TFProfiler
