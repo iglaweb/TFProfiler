@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.annotation.Nullable
 import ru.igla.tfprofiler.core.UseCase
-import ru.igla.tfprofiler.core.tflite.TensorFlowUtils
+import ru.igla.tfprofiler.core.tflite.OpsPlatformUtils
 import ru.igla.tfprofiler.models_list.domain.GPUInfo
 import ru.igla.tfprofiler.utils.SystemUtils
 import timber.log.Timber
@@ -56,9 +56,9 @@ class GetDeviceInfoUseCase(val application: Application) :
             cpuSoC = this
         }
 
-        val boardPlatform = TensorFlowUtils.getBoardPlatform()
+        val boardPlatform = OpsPlatformUtils.getBoardPlatform()
         Timber.i("Board platform: $boardPlatform")
-        val productDevice = TensorFlowUtils.getProductDevice()
+        val productDevice = OpsPlatformUtils.getProductDevice()
         Timber.i("Product device: $productDevice")
 
         val memoryUsage = SystemUtils.getMemorySizeInBytes(application)

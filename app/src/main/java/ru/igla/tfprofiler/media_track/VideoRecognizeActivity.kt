@@ -7,7 +7,7 @@ import ru.igla.tfprofiler.R
 import ru.igla.tfprofiler.models_list.DelegateRunRequest
 import ru.igla.tfprofiler.models_list.ExtraMediaRequest
 import ru.igla.tfprofiler.models_list.NeuralModelsListFragment
-import ru.igla.tfprofiler.ui.widgets.toast.Toaster
+import ru.igla.tfprofiler.ui.widgets.toastcompat.Toaster
 import ru.igla.tfprofiler.utils.inTransaction
 
 class VideoRecognizeActivity : AppCompatActivity() {

@@ -5,8 +5,8 @@ import android.os.Trace
 import androidx.annotation.CallSuper
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 import ru.igla.tfprofiler.core.ModelType
+import ru.igla.tfprofiler.core.domain.ModelOptimizedType
 import ru.igla.tfprofiler.core.tflite.FailedCreateTFDelegate
 import ru.igla.tfprofiler.core.tflite.TFInterpeterThreadExecutor
 import ru.igla.tfprofiler.core.tflite.TensorFlowUtils

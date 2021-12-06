@@ -48,7 +48,7 @@ import ru.igla.tfprofiler.ui.BaseFragment
 import ru.igla.tfprofiler.ui.pick_inference_type.ImageRequestListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceLaunchListener
 import ru.igla.tfprofiler.ui.pick_inference_type.InferenceTypeLauncher
-import ru.igla.tfprofiler.ui.widgets.toast.Toaster
+import ru.igla.tfprofiler.ui.widgets.toastcompat.Toaster
 import ru.igla.tfprofiler.utils.*
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
@@ -146,7 +146,7 @@ class NeuralModelsListFragment :
 //                }
 //            }
 
-            if(item.modelType.isTextModel()) {
+            if (item.modelType.isTextModel()) {
                 positiveButton(text = "Text") {
                     requestTextRun(item)
                 }
@@ -411,7 +411,7 @@ class NeuralModelsListFragment :
             } catch (e: Exception) {
                 Timber.e(e)
                 withContext(Dispatchers.Main) {
-                    mToaster.showToast(e.message)
+                    mToaster.showToast(e.message ?: "Video open error")
                 }
             }
         }

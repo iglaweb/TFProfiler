@@ -24,7 +24,7 @@ import ru.igla.tfprofiler.report_details.ModelReportActivity
 import ru.igla.tfprofiler.report_details.ModelReportFragment
 import ru.igla.tfprofiler.tflite_runners.base.ModelOptions
 import ru.igla.tfprofiler.ui.BaseFragment
-import ru.igla.tfprofiler.ui.widgets.toast.Toaster
+import ru.igla.tfprofiler.ui.widgets.toastcompat.Toaster
 import ru.igla.tfprofiler.utils.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -147,7 +147,7 @@ class TextRecognizeFragment :
                 observeDelegateCreator(queue)
 
                 liveDataShowRecognitionError.observe(viewLifecycleOwner) {
-                    mToaster.showToast(it.message)
+                    mToaster.showToast(it.message ?: "Recognition error")
                 }
 
                 observeRecognitionResult()

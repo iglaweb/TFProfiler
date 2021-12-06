@@ -32,7 +32,7 @@ import ru.igla.tfprofiler.core.UseCase
 import ru.igla.tfprofiler.reports_list.ListReportEntity
 import ru.igla.tfprofiler.reports_list.ReportDelegateItem
 import ru.igla.tfprofiler.ui.BaseFragment
-import ru.igla.tfprofiler.ui.widgets.toast.Toaster
+import ru.igla.tfprofiler.ui.widgets.toastcompat.Toaster
 import ru.igla.tfprofiler.utils.IntentUtils
 import ru.igla.tfprofiler.utils.forEachNoIterator
 import ru.igla.tfprofiler.utils.logI
